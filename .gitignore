@@ -1,0 +1,7 @@
+target
+*.iml
+*.ipr
+out
+lib_managed
+project/boot
+
