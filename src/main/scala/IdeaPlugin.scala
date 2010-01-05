@@ -92,7 +92,7 @@ trait IdeaPlugin extends BasicDependencyProject {
         <orderEntry type="library" name="scala" level="project" />
         {
           info.dependencies.map { dep => 
-            log.info("Dep: " + dep.toString)
+            log.info("Project dependency: " + dep.name)
             <orderEntry type="module" module-name={dep.name} />
           }
         }
