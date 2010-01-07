@@ -1,10 +1,10 @@
-A "simple-build-tool":http://code.google.com/p/simple-build-tool/ plugin to create IntelliJ IDEA project files for sbt project
+A "simple-build-tool":http://code.google.com/p/simple-build-tool/ plugin to create "IntelliJ IDEA":http://www.jetbrains.com/idea/free_java_ide.html project files for sbt project
 
-h4. Status
+h2. Status
 
 Early experimental version, not tested much and guaranteed to contain bugs and lots of room for improvement. You may or may not find it useful :) 
 
-h4. Usage
+h2. Usage
 
 Check out sbt's "plugin documentation":http://code.google.com/p/simple-build-tool/wiki/SbtPlugins.
 
@@ -34,3 +34,6 @@ i.e. plugin trait must be mixed into both parent project and subprojects if you 
 <pre>
   sbt idea
 </pre>
+
+4. Import created <project.name>.ipr file into idea
+
