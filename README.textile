@@ -8,12 +8,18 @@ h2. Usage
 
 Check out sbt's "plugin documentation":http://code.google.com/p/simple-build-tool/wiki/SbtPlugins.
 
+0. Install plugin into your local ivy repo
+<pre>
+git clone git@github.com:mpeltonen/sbt-idea-plugin.git
+cd sbt-idea-plugin
+./sbt publish-local
+</pre>
+
 1. In your project/plugins/Plugins.scala:
 
 <pre>
 import sbt._
 class Plugins(info: ProjectInfo) extends PluginDefinition(info) {
-  val repo = "Laughing Panda" at "http://www.laughingpanda.org/maven2/snapshots"
   val idea = "com.github.mpeltonen" % "sbt-idea-plugin" % "0.1-SNAPSHOT"
 }
 </pre>
