@@ -38,8 +38,9 @@ class MyProject(info: ProjectInfo) extends ParentProject(info) with IdeaPlugin {
 i.e. plugin trait must be mixed into both parent project and subprojects if you have multimodule build.
 
 3. Run
+
 <pre>
-  sbt idea
+ sbt idea
 </pre>
 
 4. Import created <project.name>.ipr file into idea
