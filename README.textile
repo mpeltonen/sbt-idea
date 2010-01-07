@@ -1,0 +1,36 @@
+A "simple-build-tool":http://code.google.com/p/simple-build-tool/ plugin to create IntelliJ IDEA project files for sbt project
+
+h4. Status
+
+Early experimental version, not tested much and guaranteed to contain bugs and lots of room for improvement. You may or may not find it useful :) 
+
+h4. Usage
+
+Check out sbt's "plugin documentation":http://code.google.com/p/simple-build-tool/wiki/SbtPlugins.
+
+1. In your project/plugins/Plugins.scala:
+
+<pre>
+import sbt._
+class Plugins(info: ProjectInfo) extends PluginDefinition(info) {
+  val repo = "Laughing Panda" at "http://www.laughingpanda.org/maven2/snapshots"
+  val idea = "com.github.mpeltonen" % "sbt-idea-plugin" % "0.1-SNAPSHOT"
+}
+</pre>
+
+2. In your project definition file:
+
+<pre>
+import sbt._
+class MyProject(info: ProjectInfo) extends ParentProject(info) with IdeaPlugin {
+  lazy val subProject = project("subproject", "subproject", new DefaultProject(_) with IdeaPlugin)              
+   // ...
+}
+</pre>
+
+i.e. plugin trait must be mixed into both parent project and subprojects if you have multimodule build.
+
+3. Run
+<pre>
+  sbt idea
+</pre>
