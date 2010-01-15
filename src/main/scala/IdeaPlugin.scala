@@ -33,8 +33,9 @@ trait IdeaPlugin extends BasicDependencyProject {
   }
 
   def ideClasspath: PathFinder = fullClasspath(Runtime) +++ managedClasspath(Optional) +++ fullClasspath(Test)
-  def scalaCompilerJar: File = FileUtilities.scalaCompilerJar
-  def scalaLibraryJar: File = FileUtilities.scalaLibraryJar
+  def buildScalaJarDir: Path = rootProject.info.bootPath / String.format("scala-%s", buildScalaVersion) / "lib"
+  def scalaCompilerJar: File = (buildScalaJarDir / "scala-compiler.jar").asFile
+  def scalaLibraryJar: File = (buildScalaJarDir / "scala-library.jar").asFile
 
   def projectXml: Node = {
     <project version="4">

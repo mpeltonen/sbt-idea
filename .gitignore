@@ -1,6 +1,7 @@
 target
 *.iml
 *.ipr
+.idea
 out
 lib_managed
 project/boot

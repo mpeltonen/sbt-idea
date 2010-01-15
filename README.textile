@@ -2,7 +2,11 @@ A "simple-build-tool":http://code.google.com/p/simple-build-tool/ plugin to crea
 
 h2. Status
 
-Early experimental version, not tested much and guaranteed to contain bugs and lots of room for improvement. You may or may not find it useful :) 
+Early experimental version, not tested much and guaranteed to contain bugs and lots of room for improvement. You may or may not find it useful :)
+
+h2. Requirements
+
+Requires sbt version 0.6.x (not compatible with 0.5.x series).
 
 h2. Usage
 
