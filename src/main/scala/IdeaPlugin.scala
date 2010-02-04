@@ -23,8 +23,12 @@ trait IdeaPlugin extends BasicDependencyProject {
   }
 
   def projectRelativePath(target: File): String = {
-    val projectPathComponents = projectPath.getAbsolutePath.split(File.separator).map(Some(_)).toList
-    val targetPathComponents = target.getAbsolutePath.split(File.separator).map(Some(_)).toList
+    def pathComponentsOf(f: File): List[String] = {
+      val p = f.getParentFile
+      if (p == null) Nil else List(f.getName) ::: pathComponentsOf(p)
+    }
+    val projectPathComponents = pathComponentsOf(projectPath).reverseMap(Some(_))
+    val targetPathComponents = pathComponentsOf(target).reverseMap(Some(_))
     val pathComponents = projectPathComponents.zipAll(targetPathComponents, None, None).dropWhile(x => x._1 == x._2)
     val (projectBranch, targetBranch) = List.unzip(pathComponents)
     val prefix = projectBranch.takeWhile(_ != None).foldLeft("")((acc, x) => acc + "../")
