@@ -4,5 +4,5 @@ target
 .idea
 out
 lib_managed
-project/boot
+project/boot*
 
