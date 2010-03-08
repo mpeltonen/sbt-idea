@@ -1,14 +1,10 @@
 import sbt.{Logger, BasicDependencyProject}
 import xml.{XML, Node}
 
-case class IdeaModuleDescriptor(val project: BasicDependencyProject, log: Logger) extends ProjectPaths {
-  def save: Unit = {
-    val moduleDescriptorPath = String.format("%s/%s.iml", projectPath, project.name)
-    XML.save(moduleDescriptorPath, moduleXml)
-    log.info("Created " + moduleDescriptorPath)
-  }
-  
-  def moduleXml: Node = {
+class IdeaModuleDescriptor(val project: BasicDependencyProject, val log: Logger) extends SaveableXml with ProjectPaths {
+  val path = String.format("%s/%s.iml", projectPath, project.name)
+
+  def content: Node = {
     <module type="JAVA_MODULE" version="4">
       <component name="FacetManager">
         <facet type="Scala" name="Scala">

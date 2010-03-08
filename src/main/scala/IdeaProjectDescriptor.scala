@@ -1,14 +1,10 @@
 import sbt.{Logger, BasicDependencyProject}
 import xml.{XML, Node}
 
-case class IdeaProjectDescriptor(val project: BasicDependencyProject, log: Logger) extends ProjectPaths {
-  def save: Unit = {
-    val projectDescriptorPath = String.format("%s/%s.ipr", projectPath, project.name)
-    XML.save(projectDescriptorPath, projectXml)
-    log.info("Created " + projectDescriptorPath)
-  }
+class IdeaProjectDescriptor(val project: BasicDependencyProject, val log: Logger) extends SaveableXml with ProjectPaths {
+  val path = String.format("%s/%s.ipr", projectPath, project.name)
 
-  def projectXml: Node = {
+  def content: Node = {
     <project version="4">
       <component name="ProjectDetails">
         <option name="projectName" value={project.name} />

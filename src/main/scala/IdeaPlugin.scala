@@ -5,9 +5,9 @@ trait IdeaPlugin extends BasicDependencyProject {
 
   def createIdeaProject: Unit = {
     if (info.parent.isEmpty) {
-      IdeaProjectDescriptor(this, log).save
-      SbtProjectDefinitionIdeaModuleDescriptor(this, log).save
+      new IdeaProjectDescriptor(this, log).save
+      new SbtProjectDefinitionIdeaModuleDescriptor(this, log).save
     }
-    if (!this.isInstanceOf[ParentProject]) IdeaModuleDescriptor(this, log).save
+    if (!this.isInstanceOf[ParentProject]) new IdeaModuleDescriptor(this, log).save
   }
 }
