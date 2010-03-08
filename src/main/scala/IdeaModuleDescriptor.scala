@@ -14,8 +14,8 @@ case class IdeaModuleDescriptor(val project: BasicDependencyProject, log: Logger
         <facet type="Scala" name="Scala">
           <configuration>
             <option name="takeFromSettings" value="true" />
-            <option name="myScalaCompilerJarPath" value={String.format("$MODULE_DIR$/%s", relativePath(scalaCompilerJar))} />
-            <option name="myScalaSdkJarPath" value={String.format("$MODULE_DIR$/%s", relativePath(scalaLibraryJar))} />
+            <option name="myScalaCompilerJarPath" value={String.format("$MODULE_DIR$/%s", relativePath(buildScalaCompilerJar))} />
+            <option name="myScalaSdkJarPath" value={String.format("$MODULE_DIR$/%s", relativePath(buildScalaLibraryJar))} />
           </configuration>
         </facet>
       </component>
@@ -28,7 +28,7 @@ case class IdeaModuleDescriptor(val project: BasicDependencyProject, log: Logger
         </content>
         <orderEntry type="inheritedJdk" />
         <orderEntry type="sourceFolder" forTests="false" />
-        <orderEntry type="library" name="scala" level="project" />
+        <orderEntry type="library" name="buildScala" level="project" />
         {
           project.info.dependencies.map { dep =>
             log.info("Project dependency: " + dep.name)

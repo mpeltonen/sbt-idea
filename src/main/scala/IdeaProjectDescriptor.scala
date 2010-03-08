@@ -15,7 +15,7 @@ case class IdeaProjectDescriptor(val project: BasicDependencyProject, log: Logge
       </component>
       <component name="ProjectModuleManager">
         <modules>
-          <module fileurl={String.format("file://$PROJECT_DIR$/%s.iml", project.name)} filepath={String.format("$PROJECT_DIR$/%s.iml", project.name)} />
+          <module fileurl={"file://$PROJECT_DIR$/project_definition.iml"} filepath={"$PROJECT_DIR$/project_definition.iml"} />
         {
           childProjects.map { case (modulePath, moduleName) =>
             <module fileurl={String.format("file://$PROJECT_DIR$/%s/%s.iml", modulePath, moduleName)} filepath={String.format("$PROJECT_DIR$/%s/%s.iml", modulePath, moduleName)} />
@@ -29,10 +29,18 @@ case class IdeaProjectDescriptor(val project: BasicDependencyProject, log: Logge
       </component>
       }
       <component name="libraryTable">
-        <library name="scala">
+        <library name="buildScala">
           <CLASSES>
-            <root url={String.format("jar://$PROJECT_DIR$/%s!/", relativePath(scalaCompilerJar))} />
-            <root url={String.format("jar://$PROJECT_DIR$/%s!/", relativePath(scalaLibraryJar))} />
+            <root url={String.format("jar://$PROJECT_DIR$/%s!/", relativePath(buildScalaCompilerJar))} />
+            <root url={String.format("jar://$PROJECT_DIR$/%s!/", relativePath(buildScalaLibraryJar))} />
+          </CLASSES>
+          <JAVADOC />
+          <SOURCES />
+        </library>
+        <library name="defScala">
+          <CLASSES>
+              <root url={String.format("jar://$PROJECT_DIR$/%s!/", relativePath(defScalaCompilerJar))} />
+              <root url={String.format("jar://$PROJECT_DIR$/%s!/", relativePath(defScalaLibraryJar))} />
           </CLASSES>
           <JAVADOC />
           <SOURCES />
