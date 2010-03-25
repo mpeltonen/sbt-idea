@@ -1,4 +1,5 @@
 import sbt._
 class IdeaPluginProject(info: ProjectInfo) extends PluginProject(info) {
-  val publishTo = Resolver.ssh("panda-repo", "www.laughingpanda.org", "/var/www/localhost/htdocs/maven2/snapshots")
+  override def managedStyle = ManagedStyle.Maven
+  lazy val publishTo = Resolver.file("GitHub Pages", new java.io.File("../mpeltonen.github.com/maven/")) 
 }
