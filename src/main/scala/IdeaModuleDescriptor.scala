@@ -32,19 +32,24 @@ class IdeaModuleDescriptor(val project: BasicDependencyProject, val log: Logger)
           }
         }
         {
-          ideClasspath.getFiles.filter(_.getPath.endsWith(".jar")).map { jarFile =>
-            <orderEntry type="module-library">
-              <library>
-                <CLASSES>
-                  <root url={String.format("jar://$MODULE_DIR$/%s!/", relativePath(jarFile))} />
-                </CLASSES>
-                <JAVADOC />
-                <SOURCES />
-              </library>
-            </orderEntry>
-          }
+          val jars = ideClasspath.getFiles.filter(_.getPath.endsWith(".jar")).map(relativePath)
+          val libs = new scala.xml.NodeBuffer
+          jars.foreach { path =>  libs &+ moduleLibrary(path)}
+          libs
         }
       </component>
     </module>
+  }
+
+  def moduleLibrary(moduleRelativeJarPath: String): Node = {
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url={String.format("jar://$MODULE_DIR$/%s!/", moduleRelativeJarPath)} />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
   }
 }
