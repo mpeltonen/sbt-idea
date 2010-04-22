@@ -19,6 +19,7 @@ class IdeaModuleDescriptor(val project: BasicDependencyProject, val log: Logger)
         <exclude-output />
         <content url="file://$MODULE_DIR$">
           <sourceFolder url="file://$MODULE_DIR$/src/main/scala" isTestSource="false" />
+          <sourceFolder url="file://$MODULE_DIR$/src/main/java" isTestSource="false" />
           <sourceFolder url="file://$MODULE_DIR$/src/test/scala" isTestSource="true" />
           <excludeFolder url="file://$MODULE_DIR$/target" />
         </content>
