@@ -1,4 +1,4 @@
-import sbt.{Logger, BasicDependencyProject}
+import sbt.{Logger, BasicScalaProject, BasicDependencyProject}
 import xml.{XML, Node}
 
 class IdeaProjectDescriptor(val project: BasicDependencyProject, val log: Logger) extends SaveableXml with ProjectPaths {
@@ -11,9 +11,10 @@ class IdeaProjectDescriptor(val project: BasicDependencyProject, val log: Logger
       </component>
       <component name="ProjectModuleManager">
         <modules>
-          <module fileurl={"file://$PROJECT_DIR$/project_definition.iml"} filepath={"$PROJECT_DIR$/project_definition.iml"} />
+          <module fileurl={"file://$PROJECT_DIR$/project/sbt_project_definition.iml"} filepath={"$PROJECT_DIR$/project/sbt_project_definition.iml"} />
         {
-          childProjects.map { case (modulePath, moduleName) =>
+          val mainModule = if (project.isInstanceOf[BasicScalaProject]) List(("", project.name)) else Nil 
+          (childProjects ::: mainModule).map { case (modulePath, moduleName) =>
             <module fileurl={String.format("file://$PROJECT_DIR$/%s/%s.iml", modulePath, moduleName)} filepath={String.format("$PROJECT_DIR$/%s/%s.iml", modulePath, moduleName)} />
           }
         }
