@@ -10,8 +10,16 @@ class IdeaModuleDescriptor(val project: BasicDependencyProject, val log: Logger)
         <facet type="Scala" name="Scala">
           <configuration>
             <option name="takeFromSettings" value="true" />
-            <option name="myScalaCompilerJarPath" value={String.format("$MODULE_DIR$/%s", relativePath(buildScalaCompilerJar))} />
-            <option name="myScalaSdkJarPath" value={String.format("$MODULE_DIR$/%s", relativePath(buildScalaLibraryJar))} />
+            <option name="myScalaCompilerJarPaths">
+              <array>
+                <option value={String.format("$MODULE_DIR$/%s", relativePath(buildScalaCompilerJar))} />
+              </array>
+            </option>
+            <option name="myScalaSdkJarPaths">
+              <array>
+                <option value={String.format("$MODULE_DIR$/%s", relativePath(buildScalaLibraryJar))} />
+              </array>
+            </option>
           </configuration>
         </facet>
       </component>

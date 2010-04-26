@@ -10,8 +10,16 @@ class SbtProjectDefinitionIdeaModuleDescriptor(val project: BasicDependencyProje
         <facet type="Scala" name="Scala">
           <configuration>
             <option name="takeFromSettings" value="true" />
-            <option name="myScalaCompilerJarPath" value={String.format("$MODULE_DIR$/%s", relativePath(defScalaCompilerJar))} />
-            <option name="myScalaSdkJarPath" value={String.format("$MODULE_DIR$/%s", relativePath(defScalaLibraryJar))} />
+            <option name="myScalaCompilerJarPaths">
+              <array>
+                <option value={String.format("$MODULE_DIR$/%s", relativePath(defScalaCompilerJar))} />
+              </array>
+            </option>
+            <option name="myScalaSdkJarPaths">
+              <array>
+                <option value={String.format("$MODULE_DIR$/%s", relativePath(defScalaLibraryJar))} />
+              </array>
+            </option>
           </configuration>
         </facet>
       </component>
