@@ -34,6 +34,7 @@ i.e. plugin trait must be mixed into both parent project and subprojects if you 
 3. Run
 
 <pre>
+ sbt update
  sbt idea
 </pre>
 
