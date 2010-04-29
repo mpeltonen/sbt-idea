@@ -1,4 +1,4 @@
-import sbt.{Logger, BasicDependencyProject}
+import sbt.{Logger, BasicDependencyProject, ParentProject}
 import xml.{XML, Node}
 
 class IdeaModuleDescriptor(val project: BasicDependencyProject, val log: Logger) extends SaveableXml with ProjectPaths {
@@ -35,7 +35,7 @@ class IdeaModuleDescriptor(val project: BasicDependencyProject, val log: Logger)
         <orderEntry type="sourceFolder" forTests="false" />
         <orderEntry type="library" name="buildScala" level="project" />
         {
-          project.projectClosure.map { dep =>
+          project.projectClosure.filter(!_.isInstanceOf[ParentProject]).map { dep =>
             log.info("Project dependency: " + dep.name)
             <orderEntry type="module" module-name={dep.name} />
           }
