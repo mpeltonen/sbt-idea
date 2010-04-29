@@ -35,7 +35,7 @@ class IdeaModuleDescriptor(val project: BasicDependencyProject, val log: Logger)
         <orderEntry type="sourceFolder" forTests="false" />
         <orderEntry type="library" name="buildScala" level="project" />
         {
-          project.info.dependencies.map { dep =>
+          project.projectClosure.map { dep =>
             log.info("Project dependency: " + dep.name)
             <orderEntry type="module" module-name={dep.name} />
           }
