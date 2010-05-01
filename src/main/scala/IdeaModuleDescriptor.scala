@@ -1,5 +1,5 @@
-import sbt.{Logger, BasicDependencyProject, ParentProject}
-import xml.{XML, Node}
+import sbt._
+import xml.{NodeSeq, Node}
 
 class IdeaModuleDescriptor(val project: BasicDependencyProject, val log: Logger) extends SaveableXml with ProjectPaths {
   val path = String.format("%s/%s.iml", projectPath, project.name)
@@ -41,23 +41,44 @@ class IdeaModuleDescriptor(val project: BasicDependencyProject, val log: Logger)
           }
         }
         {
-          val jars = ideClasspath.getFiles.filter(_.getPath.endsWith(".jar")).map(relativePath)
+          val jars = ideClasspath ** GlobFilter("*.jar")
+
+          val sources = jars ** GlobFilter("*-sources.jar")
+          val javadoc = jars ** GlobFilter("*-javadoc.jar")
+          val classes = jars --- sources --- javadoc
+
+          def cut(name:String, c:String) = name.substring(0, name.length - c.length)
+          def named(pf:PathFinder, suffix:String) = Map() ++ pf.getRelativePaths.map(path => (cut(path, suffix), path))
+
+          val namedSources = named(sources, "-sources.jar")
+          val namedJavadoc = named(javadoc, "-javadoc.jar")
+          val namedClasses = named(classes, ".jar")
+
+          val names = namedSources.keySet ++ namedJavadoc.keySet ++ namedClasses.keySet
+
           val libs = new scala.xml.NodeBuffer
-          jars.foreach { path =>  libs &+ moduleLibrary(path)}
+          names.foreach { name =>  libs &+ moduleLibrary(namedSources.get(name), namedJavadoc.get(name), namedClasses.get(name))}
           libs
         }
       </component>
     </module>
   }
 
-  def moduleLibrary(moduleRelativeJarPath: String): Node = {
+  def moduleLibrary(sources:Option[String], javadoc:Option[String], classes:Option[String]): Node = {
+    def root(entry:Option[String]) =
+      entry.map(e => <root url={String.format("jar://$MODULE_DIR$/%s!/", e)} />).getOrElse(NodeSeq.Empty) 
+
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url={String.format("jar://$MODULE_DIR$/%s!/", moduleRelativeJarPath)} />
+          { root(classes) }
         </CLASSES>
-        <JAVADOC />
-        <SOURCES />
+        <JAVADOC>
+          { root(javadoc) }
+        </JAVADOC>
+        <SOURCES>
+          { root(sources) }
+        </SOURCES>
       </library>
     </orderEntry>
   }
