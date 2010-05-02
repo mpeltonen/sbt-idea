@@ -40,3 +40,5 @@ i.e. plugin trait must be mixed into both parent project and subprojects if you 
 
 4. Import created <project.name>.ipr file into idea
 
+h2. Contributors
+- Jon-Anders Teigen
