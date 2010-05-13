@@ -37,11 +37,11 @@ class SbtProjectDefinitionIdeaModuleDescriptor(val project: BasicDependencyProje
           <orderEntry type="module-library">
             <library>
               <CLASSES>
-                <root url={String.format("file://$MODULE_DIR$/boot/scala-%s/org.scala-tools.sbt", project.defScalaVersion.value)} />
+                <root url={String.format("file://$MODULE_DIR$/boot/scala-%s/org.scala-tools.sbt/sbt/%s", project.defScalaVersion.value, project.sbtVersion.value)} />
               </CLASSES>
               <JAVADOC />
               <SOURCES />
-              <jarDirectory url={String.format("file://$MODULE_DIR$/boot/scala-%s/org.scala-tools.sbt", project.defScalaVersion.value)} recursive="true" />
+              <jarDirectory url={String.format("file://$MODULE_DIR$/boot/scala-%s/org.scala-tools.sbt/sbt/%s", project.defScalaVersion.value, project.sbtVersion.value)} recursive="true" />
             </library>
           </orderEntry>
           <orderEntry type="module-library">
