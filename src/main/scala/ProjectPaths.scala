@@ -29,7 +29,14 @@ trait ProjectPaths {
     prefix + suffix
   }
 
-  def ideClasspath: PathFinder = project.fullClasspath(Runtime) +++ project.managedClasspath(Optional) +++ project.fullClasspath(Test)
+  def defaultClasspath: PathFinder = project.configurationPath(Default) +++ project.unmanagedClasspath +++ project.configurationPath(Compile)
+  def testClasspath: PathFinder = project.configurationPath(Test)
+  def runtimeClasspath: PathFinder = project.configurationPath(Runtime)
+  def providedClasspath: PathFinder = project.configurationPath(Provided)
+
+  def ideClasspath: PathFinder = defaultClasspath +++ testClasspath +++ runtimeClasspath +++ providedClasspath
+
+  //def ideClasspath: PathFinder = project.fullClasspath(Runtime) +++ project.managedClasspath(Optional) +++ project.fullClasspath(Test)
   def buildScalaJarDir: Path = project.rootProject.info.bootPath / String.format("scala-%s", project.buildScalaVersion) / "lib"
   def buildScalaCompilerJar: File = (buildScalaJarDir / "scala-compiler.jar").asFile
   def buildScalaLibraryJar: File = (buildScalaJarDir / "scala-library.jar").asFile
