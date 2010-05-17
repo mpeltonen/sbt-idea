@@ -57,7 +57,7 @@ class IdeaModuleDescriptor(val project: BasicDependencyProject, val log: Logger)
           val classes = jars --- sources --- javadoc
 
           def cut(name: String, c: String) = name.substring(0, name.length - c.length)
-          def named(pf: PathFinder, suffix: String) = Map() ++ pf.getRelativePaths.map(path => (cut(path, suffix), path))
+          def named(pf: PathFinder, suffix: String) = Map() ++ pf.getFiles.map(relativePath _).map(path => (cut(path, suffix), path))
 
           val namedSources = named(sources, SourcesJar)
           val namedJavadoc = named(javadoc, JavaDocJar)
