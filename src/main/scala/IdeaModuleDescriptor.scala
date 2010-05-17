@@ -27,8 +27,8 @@ class IdeaModuleDescriptor(val project: BasicDependencyProject, val log: Logger)
       <component name="NewModuleRootManager" inherit-compiler-output="true">
         <exclude-output />
         <content url="file://$MODULE_DIR$">
-          { addSourceFoldersIfExists("src/main/scala" :: "src/main/java" :: "src/it/scala" :: Nil) }
-          { addTestSourceFoldersIfExists("src/test/scala" :: Nil) }
+          { addSourceFoldersIfExists("src/main/scala" :: "src/main/resources" :: "src/main/java" :: "src/it/scala" :: Nil) }
+          { addTestSourceFoldersIfExists("src/test/scala" :: "src/test/resources" :: Nil) }
           <excludeFolder url="file://$MODULE_DIR$/target" />
         </content>
         <orderEntry type="inheritedJdk" />
