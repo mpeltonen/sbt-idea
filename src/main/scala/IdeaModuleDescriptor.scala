@@ -27,8 +27,8 @@ class IdeaModuleDescriptor(val project: BasicDependencyProject, val log: Logger)
       <component name="NewModuleRootManager" inherit-compiler-output="true">
         <exclude-output />
         <content url="file://$MODULE_DIR$">
-          { addSourceFoldersIfExists("src/main/scala" :: "src/main/resources" :: "src/main/java" :: "src/it/scala" :: Nil) }
-          { addTestSourceFoldersIfExists("src/test/scala" :: "src/test/resources" :: Nil) }
+          { nodePerExistingSourceFolder("src/main/scala" :: "src/main/resources" :: "src/main/java" :: "src/it/scala" :: Nil) }
+          { nodePerExistingTestSourceFolder("src/test/scala" :: "src/test/resources" :: Nil) }
           <excludeFolder url="file://$MODULE_DIR$/target" />
         </content>
         <orderEntry type="inheritedJdk"/>
@@ -97,16 +97,16 @@ class IdeaModuleDescriptor(val project: BasicDependencyProject, val log: Logger)
     </module>
   }
 
-  def addSourceFoldersIfExists(paths: List[String]): NodeBuffer = addSourceFoldersIfExists(paths, false)
-  def addTestSourceFoldersIfExists(paths: List[String]): NodeBuffer = addSourceFoldersIfExists(paths, true)
+  def nodePerExistingSourceFolder(paths: List[String]): NodeBuffer = nodePerExistingFolder(paths, false)
+  def nodePerExistingTestSourceFolder(paths: List[String]): NodeBuffer = nodePerExistingFolder(paths, true)
 
-  def addSourceFoldersIfExists(paths: List[String], isTestSources: Boolean): NodeBuffer = {
+  def nodePerExistingFolder(paths: List[String], isTestSourceFolders: Boolean): NodeBuffer = {
     val nodes = new scala.xml.NodeBuffer
-    paths.filter(new File(projectPath, _).exists()).foreach(nodes &+ sourceFolder(_, isTestSources))
+    paths.filter(new File(projectPath, _).exists()).foreach(nodes &+ sourceFolder(_, isTestSourceFolders))
     nodes
   }
 
-  def sourceFolder(path: String, isTestSource: Boolean) = <sourceFolder url={"file://$MODULE_DIR$/" + path} isTestSource={isTestSource.toString} />
+  def sourceFolder(path: String, isTestSourceFolder: Boolean) = <sourceFolder url={"file://$MODULE_DIR$/" + path} isTestSource={isTestSourceFolder.toString} />
 
   def moduleLibrary(scope: Option[String], sources: Option[String], javadoc: Option[String], classes: Option[String]): Node = {
     def root(entry: Option[String]) =
