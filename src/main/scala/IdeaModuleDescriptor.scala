@@ -23,6 +23,12 @@ class IdeaModuleDescriptor(val project: BasicDependencyProject, val log: Logger)
             </option>
           </configuration>
         </facet>
+        {
+          project match {
+            case webProject: DefaultWebProject => webFacet(webProject)
+            case _ => Null
+          }
+        }
       </component>
       <component name="NewModuleRootManager" inherit-compiler-output="true">
         <exclude-output />
@@ -107,6 +113,19 @@ class IdeaModuleDescriptor(val project: BasicDependencyProject, val log: Logger)
   }
 
   def sourceFolder(path: String, isTestSourceFolder: Boolean) = <sourceFolder url={"file://$MODULE_DIR$/" + path} isTestSource={isTestSourceFolder.toString} />
+
+  def webFacet(webProject: DefaultWebProject): Node = {
+    <facet type="web" name="Web">
+      <configuration>
+        <descriptors>
+          <deploymentDescriptor name="web.xml" url={String.format("file://$MODULE_DIR$/%s/WEB-INF/web.xml", relativePath(webProject.webappPath.asFile))} />
+        </descriptors>
+        <webroots>
+          <root url={String.format("file://$MODULE_DIR$/%s", relativePath(webProject.webappPath.asFile))} relative="/" />
+        </webroots>
+      </configuration>
+    </facet>
+  }
 
   def moduleLibrary(scope: Option[String], sources: Option[String], javadoc: Option[String], classes: Option[String]): Node = {
     def root(entry: Option[String]) =
