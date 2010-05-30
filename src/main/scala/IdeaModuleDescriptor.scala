@@ -1,6 +1,6 @@
 import sbt._
 import java.io.File
-import xml.{UnprefixedAttribute, NodeSeq, Node, Null, NodeBuffer}
+import xml.{UnprefixedAttribute, NodeSeq, Node, NodeBuffer}
 
 class IdeaModuleDescriptor(val project: BasicDependencyProject, val log: Logger) extends SaveableXml with ProjectPaths {
   val path = String.format("%s/%s.iml", projectPath, project.name)
@@ -26,7 +26,7 @@ class IdeaModuleDescriptor(val project: BasicDependencyProject, val log: Logger)
         {
           project match {
             case webProject: DefaultWebProject => webFacet(webProject)
-            case _ => Null
+            case _ => scala.xml.Null
           }
         }
       </component>
@@ -147,7 +147,7 @@ class IdeaModuleDescriptor(val project: BasicDependencyProject, val log: Logger)
     </orderEntry>
 
     scope match {
-      case Some(s) => orderEntry % new UnprefixedAttribute("scope", s, Null)
+      case Some(s) => orderEntry % new UnprefixedAttribute("scope", s, scala.xml.Null)
       case _ => orderEntry
     }
   }
