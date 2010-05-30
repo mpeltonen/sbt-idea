@@ -1,7 +1,7 @@
 import sbt.{Logger, BasicScalaProject, BasicDependencyProject}
 import xml.{XML, Node}
 
-class IdeaProjectDescriptor(val project: BasicDependencyProject, val log: Logger) extends SaveableXml with ProjectPaths {
+class IdeaProjectDescriptor(val project: IdeaProject, val log: Logger) extends SaveableXml with ProjectPaths {
   val path = String.format("%s/%s.ipr", projectPath, project.name)
 
   def content: Node = {
@@ -21,7 +21,7 @@ class IdeaProjectDescriptor(val project: BasicDependencyProject, val log: Logger
         </modules>
       </component>
       {
-      <component name="ProjectRootManager" version="2" languageLevel="JDK_1_5" assert-keyword="true" jdk-15="true" project-jdk-name="1.6" project-jdk-type="JavaSDK">
+      <component name="ProjectRootManager" version="2" languageLevel="JDK_1_5" assert-keyword="true" jdk-15="true" project-jdk-name={project.ideaJdkName.value} project-jdk-type="JavaSDK">
         <output url="file://$PROJECT_DIR$/out" />
       </component>
       }
