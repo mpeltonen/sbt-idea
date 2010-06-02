@@ -34,7 +34,7 @@ class IdeaModuleDescriptor(val project: BasicDependencyProject, val log: Logger)
         <exclude-output />
         <content url="file://$MODULE_DIR$">
           { nodePerExistingSourceFolder("src/main/scala" :: "src/main/resources" :: "src/main/java" :: "src/it/scala" :: Nil) }
-          { nodePerExistingTestSourceFolder("src/test/scala" :: "src/test/resources" :: Nil) }
+          { nodePerExistingTestSourceFolder("src/test/scala" :: "src/test/resources" :: "src/test/java" :: Nil) }
           <excludeFolder url="file://$MODULE_DIR$/target" />
         </content>
         <orderEntry type="inheritedJdk"/>
