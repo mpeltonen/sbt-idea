@@ -23,8 +23,8 @@ class Plugins(info: ProjectInfo) extends PluginDefinition(info) {
 
 <pre>
 import sbt._
-class MyProject(info: ProjectInfo) extends ParentProject(info) with IdeaPlugin {
-  lazy val subProject = project("subproject", "subproject", new DefaultProject(_) with IdeaPlugin)              
+class MyProject(info: ProjectInfo) extends ParentProject(info) with IdeaProject {
+  lazy val subProject = project("subproject", "subproject", new DefaultProject(_) with IdeaProject)              
    // ...
 }
 </pre>
@@ -40,6 +40,14 @@ i.e. plugin trait must be mixed into both parent project and subprojects if you 
 
 4. Import created <project.name>.ipr file into idea
 
+h2. Configuration
+
+You can customize some attributes of generated Idea project descriptors in project/build.properties file. Currently supported properties are:
+
+|_. Property |_. Description |_. Default value |
+| idea.jdk.name | Name of the 'Project SDK' in Idea Module Settings | 1.6 |
+
 h2. Contributors
 
 * Jon-Anders Teigen
+* Michal Příhoda

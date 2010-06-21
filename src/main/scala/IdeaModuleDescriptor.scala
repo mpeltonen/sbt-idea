@@ -1,5 +1,6 @@
 import sbt._
-import xml.{UnprefixedAttribute, NodeSeq, Node, Null}
+import java.io.File
+import xml.{UnprefixedAttribute, NodeSeq, Node, NodeBuffer}
 
 class IdeaModuleDescriptor(val project: BasicDependencyProject, val log: Logger) extends SaveableXml with ProjectPaths {
   val path = String.format("%s/%s.iml", projectPath, project.name)
@@ -22,13 +23,18 @@ class IdeaModuleDescriptor(val project: BasicDependencyProject, val log: Logger)
             </option>
           </configuration>
         </facet>
+        {
+          project match {
+            case webProject: DefaultWebProject => webFacet(webProject)
+            case _ => scala.xml.Null
+          }
+        }
       </component>
       <component name="NewModuleRootManager" inherit-compiler-output="true">
         <exclude-output />
         <content url="file://$MODULE_DIR$">
-          <sourceFolder url="file://$MODULE_DIR$/src/main/scala" isTestSource="false" />
-          <sourceFolder url="file://$MODULE_DIR$/src/main/java" isTestSource="false" />
-          <sourceFolder url="file://$MODULE_DIR$/src/test/scala" isTestSource="true" />
+          { nodePerExistingSourceFolder("src/main/scala" :: "src/main/resources" :: "src/main/java" :: "src/it/scala" :: Nil) }
+          { nodePerExistingTestSourceFolder("src/test/scala" :: "src/test/resources" :: "src/test/java" :: Nil) }
           <excludeFolder url="file://$MODULE_DIR$/target" />
         </content>
         <orderEntry type="inheritedJdk"/>
@@ -57,7 +63,7 @@ class IdeaModuleDescriptor(val project: BasicDependencyProject, val log: Logger)
           val classes = jars --- sources --- javadoc
 
           def cut(name: String, c: String) = name.substring(0, name.length - c.length)
-          def named(pf: PathFinder, suffix: String) = Map() ++ pf.getRelativePaths.map(path => (cut(path, suffix), path))
+          def named(pf: PathFinder, suffix: String) = Map() ++ pf.getFiles.map(relativePath _).map(path => (cut(path, suffix), path))
 
           val namedSources = named(sources, SourcesJar)
           val namedJavadoc = named(javadoc, JavaDocJar)
@@ -97,6 +103,30 @@ class IdeaModuleDescriptor(val project: BasicDependencyProject, val log: Logger)
     </module>
   }
 
+  def nodePerExistingSourceFolder(paths: List[String]): NodeBuffer = nodePerExistingFolder(paths, false)
+  def nodePerExistingTestSourceFolder(paths: List[String]): NodeBuffer = nodePerExistingFolder(paths, true)
+
+  def nodePerExistingFolder(paths: List[String], isTestSourceFolders: Boolean): NodeBuffer = {
+    val nodes = new scala.xml.NodeBuffer
+    paths.filter(new File(projectPath, _).exists()).foreach(nodes &+ sourceFolder(_, isTestSourceFolders))
+    nodes
+  }
+
+  def sourceFolder(path: String, isTestSourceFolder: Boolean) = <sourceFolder url={"file://$MODULE_DIR$/" + path} isTestSource={isTestSourceFolder.toString} />
+
+  def webFacet(webProject: DefaultWebProject): Node = {
+    <facet type="web" name="Web">
+      <configuration>
+        <descriptors>
+          <deploymentDescriptor name="web.xml" url={String.format("file://$MODULE_DIR$/%s/WEB-INF/web.xml", relativePath(webProject.webappPath.asFile))} />
+        </descriptors>
+        <webroots>
+          <root url={String.format("file://$MODULE_DIR$/%s", relativePath(webProject.webappPath.asFile))} relative="/" />
+        </webroots>
+      </configuration>
+    </facet>
+  }
+
   def moduleLibrary(scope: Option[String], sources: Option[String], javadoc: Option[String], classes: Option[String]): Node = {
     def root(entry: Option[String]) =
       entry.map(e => <root url={String.format("jar://$MODULE_DIR$/%s!/", e)}/>).getOrElse(NodeSeq.Empty)
@@ -117,7 +147,7 @@ class IdeaModuleDescriptor(val project: BasicDependencyProject, val log: Logger)
     </orderEntry>
 
     scope match {
-      case Some(s) => orderEntry % new UnprefixedAttribute("scope", s, Null)
+      case Some(s) => orderEntry % new UnprefixedAttribute("scope", s, scala.xml.Null)
       case _ => orderEntry
     }
   }
