@@ -53,6 +53,16 @@ class SbtProjectDefinitionIdeaModuleDescriptor(val project: BasicDependencyProje
               <SOURCES />
             </library>
           </orderEntry>
+					<orderEntry type="module-library">
+					  <library>
+					    <CLASSES>
+					      <root url="file://$MODULE_DIR$/build/lib" />
+					    </CLASSES>
+					    <JAVADOC />
+					    <SOURCES />
+					    <jarDirectory url="file://$MODULE_DIR$/build/lib" recursive="false" />
+					  </library>
+					</orderEntry>
         }
       </component>
     </module>
