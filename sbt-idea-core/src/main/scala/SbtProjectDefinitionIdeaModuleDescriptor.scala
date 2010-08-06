@@ -13,7 +13,7 @@ class SbtProjectDefinitionIdeaModuleDescriptor(val project: BasicDependencyProje
   def content: Node = {
     <module type="JAVA_MODULE" version="4">
       <component name="FacetManager">
-        <facet type="Scala" name="Scala">
+        <facet type="scala" name="Scala">
           <configuration>
             <option name="takeFromSettings" value="true" />
             <option name="myScalaCompilerJarPaths">
