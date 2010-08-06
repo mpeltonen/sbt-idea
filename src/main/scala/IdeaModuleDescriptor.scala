@@ -30,7 +30,9 @@ class IdeaModuleDescriptor(val project: BasicDependencyProject, val log: Logger)
           }
         }
       </component>
-      <component name="NewModuleRootManager" inherit-compiler-output="true">
+      <component name="NewModuleRootManager" inherit-compiler-output="false">
+        <output url={"file://$MODULE_DIR$/" + project.asInstanceOf[ScalaPaths].mainCompilePath.relativePath.toString} />
+        <output-test url={"file://$MODULE_DIR$/" + project.asInstanceOf[ScalaPaths].testCompilePath.relativePath.toString} />
         <exclude-output />
         <content url="file://$MODULE_DIR$">
           { nodePerExistingSourceFolder("src/main/scala" :: "src/main/resources" :: "src/main/java" :: "src/it/scala" :: Nil) }
