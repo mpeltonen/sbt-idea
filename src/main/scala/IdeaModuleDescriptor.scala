@@ -43,7 +43,8 @@ class IdeaModuleDescriptor(val project: BasicDependencyProject, val log: Logger)
         <orderEntry type="sourceFolder" forTests="false"/>
         <orderEntry type="library" name="buildScala" level="project"/>
         {
-          project.projectClosure.filter(!_.isInstanceOf[ParentProject]).map { dep =>
+          def isDependencyProject(p: Project) = p != project && !p.isInstanceOf[ParentProject]
+          project.projectClosure.filter(isDependencyProject).map { dep =>
             log.info("Project dependency: " + dep.name)
             <orderEntry type="module" module-name={dep.name} />
           }
