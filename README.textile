@@ -47,7 +47,4 @@ You can customize some attributes of generated Idea project descriptors in proje
 |_. Property |_. Description |_. Default value |
 | idea.jdk.name | Name of the 'Project SDK' in Idea Module Settings | 1.6 |
 
-h2. Contributors
-
-* Jon-Anders Teigen
-* Michal Příhoda
+h2. "Contributors":http://github.com/mpeltonen/sbt-idea-plugin/contributors
