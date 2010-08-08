@@ -11,9 +11,14 @@ class IdeaProjectDescriptor(val project: IdeaProject, val log: Logger) extends S
       </component>
       <component name="ProjectModuleManager">
         <modules>
-          <module fileurl={"file://$PROJECT_DIR$/project/sbt_project_definition.iml"} filepath={"$PROJECT_DIR$/project/sbt_project_definition.iml"} />
         {
-          val mainModule = if (project.isInstanceOf[BasicScalaProject]) List(("", project.name)) else Nil 
+          project.ideaIncludeSbtProjectDefinitionModule.value match {
+            case true => <module fileurl={"file://$PROJECT_DIR$/project/sbt_project_definition.iml"} filepath={"$PROJECT_DIR$/project/sbt_project_definition.iml"} />
+            case _ =>
+          }
+        }
+        {
+          val mainModule = if (project.isInstanceOf[BasicScalaProject]) List(("", project.name)) else Nil
           (childProjects ::: mainModule).map { case (modulePath, moduleName) =>
             <module fileurl={String.format("file://$PROJECT_DIR$/%s/%s.iml", modulePath, moduleName)} filepath={String.format("$PROJECT_DIR$/%s/%s.iml", modulePath, moduleName)} />
           }
