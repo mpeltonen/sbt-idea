@@ -16,19 +16,10 @@ class IdeaModuleDescriptor(val project: BasicDependencyProject, val log: Logger)
       <component name="FacetManager">
         <facet type="scala" name="Scala">
           <configuration>
-            <option name="takeFromSettings" value="true" />
-            <option name="myScalaCompilerJarPaths">
-              <array>
-                <option value={String.format("$MODULE_DIR$/%s", relativePath(buildScalaCompilerJar))} />
-              </array>
-            </option>
-            <option name="myScalaSdkJarPaths">
-              <array>
-                <option value={String.format("$MODULE_DIR$/%s", relativePath(buildScalaLibraryJar))} />
-              </array>
-            </option>
+            <option name="compilerLibraryLevel" value="Project" />
+            <option name="compilerLibraryName" value="buildScala" />
           </configuration>
-        </facet>
+	    </facet>
         {
           project match {
             case webProject: DefaultWebProject => webFacet(webProject)
