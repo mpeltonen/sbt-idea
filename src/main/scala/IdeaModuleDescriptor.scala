@@ -30,18 +30,35 @@ class IdeaModuleDescriptor(val project: BasicDependencyProject, val log: Logger)
           }
         }
       </component>
-      <component name="NewModuleRootManager" inherit-compiler-output="true">
+      <component name="NewModuleRootManager" inherit-compiler-output="false">
+        <output url={"file://$MODULE_DIR$/" + project.asInstanceOf[ScalaPaths].mainCompilePath.relativePath.toString} />
+        <output-test url={"file://$MODULE_DIR$/" + project.asInstanceOf[ScalaPaths].testCompilePath.relativePath.toString} />
         <exclude-output />
         <content url="file://$MODULE_DIR$">
           { nodePerExistingSourceFolder("src/main/scala" :: "src/main/resources" :: "src/main/java" :: "src/it/scala" :: Nil) }
           { nodePerExistingTestSourceFolder("src/test/scala" :: "src/test/resources" :: "src/test/java" :: Nil) }
           <excludeFolder url="file://$MODULE_DIR$/target" />
         </content>
+        {
+          project match {
+            case sp: ScalaPaths =>
+              val nodeBuffer = new xml.NodeBuffer
+              if (sp.testResources.getFiles.exists(_.exists))
+                nodeBuffer &+ moduleLibrary(Some("TEST"), None, None,
+                  Some("file://$MODULE_DIR$/" + relativePath(sp.testResourcesOutputPath.asFile)), false)
+              if (sp.mainResources.getFiles.exists(_.exists))
+                nodeBuffer &+ moduleLibrary(None, None, None,
+                  Some("file://$MODULE_DIR$/" + relativePath(sp.mainResourcesOutputPath.asFile)), false)
+              nodeBuffer
+            case _ => xml.Null
+          }
+        }
         <orderEntry type="inheritedJdk"/>
         <orderEntry type="sourceFolder" forTests="false"/>
         <orderEntry type="library" name="buildScala" level="project"/>
         {
-          project.projectClosure.filter(!_.isInstanceOf[ParentProject]).map { dep =>
+          def isDependencyProject(p: Project) = p != project && !p.isInstanceOf[ParentProject]
+          project.projectClosure.filter(isDependencyProject).map { dep =>
             log.info("Project dependency: " + dep.name)
             <orderEntry type="module" module-name={dep.name} />
           }
@@ -95,7 +112,7 @@ class IdeaModuleDescriptor(val project: BasicDependencyProject, val log: Logger)
           val libs = new scala.xml.NodeBuffer
           names.foreach {
             name =>
-              libs &+ moduleLibrary(scope(name), namedSources.get(name), namedJavadoc.get(name), namedClasses.get(name))
+              libs &+ moduleLibrary(scope(name), namedSources.get(name), namedJavadoc.get(name), namedClasses.get(name), true)
           }
           libs
         }
@@ -127,9 +144,12 @@ class IdeaModuleDescriptor(val project: BasicDependencyProject, val log: Logger)
     </facet>
   }
 
-  def moduleLibrary(scope: Option[String], sources: Option[String], javadoc: Option[String], classes: Option[String]): Node = {
+  def moduleLibrary(scope: Option[String], sources: Option[String], javadoc: Option[String], classes: Option[String], relativePaths: Boolean): Node = {
     def root(entry: Option[String]) =
-      entry.map(e => <root url={String.format("jar://$MODULE_DIR$/%s!/", e)}/>).getOrElse(NodeSeq.Empty)
+      entry.map { e =>
+        val url = if (relativePaths) String.format("jar://$MODULE_DIR$/%s!/", e) else e
+        <root url={url}/>
+      }.getOrElse(NodeSeq.Empty)
 
     val orderEntry =
     <orderEntry type="module-library" exported=" ">
