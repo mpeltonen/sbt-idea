@@ -1,8 +1,9 @@
 import sbt.{Logger, BasicScalaProject, BasicDependencyProject}
 import xml.{XML, Node}
 
-class IdeaProjectDescriptor(val project: IdeaProject, val log: Logger) extends SaveableXml with ProjectPaths {
+class IdeaProjectDescriptor(val project: BasicDependencyProject, val log: Logger) extends SaveableXml with ProjectPaths {
   val path = String.format("%s/%s.ipr", projectPath, project.name)
+  val env = new IdeaEnvironment(project)
 
   def content: Node = {
     <project version="4">
@@ -12,7 +13,7 @@ class IdeaProjectDescriptor(val project: IdeaProject, val log: Logger) extends S
       <component name="ProjectModuleManager">
         <modules>
         {
-          project.ideaIncludeSbtProjectDefinitionModule.value match {
+          env.ideaIncludeSbtProjectDefinitionModule.value match {
             case true => <module fileurl={"file://$PROJECT_DIR$/project/sbt_project_definition.iml"} filepath={"$PROJECT_DIR$/project/sbt_project_definition.iml"} />
             case _ =>
           }
@@ -26,7 +27,7 @@ class IdeaProjectDescriptor(val project: IdeaProject, val log: Logger) extends S
         </modules>
       </component>
       {
-      <component name="ProjectRootManager" version="2" languageLevel="JDK_1_5" assert-keyword="true" jdk-15="true" project-jdk-name={project.ideaJdkName.value} project-jdk-type="JavaSDK">
+      <component name="ProjectRootManager" version="2" languageLevel="JDK_1_5" assert-keyword="true" jdk-15="true" project-jdk-name={env.ideaJdkName.value} project-jdk-type="JavaSDK">
         <output url="file://$PROJECT_DIR$/out" />
       </component>
       }
