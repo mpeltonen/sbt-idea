@@ -1,4 +1,4 @@
-A "simple-build-tool":http://code.google.com/p/simple-build-tool/ plugin to create "IntelliJ IDEA":http://www.jetbrains.com/idea/free_java_ide.html project files for sbt project
+A "simple-build-tool":http://code.google.com/p/simple-build-tool/ plugin/processor to create "IntelliJ IDEA":http://www.jetbrains.com/idea/free_java_ide.html project files for sbt project
 
 h2. Requirements
 
@@ -7,15 +7,19 @@ h2. Requirements
 
 h2. Usage
 
-Check out sbt's "plugin documentation":http://code.google.com/p/simple-build-tool/wiki/SbtPlugins.
+Tool can be used either as SBT plugin or SBT processor (thanks to "teigen":http://github.com/teigen for the processor integration!). 
+
+Usage as plugin requires modification of your project descriptor, whereas usage as processor is non-intrusive and requires only few commands on the sbt console. Instructions for both usage scenarios below.
+
+h3. Usage as plugin
 
 1. In your project/plugins/Plugins.scala:
 
 <pre>
 import sbt._
 class Plugins(info: ProjectInfo) extends PluginDefinition(info) {
-  val repo = "GH-pages repo" at "http://mpeltonen.github.com/maven/"
-  val idea = "com.github.mpeltonen" % "sbt-idea-plugin" % "0.1-SNAPSHOT"
+  val sbtIdeaRepo = "sbt-idea-repo" at "http://mpeltonen.github.com/maven/"
+  val sbtIdea = "com.github.mpeltonen" % "sbt-idea-plugin" % "0.1-SNAPSHOT"
 }
 </pre>
 
@@ -38,7 +42,29 @@ i.e. plugin trait must be mixed into both parent project and subprojects if you 
  sbt idea
 </pre>
 
-4. Import created <project.name>.ipr file into idea
+4. Import created <project.name>.ipr file into Idea
+
+Check out sbt's "plugin documentation":http://code.google.com/p/simple-build-tool/wiki/SbtPlugins.
+
+h3. Usage as processor
+
+1. Start sbt console on the root of your project
+
+2. Enter the following sbt console commands (* is part of sbt processor command syntax):
+
+<pre>
+ > *sbtIdeaRepo at http://mpeltonen.github.com/maven/
+ > *idea is com.github.mpeltonen sbt-idea-processor 0.1-SNAPSHOT 
+ ...
+ > update
+ ...
+ > idea
+ ...
+</pre>
+
+3. Import created <project.name>.ipr file into Idea
+
+Check out sbt's "processor documentation":http://code.google.com/p/simple-build-tool/wiki/Processors for further details.
 
 h2. Configuration
 
