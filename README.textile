@@ -44,7 +44,7 @@ i.e. plugin trait must be mixed into both parent project and subprojects if you 
 
 4. Import created <project.name>.ipr file into Idea
 
-Check out sbt's "plugin documentation":http://code.google.com/p/simple-build-tool/wiki/SbtPlugins.
+Check out sbt's "plugin documentation":http://code.google.com/p/simple-build-tool/wiki/SbtPlugins for further details.
 
 h3. Usage as processor
 
