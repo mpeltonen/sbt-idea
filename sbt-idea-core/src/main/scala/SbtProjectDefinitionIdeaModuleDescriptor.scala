@@ -14,19 +14,10 @@ class SbtProjectDefinitionIdeaModuleDescriptor(val project: BasicDependencyProje
     <module type="JAVA_MODULE" version="4">
       <component name="FacetManager">
         <facet type="scala" name="Scala">
-          <configuration>
-            <option name="takeFromSettings" value="true" />
-            <option name="myScalaCompilerJarPaths">
-              <array>
-                <option value={String.format("$MODULE_DIR$/%s", relativePath(defScalaCompilerJar).replace("project/", "/"))} />
-              </array>
-            </option>
-            <option name="myScalaSdkJarPaths">
-              <array>
-                <option value={String.format("$MODULE_DIR$/%s", relativePath(defScalaLibraryJar).replace("project/", "/"))} />
-              </array>
-            </option>
-          </configuration>
+			<configuration>
+				<option name="compilerLibraryLevel" value="Project" />
+				<option name="compilerLibraryName" value="defScala" />
+			</configuration>
         </facet>
       </component>
       <component name="NewModuleRootManager" inherit-compiler-output="true">
