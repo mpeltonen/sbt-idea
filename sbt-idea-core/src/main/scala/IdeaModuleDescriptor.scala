@@ -19,7 +19,7 @@ class IdeaModuleDescriptor(val project: BasicDependencyProject, val log: Logger)
             <option name="compilerLibraryLevel" value="Project" />
             <option name="compilerLibraryName" value="buildScala" />
           </configuration>
-	    </facet>
+        </facet>
         {
           project match {
             case webProject: DefaultWebProject => webFacet(webProject)
