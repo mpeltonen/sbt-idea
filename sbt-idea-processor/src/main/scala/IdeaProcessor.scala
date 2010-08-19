@@ -1,3 +1,9 @@
+/**
+ * Copyright (C) 2010, Jon-Anders Teigen, Mikko Peltonen
+ * Licensed under the new BSD License.
+ * See the LICENSE file for details.
+ */
+
 import sbt._
 import processor._
 

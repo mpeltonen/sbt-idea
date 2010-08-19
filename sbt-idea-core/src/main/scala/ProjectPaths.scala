@@ -1,3 +1,9 @@
+/**
+ * Copyright (C) 2010, Mikko Peltonen, Jon-Anders Teigen
+ * Licensed under the new BSD License.
+ * See the LICENSE file for details.
+ */
+
 import java.io.File
 import sbt.Configurations._
 import sbt.{Path, PathFinder, BasicDependencyProject, ParentProject}

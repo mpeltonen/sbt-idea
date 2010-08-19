@@ -1,3 +1,9 @@
+/**
+ * Copyright (C) 2010, Mikko Peltonen, Jon-Anders Teigen, Mikko Koponen
+ * Licensed under the new BSD License.
+ * See the LICENSE file for details.
+ */
+
 import sbt.{Logger, BasicDependencyProject}
 import xml.{XML, Node}
 

@@ -1,3 +1,9 @@
+/**
+ * Copyright (C) 2010, Mikko Peltonen, Jon-Anders Teigen, Michal Příhoda, Graham Tackley, Ismael Juma
+ * Licensed under the new BSD License.
+ * See the LICENSE file for details.
+ */
+
 import sbt._
 import java.io.File
 import xml.{UnprefixedAttribute, NodeSeq, Node, NodeBuffer}
