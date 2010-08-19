@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2010, Mikko Peltonen, Jon-Anders Teigen, Mikko Koponen
+ * Copyright (C) 2010, Mikko Peltonen, Jon-Anders Teigen, Mikko Koponen, Odd Möller
  * Licensed under the new BSD License.
  * See the LICENSE file for details.
  */

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2010, Mikko Peltonen, Jon-Anders Teigen, Michal Příhoda, Graham Tackley, Ismael Juma
+ * Copyright (C) 2010, Mikko Peltonen, Jon-Anders Teigen, Michal Příhoda, Graham Tackley, Ismael Juma, Odd Möller
  * Licensed under the new BSD License.
  * See the LICENSE file for details.
  */
