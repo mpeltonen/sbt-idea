@@ -60,6 +60,16 @@ class SbtProjectDefinitionIdeaModuleDescriptor(val project: BasicDependencyProje
 					    <jarDirectory url="file://$MODULE_DIR$/build/lib" recursive="false" />
 					  </library>
 					</orderEntry>
+          <orderEntry type="module-library">
+            <library>
+              <CLASSES>
+                <root url={String.format("file://$MODULE_DIR$/plugins/lib_managed/scala_%s", project.defScalaVersion.value)} />
+              </CLASSES>
+              <JAVADOC />
+              <SOURCES />
+              <jarDirectory url={String.format("file://$MODULE_DIR$/plugins/lib_managed/scala_%s", project.defScalaVersion.value)} recursive="false" />
+            </library>
+          </orderEntry>
         }
       </component>
     </module>
