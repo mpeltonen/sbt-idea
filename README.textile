@@ -29,12 +29,19 @@ class Plugins(info: ProjectInfo) extends PluginDefinition(info) {
 <pre>
 import sbt._
 class MyProject(info: ProjectInfo) extends ParentProject(info) with IdeaProject {
-  lazy val subProject = project("subproject", "subproject", new DefaultProject(_) with IdeaProject)              
    // ...
 }
 </pre>
 
-i.e. plugin trait must be mixed into both parent project and subprojects if you have multimodule build.
+If you have multi-module project, plugin trait must be mixed into subprojects too, for example:
+
+<pre>
+import sbt._
+class MyProject(info: ProjectInfo) extends ParentProject(info) with IdeaProject {
+  lazy val mySubProject = project("my-subproject", "my-subproject", new DefaultProject(_) with IdeaProject)
+   // ...
+}
+</pre>
 
 3. Run
 
