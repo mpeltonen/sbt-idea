@@ -6,8 +6,10 @@
 
 import sbt._
 
-class IdeaEnvironment(val env:BasicEnvironment) {
-  import env._
-  lazy val ideaJdkName = env.propertyOptional[String]("1.6", true)
-  lazy val ideaIncludeSbtProjectDefinitionModule = env.propertyOptional[Boolean](true, true)
+class IdeaEnvironment(project: Project) extends BasicEnvironment {
+  lazy val projectJdkName = propertyOptional[String]("1.6", true)
+  lazy val includeSbtProjectDefinitionModule = propertyOptional[Boolean](true, true)
+
+  def envBackingPath = project.info.builderPath / "idea.properties"
+  def log = project.log 
 }

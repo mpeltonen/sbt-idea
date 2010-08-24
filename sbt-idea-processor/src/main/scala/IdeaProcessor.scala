@@ -27,7 +27,7 @@ class IdeaProcessor extends BasicProcessor {
 
     if(isRoot(project)){
       new IdeaProjectDescriptor(project, project.log).save
-      if (env.ideaIncludeSbtProjectDefinitionModule.value) {
+      if (env.includeSbtProjectDefinitionModule.value) {
         new SbtProjectDefinitionIdeaModuleDescriptor(project, project.log).save
       }
     }

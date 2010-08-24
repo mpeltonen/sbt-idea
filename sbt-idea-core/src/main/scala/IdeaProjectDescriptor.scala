@@ -19,7 +19,7 @@ class IdeaProjectDescriptor(val project: BasicDependencyProject, val log: Logger
       <component name="ProjectModuleManager">
         <modules>
         {
-          env.ideaIncludeSbtProjectDefinitionModule.value match {
+          env.includeSbtProjectDefinitionModule.value match {
             case true => <module fileurl={"file://$PROJECT_DIR$/project/sbt_project_definition.iml"} filepath={"$PROJECT_DIR$/project/sbt_project_definition.iml"} />
             case _ =>
           }
@@ -33,7 +33,7 @@ class IdeaProjectDescriptor(val project: BasicDependencyProject, val log: Logger
         </modules>
       </component>
       {
-      <component name="ProjectRootManager" version="2" languageLevel="JDK_1_5" assert-keyword="true" jdk-15="true" project-jdk-name={env.ideaJdkName.value} project-jdk-type="JavaSDK">
+      <component name="ProjectRootManager" version="2" languageLevel="JDK_1_5" assert-keyword="true" jdk-15="true" project-jdk-name={env.projectJdkName.value} project-jdk-type="JavaSDK">
         <output url="file://$PROJECT_DIR$/out" />
       </component>
       }

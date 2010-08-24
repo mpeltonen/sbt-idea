@@ -15,7 +15,7 @@ trait IdeaProject extends BasicDependencyProject {
   def createIdeaProject: Unit = {
     if (this eq rootProject) {
       new IdeaProjectDescriptor(this, log).save
-      if (env.ideaIncludeSbtProjectDefinitionModule.value) {
+      if (env.includeSbtProjectDefinitionModule.value) {
         new SbtProjectDefinitionIdeaModuleDescriptor(this, log).save
       }
     }
