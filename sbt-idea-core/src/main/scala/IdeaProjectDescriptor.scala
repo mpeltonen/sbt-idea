@@ -36,7 +36,7 @@ class IdeaProjectDescriptor(val project: BasicDependencyProject, val log: Logger
         </modules>
       </component>
       {
-      <component name="ProjectRootManager" version="2" languageLevel="JDK_1_5" assert-keyword="true" jdk-15="true" project-jdk-name={env.projectJdkName.value} project-jdk-type="JavaSDK">
+      <component name="ProjectRootManager" version="2" languageLevel={env.javaLanguageLevel.value} assert-keyword="true" jdk-15="true" project-jdk-name={env.projectJdkName.value} project-jdk-type="JavaSDK">
         <output url="file://$PROJECT_DIR$/out" />
       </component>
       <component name="VcsDirectoryMappings">
