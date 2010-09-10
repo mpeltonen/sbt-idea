@@ -70,14 +70,16 @@ class IdeaModuleDescriptor(val project: BasicDependencyProject, val log: Logger)
           val JavaDocJar = "-javadoc" + Jar
           val JavaDocs = GlobFilter("*" + JavaDocJar)
 
-          val jars = ideClasspath ** Jars
+          val classpathJars = ideClasspath ** Jars
+          val allJars = (project.unmanagedClasspath +++ project.managedDependencyPath) ** Jars
 
-          val sources = jars ** Sources
-          val javadoc = jars ** JavaDocs
-          val classes = jars --- sources --- javadoc
+          val sources = allJars ** Sources
+          val javadoc = allJars ** JavaDocs
+          val classes = classpathJars --- sources --- javadoc
 
           def cut(name: String, c: String) = name.substring(0, name.length - c.length)
-          def named(pf: PathFinder, suffix: String) = Map() ++ pf.getFiles.map(relativePath _).map(path => (cut(path, suffix), path))
+          def named(pf: PathFinder, suffix: String) = Map() ++ pf.getFiles.map(file =>
+            cut(file.getName, suffix) -> relativePath(file))
 
           val namedSources = named(sources, SourcesJar)
           val namedJavadoc = named(javadoc, JavaDocJar)
@@ -104,8 +106,7 @@ class IdeaModuleDescriptor(val project: BasicDependencyProject, val log: Logger)
               None //default
           }
 
-          val names = namedSources.keySet ++ namedJavadoc.keySet ++ namedClasses.keySet
-
+          val names = namedClasses.keySet
           val libs = new scala.xml.NodeBuffer
           names.foreach {
             name =>
