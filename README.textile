@@ -24,7 +24,7 @@ class Plugins(info: ProjectInfo) extends PluginDefinition(info) {
 }
 </pre>
 
-2. In your project definition file:
+2. In your "project definition file":http://code.google.com/p/simple-build-tool/wiki/BuildConfiguration:
 
 <pre>
 import sbt._
