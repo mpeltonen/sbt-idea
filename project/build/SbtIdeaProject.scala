@@ -19,7 +19,7 @@ class SbtIdeaProject(info:ProjectInfo) extends ParentProject(info) with IdeaProj
     override def unmanagedClasspath = super.unmanagedClasspath +++ info.sbtClasspath
   }
 
-  class ScriptedTests(info: ProjectInfo) extends DefaultProject(info) with test.SbtScripted {
+  class ScriptedTests(info: ProjectInfo) extends DefaultProject(info) with test.SbtScripted with IdeaProject {
     override def scriptedSbt = "0.7.4"
   }
 }
