@@ -10,6 +10,7 @@ import xml.{UnprefixedAttribute, NodeSeq, Node, NodeBuffer}
 
 class IdeaModuleDescriptor(val project: BasicDependencyProject, val log: Logger) extends SaveableXml with ProjectPaths {
   val path = String.format("%s/%s.iml", projectPath, project.name)
+  val env = new IdeaEnvironment(project.rootProject)
 
   def content: Node = {
     <module type="JAVA_MODULE" version="4">
@@ -27,9 +28,13 @@ class IdeaModuleDescriptor(val project: BasicDependencyProject, val log: Logger)
           }
         }
       </component>
-      <component name="NewModuleRootManager" inherit-compiler-output="false">
-        <output url={"file://$MODULE_DIR$/" + project.asInstanceOf[ScalaPaths].mainCompilePath.relativePath.toString} />
-        <output-test url={"file://$MODULE_DIR$/" + project.asInstanceOf[ScalaPaths].testCompilePath.relativePath.toString} />
+      <component name="NewModuleRootManager" inherit-compiler-output={env.projectOutputPath.get.isDefined.toString}>
+        {
+          if (env.projectOutputPath.get.isEmpty) {
+            <output url={"file://$MODULE_DIR$/" + project.asInstanceOf[ScalaPaths].mainCompilePath.relativePath.toString} />
+            <output-test url={"file://$MODULE_DIR$/" + project.asInstanceOf[ScalaPaths].testCompilePath.relativePath.toString} />
+          } else scala.xml.Null
+        }
         <exclude-output />
         <content url="file://$MODULE_DIR$">
           { nodePerExistingSourceFolder("src/main/scala" :: "src/main/resources" :: "src/main/java" :: "src/it/scala" :: Nil) }

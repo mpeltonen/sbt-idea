@@ -10,6 +10,7 @@ class IdeaEnvironment(project: Project) extends BasicEnvironment {
   lazy val projectJdkName = propertyOptional[String]("1.6", true)
   lazy val javaLanguageLevel = propertyOptional[String]("JDK_1_6", true)
   lazy val includeSbtProjectDefinitionModule = propertyOptional[Boolean](true, true)
+  lazy val projectOutputPath = propertyLocal[String]
 
   def envBackingPath = project.info.builderPath / "idea.properties"
   def log = project.log 

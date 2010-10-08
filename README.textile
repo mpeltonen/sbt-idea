@@ -81,6 +81,7 @@ with desired properties. Currently supported properties are:
 
 |_. Property |_. Description |_. Default value |
 | project.jdk.name | Value of the 'project-jdk-name' attribute of ProjectRootManager component | 1.6 |
+| project.output.path | If defined, use this (project relative) directory as output path for all modules, instead of sbt's output path | no default |
 | java.language.level | Value of the 'languageLevel' attribute of ProjectRootManager component | JDK_1_6 |
 | include.sbt.project.definition.module | Generate Idea Module also for SBT project definition code | true |
 
