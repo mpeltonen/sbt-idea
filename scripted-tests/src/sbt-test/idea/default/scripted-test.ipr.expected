@@ -1,0 +1,37 @@
+<project version="4">
+  <component name="ProjectDetails">
+    <option value="scripted-test" name="projectName"></option>
+  </component>
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/project/sbt_project_definition.iml" filepath="$PROJECT_DIR$/project/sbt_project_definition.iml"></module>
+      <module fileurl="file://$PROJECT_DIR$//scripted-test.iml" filepath="$PROJECT_DIR$//scripted-test.iml"></module>
+    </modules>
+  </component>
+  <component languageLevel="JDK_1_6" assert-keyword="true" project-jdk-name="1.6" name="ProjectRootManager" project-jdk-type="JavaSDK" jdk-15="true" version="2">
+    <output url="file://$PROJECT_DIR$/out"></output>
+  </component><component name="VcsDirectoryMappings">
+    <mapping directory="" vcs=""></mapping>
+  </component>
+  <component name="libraryTable">
+    <library name="buildScala">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/project/boot/scala-2.7.7/lib/scala-compiler.jar!/"></root>
+        <root url="jar://$PROJECT_DIR$/project/boot/scala-2.7.7/lib/scala-library.jar!/"></root>
+      </CLASSES>
+      <JAVADOC></JAVADOC>
+      <SOURCES>
+        <root url="jar://$PROJECT_DIR$/project/boot/scala-2.7.7/lib/scala-compiler-sources.jar!/"></root>
+        <root url="jar://$PROJECT_DIR$/project/boot/scala-2.7.7/lib/scala-library-sources.jar!/"></root>
+      </SOURCES>
+    </library>
+    <library name="defScala">
+      <CLASSES>
+          <root url="jar://$PROJECT_DIR$/project/boot/scala-2.7.7/lib/scala-compiler.jar!/"></root>
+          <root url="jar://$PROJECT_DIR$/project/boot/scala-2.7.7/lib/scala-library.jar!/"></root>
+      </CLASSES>
+      <JAVADOC></JAVADOC>
+      <SOURCES></SOURCES>
+    </library>
+  </component>
+</project>

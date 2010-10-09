@@ -20,6 +20,7 @@ class SbtIdeaProject(info:ProjectInfo) extends ParentProject(info) with IdeaProj
   }
 
   class ScriptedTests(info: ProjectInfo) extends DefaultProject(info) with test.SbtScripted with IdeaProject {
+    val commonsIo = "commons-io" % "commons-io" % "1.4" withSources()
     override def scriptedSbt = "0.7.4"
   }
 }
