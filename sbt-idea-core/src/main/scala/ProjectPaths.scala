@@ -43,10 +43,12 @@ trait ProjectPaths {
   def ideClasspath: PathFinder = defaultClasspath +++ testClasspath +++ runtimeClasspath +++ providedClasspath
 
   //def ideClasspath: PathFinder = project.fullClasspath(Runtime) +++ project.managedClasspath(Optional) +++ project.fullClasspath(Test)
+  def compilerJar(scalaJarDir: Path) = (scalaJarDir / "scala-compiler.jar").asFile
+  def libraryJar(scalaJarDir: Path) = (scalaJarDir / "scala-library.jar").asFile
   def buildScalaJarDir: Path = project.rootProject.info.bootPath / String.format("scala-%s", project.buildScalaVersion) / "lib"
-  def buildScalaCompilerJar: File = (buildScalaJarDir / "scala-compiler.jar").asFile
-  def buildScalaLibraryJar: File = (buildScalaJarDir / "scala-library.jar").asFile
+  def buildScalaCompilerJar: File = compilerJar(buildScalaJarDir)
+  def buildScalaLibraryJar: File = libraryJar(buildScalaJarDir)
   def defScalaJarDir: Path = project.rootProject.info.bootPath / String.format("scala-%s", project.defScalaVersion.value) / "lib"
-  def defScalaCompilerJar: File = (defScalaJarDir / "scala-compiler.jar").asFile
-  def defScalaLibraryJar: File = (defScalaJarDir / "scala-library.jar").asFile
+  def defScalaCompilerJar: File = compilerJar(defScalaJarDir)
+  def defScalaLibraryJar: File = libraryJar(defScalaJarDir)
 }
