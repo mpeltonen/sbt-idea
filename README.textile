@@ -50,7 +50,7 @@ class MyProject(info: ProjectInfo) extends ParentProject(info) with IdeaProject 
  sbt idea
 </pre>
 
-4. Import created <project.name>.ipr file into Idea
+4. Open created project (sbt project's root directory) in Idea
 
 Check out sbt's "plugin documentation":http://code.google.com/p/simple-build-tool/wiki/SbtPlugins for further details.
 
@@ -70,7 +70,7 @@ h3. Usage as processor
  ...
 </pre>
 
-3. Import created <project.name>.ipr file into Idea
+3. Open created project (sbt project's root directory) in Idea
 
 Check out sbt's "processor documentation":http://code.google.com/p/simple-build-tool/wiki/Processors for further details.
 
