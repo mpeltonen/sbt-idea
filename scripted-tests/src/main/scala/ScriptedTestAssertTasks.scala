@@ -10,6 +10,7 @@ trait ScriptedTestAssertTasks extends BasicScalaProject {
   lazy val assertExpectedXmlFiles = task {
     val expectedFiles = listFiles(info.projectPath.asFile, List("expected").toArray, true).toArray.map(_.asInstanceOf[File])
     List(expectedFiles: _*).foreach { expectedFile =>
+      println("Expected: " + expectedFile.getAbsolutePath)
       val actualFile = new File(removeExtension(expectedFile.getAbsolutePath))
       if (!actualFile.exists)
         throw new AssertionFailedException("Expected file " + actualFile.getAbsolutePath + " does not exist.")
