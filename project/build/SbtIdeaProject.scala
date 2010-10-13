@@ -14,6 +14,7 @@ class SbtIdeaProject(info:ProjectInfo) extends ParentProject(info) with IdeaProj
   lazy val plugin = project("sbt-idea-plugin", "sbt-idea-plugin", new PluginProject(_) with IdeaProject, core)
   lazy val processor = project("sbt-idea-processor", "sbt-idea-processor", new ProcessorProject(_) with IdeaProject, core)
   lazy val scripted = project("scripted-tests", "scripted-tests", new ScriptedTests(_), plugin)
+  override def deliverProjectDependencies = super.deliverProjectDependencies.toList - scripted.projectID
 
   class Core(info:ProjectInfo) extends DefaultProject(info) with IdeaProject {
     override def unmanagedClasspath = super.unmanagedClasspath +++ info.sbtClasspath
@@ -22,5 +23,7 @@ class SbtIdeaProject(info:ProjectInfo) extends ParentProject(info) with IdeaProj
   class ScriptedTests(info: ProjectInfo) extends DefaultProject(info) with test.SbtScripted with IdeaProject {
     val commonsIo = "commons-io" % "commons-io" % "1.4" withSources()
     override def scriptedSbt = "0.7.4"
+    override def publishAction = task { None }
+    override def deliverAction = task { None }
   }
 }
