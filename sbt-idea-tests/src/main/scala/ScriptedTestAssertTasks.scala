@@ -1,11 +1,11 @@
 import java.io.File
-import sbt.BasicScalaProject
+import sbt.Project
 import org.apache.commons.io.FileUtils.listFiles
 import org.apache.commons.io.FilenameUtils.removeExtension
 import scala.xml.Utility.trim
 import xml.XML
 
-trait ScriptedTestAssertTasks extends BasicScalaProject {
+trait ScriptedTestAssertTasks extends Project {
   lazy val assertExpectedXmlFiles = task {
     val expectedFiles = listFiles(info.projectPath.asFile, Seq("expected").toArray, true).toArray.map(_.asInstanceOf[File])
     Seq(expectedFiles: _*).map(assertExpectedXml).foldLeft[Option[String]](None) {
