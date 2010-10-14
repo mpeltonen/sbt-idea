@@ -1,0 +1,8 @@
+<project version="4">
+  <component version="2" jdk-15="true" project-jdk-type="JavaSDK" name="ProjectRootManager" project-jdk-name="1.5" assert-keyword="true" languageLevel="JDK_1_5">
+    <output url="file://$PROJECT_DIR$/idea_target"/>
+  </component>
+  <component name="ProjectDetails">
+    <option name="projectName" value="scripted-test"/>
+  </component>
+</project>

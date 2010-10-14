@@ -1,0 +1,19 @@
+<module version="4" type="JAVA_MODULE">
+  <component name="FacetManager">
+    <facet name="Scala" type="scala">
+      <configuration>
+        <option name="compilerLibraryLevel" value="Project"></option>
+        <option name="compilerLibraryName" value="buildScala"></option>
+      </configuration>
+    </facet>
+  </component>
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output></exclude-output>
+    <content url="file://$MODULE_DIR$">
+      <excludeFolder url="file://$MODULE_DIR$/target"></excludeFolder>
+    </content>
+    <orderEntry type="inheritedJdk"></orderEntry>
+    <orderEntry forTests="false" type="sourceFolder"></orderEntry>
+    <orderEntry name="buildScala" type="library" level="project"></orderEntry>
+  </component>
+</module>
