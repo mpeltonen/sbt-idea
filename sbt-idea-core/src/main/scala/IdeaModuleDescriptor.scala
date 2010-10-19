@@ -39,6 +39,7 @@ class IdeaModuleDescriptor(val project: BasicDependencyProject, val log: Logger)
         <content url="file://$MODULE_DIR$">
           { nodePerExistingSourceFolder("src/main/scala" :: "src/main/resources" :: "src/main/java" :: "src/it/scala" :: Nil) }
           { nodePerExistingTestSourceFolder("src/test/scala" :: "src/test/resources" :: "src/test/java" :: Nil) }
+          { if (env.excludeLibmanagedFolders.value) <excludeFolder url="file://$MODULE_DIR$/lib_managed" /> else scala.xml.Null }
           <excludeFolder url="file://$MODULE_DIR$/target" />
         </content>
         {
