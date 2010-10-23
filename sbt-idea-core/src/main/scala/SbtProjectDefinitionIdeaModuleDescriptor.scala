@@ -26,6 +26,11 @@ class SbtProjectDefinitionIdeaModuleDescriptor(val project: BasicDependencyProje
           <sourceFolder url="file://$MODULE_DIR$/build" isTestSource="false" />
           <sourceFolder url="file://$MODULE_DIR$/build/src" isTestSource="false" />
           <excludeFolder url="file://$MODULE_DIR$/build/target" />
+          <excludeFolder url="file://$MODULE_DIR$/boot" />
+          <excludeFolder url="file://$MODULE_DIR$/build/target" />
+          <excludeFolder url="file://$MODULE_DIR$/plugins/lib_managed" />
+          <excludeFolder url="file://$MODULE_DIR$/plugins/src_managed" />
+          <excludeFolder url="file://$MODULE_DIR$/plugins/target" />
         </content>
         <orderEntry type="inheritedJdk" />
         <orderEntry type="sourceFolder" forTests="false" />
