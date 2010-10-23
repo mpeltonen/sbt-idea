@@ -20,7 +20,7 @@
     <orderEntry type="module-library" exported=" ">
       <library>
         <CLASSES><root url="jar://$MODULE_DIR$/lib_managed/scala_2.7.7/compile/commons-io-1.4.jar!/"/></CLASSES>
-        <JAVADOC></JAVADOC>
+        <JAVADOC><root url="http://commons.apache.org/io/api-1.4/"/></JAVADOC>
         <SOURCES><root url="jar://$MODULE_DIR$/lib_managed/scala_2.7.7/compile/commons-io-1.4-sources.jar!/"/></SOURCES>
       </library>
     </orderEntry>

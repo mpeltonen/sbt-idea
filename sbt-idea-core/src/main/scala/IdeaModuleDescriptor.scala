@@ -155,6 +155,13 @@ class IdeaModuleDescriptor(val project: BasicDependencyProject, val log: Logger)
         <root url={url}/>
       }.getOrElse(NodeSeq.Empty)
 
+    def docUrlKey(jarPath: Option[String]): Option[String] = {
+      val KeyRegex = """.*/(.*).jar$""".r
+      jarPath flatMap {
+        case KeyRegex(grp) => Some(grp)
+        case _ => None
+      }
+    }
     val orderEntry =
     <orderEntry type="module-library" exported=" ">
       <library>
@@ -163,6 +170,11 @@ class IdeaModuleDescriptor(val project: BasicDependencyProject, val log: Logger)
         </CLASSES>
         <JAVADOC>
           { root(javadoc) }
+          { docUrlKey(classes).flatMap(IdeaDocUrl.docUrls.get) match {
+              case Some(docUrl) => <root url={docUrl}/>
+              case None => NodeSeq.Empty
+            }
+          }
         </JAVADOC>
         <SOURCES>
           { root(sources) }
