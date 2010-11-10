@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2010, Mikko Peltonen, Jon-Anders Teigen, Mikko Koponen, Odd Möller
+ * Copyright (C) 2010, Mikko Peltonen, Jon-Anders Teigen, Mikko Koponen, Odd Möller, Piotr Gabryanczyk
  * Licensed under the new BSD License.
  * See the LICENSE file for details.
  */
@@ -25,7 +25,6 @@ class SbtProjectDefinitionIdeaModuleDescriptor(val project: BasicDependencyProje
         <content url="file://$MODULE_DIR$">
           <sourceFolder url="file://$MODULE_DIR$/build" isTestSource="false" />
           <sourceFolder url="file://$MODULE_DIR$/build/src" isTestSource="false" />
-          <excludeFolder url="file://$MODULE_DIR$/build/target" />
           <excludeFolder url="file://$MODULE_DIR$/boot" />
           <excludeFolder url="file://$MODULE_DIR$/build/target" />
           <excludeFolder url="file://$MODULE_DIR$/plugins/lib_managed" />
