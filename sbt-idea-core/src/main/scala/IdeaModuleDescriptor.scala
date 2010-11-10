@@ -46,10 +46,10 @@ class IdeaModuleDescriptor(val project: BasicDependencyProject, val log: Logger)
           project match {
             case sp: ScalaPaths =>
               val nodeBuffer = new xml.NodeBuffer
-              if (sp.testResources.getFiles.exists(_.exists))
+              if (sp.testResources.getFiles.exists(_.exists) && ! env.excludeSbtResources.value)
                 nodeBuffer &+ moduleLibrary(Some("TEST"), None, None,
                   Some("file://$MODULE_DIR$/" + relativePath(sp.testResourcesOutputPath.asFile)), false)
-              if (sp.mainResources.getFiles.exists(_.exists))
+              if (sp.mainResources.getFiles.exists(_.exists) && ! env.excludeSbtResources.value)
                 nodeBuffer &+ moduleLibrary(None, None, None,
                   Some("file://$MODULE_DIR$/" + relativePath(sp.mainResourcesOutputPath.asFile)), false)
               nodeBuffer
