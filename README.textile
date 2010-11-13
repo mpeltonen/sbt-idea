@@ -89,7 +89,7 @@ with desired properties. Currently supported properties are:
 
 h2. Contributors
 
-See "contributors":http://github.com/mpeltonen/sbt-idea-plugin/contributors
+See "contributors":http://github.com/mpeltonen/sbt-idea/contributors
 
 h2. License
 
