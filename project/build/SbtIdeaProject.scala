@@ -6,7 +6,7 @@
 
 import sbt._
 
-class SbtIdeaProject(info:ProjectInfo) extends ParentProject(info) with IdeaProject {
+class SbtIdeaProject(info:ProjectInfo) extends ParentProject(info) with IdeaProject with posterous.Publish {
   override def managedStyle = ManagedStyle.Maven
   lazy val publishTo = Resolver.file("GitHub Pages", new java.io.File("../mpeltonen.github.com/maven/"))
 
