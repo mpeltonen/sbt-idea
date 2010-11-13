@@ -69,7 +69,7 @@ h3. Usage as processor
 
 <pre>
  > *sbtIdeaRepo at http://mpeltonen.github.com/maven/
- > *idea is com.github.mpeltonen sbt-idea-processor 0.1-SNAPSHOT 
+ > *idea is com.github.mpeltonen sbt-idea-processor 0.1.0
  ...
  > update
  ...
