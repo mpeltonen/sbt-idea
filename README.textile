@@ -76,6 +76,8 @@ Check out sbt's "processor documentation":http://code.google.com/p/simple-build-
 
 h2. Configuration
 
+h3. Properties
+
 You can customize some aspects of generated Idea project descriptors by creating a property file project/idea.properties
 with desired properties. Currently supported properties are:
 
@@ -86,6 +88,16 @@ with desired properties. Currently supported properties are:
 | include.sbt.project.definition.module | Generate Idea Module also for SBT project definition code | true |
 | exclude.libmanaged.folders | Mark lib_managed -folders as excluded, causing them to be invisible in IDEA's project view | false |
 | compile.with.idea | If defined, SBT's target resources and test-resources folders will not be added to classpath (since Idea copies them during compile) | false | 
+
+h3. Documentation URL
+
+IDEA has an option of specifying a documentation URL for a dependency artifact. When documentation URL for a library containing given class is specified, pressing Shift+F1 when cursor is over a method or class will open default browser at the corresponding API doc page. You can specify this documentation url in sbt project definition by adding extra attribute called "docUrl" into dependency declaration. For example:
+
+<pre>
+  val jodaTime = "joda-time" % "joda-time" % "1.6.2" extra("docUrl" -> "http://joda-time.sourceforge.net/api-release/")
+</pre>
+
+This currently works only for JavaDoc APIs, not ScalaDoc.
 
 h2. Contributors
 
