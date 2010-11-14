@@ -6,7 +6,8 @@
 
 import java.io.File
 import sbt.{Path, Logger, BasicScalaProject, BasicDependencyProject}
-import xml.{XML, Node}
+import xml.transform.{RewriteRule, RuleTransformer}
+import xml.{Text, Elem, XML, Node}
 
 class IdeaProjectDescriptor(val project: BasicDependencyProject, val log: Logger) extends ProjectPaths {
   val env = new IdeaEnvironment(project)
@@ -77,7 +78,7 @@ class IdeaProjectDescriptor(val project: BasicDependencyProject, val log: Logger
 
       Seq(
         "modules.xml" -> project(projectModuleManagerComponent),
-        "misc.xml" -> project(projectRootManagerComponent, projectDetailsComponent),
+        "misc.xml" -> miscTransformer.transform(miscXml(configDir)).firstOption.get,
         "vcs.xml" -> project(vcsComponent)
       ) foreach { case (fileName, xmlNode) => saveFile(configDir, fileName, xmlNode) }
 
@@ -89,4 +90,22 @@ class IdeaProjectDescriptor(val project: BasicDependencyProject, val log: Logger
       log.info("Created " + configDir)
     } else log.error("Skipping .idea creation for " + projectPath + " since directory does not exist")
   }
+
+  val defaultMiscXml = project(<component name="ProjectRootManager"/>, <component name="ProjectDetails"/>)
+
+  private def miscXml(configDir: File): Node = try {
+    XML.loadFile(new File(configDir, "misc.xml"))
+  } catch {
+    case e: java.io.FileNotFoundException => defaultMiscXml
+  }
+
+  private object miscTransformer extends RuleTransformer(
+    new RewriteRule () {
+      override def transform (n: Node): Seq[Node] = n match {
+        case e @ Elem(_, "component", _, _, _*) if e \ "@name" == Text("ProjectDetails") => projectDetailsComponent
+        case e @ Elem(_, "component", _, _, _*) if e \ "@name" == Text("ProjectRootManager") => projectRootManagerComponent
+        case _ => n
+      }
+    }
+  )
 }
