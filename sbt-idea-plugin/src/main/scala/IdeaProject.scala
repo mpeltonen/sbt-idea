@@ -19,8 +19,9 @@ trait IdeaProject extends BasicDependencyProject {
         new SbtProjectDefinitionIdeaModuleDescriptor(this, log).save
       }
     }
-    if (isModuleProject) new IdeaModuleDescriptor(this, log).save
+    this match {
+      case pp: ParentProject => new ParentProjectIdeaModuleDescriptor(pp, log).save
+      case bdp: BasicDependencyProject => new IdeaModuleDescriptor(bdp, log).save
+    }
   }
-
-  def isModuleProject = !this.isInstanceOf[ParentProject]
 }

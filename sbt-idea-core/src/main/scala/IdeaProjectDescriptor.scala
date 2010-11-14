@@ -5,7 +5,7 @@
  */
 
 import java.io.File
-import sbt.{Path, Logger, BasicScalaProject, BasicDependencyProject}
+import sbt._
 import xml.transform.{RewriteRule, RuleTransformer}
 import xml.{Text, Elem, XML, Node}
 
@@ -25,7 +25,7 @@ class IdeaProjectDescriptor(val project: BasicDependencyProject, val log: Logger
         }
       }
       {
-        val mainModule = if (project.isInstanceOf[BasicScalaProject]) List(("", project.name)) else Nil
+        val mainModule = List(("", project.name))
         (childProjects ::: mainModule).map { case (modulePath, moduleName) =>
           <module fileurl={String.format("file://$PROJECT_DIR$/%s/%s.iml", modulePath, moduleName)} filepath={String.format("$PROJECT_DIR$/%s/%s.iml", modulePath, moduleName)} />
         }

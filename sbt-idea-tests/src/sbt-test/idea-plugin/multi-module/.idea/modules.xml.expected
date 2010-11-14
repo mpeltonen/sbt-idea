@@ -4,6 +4,7 @@
       <module filepath="$PROJECT_DIR$/project/sbt_project_definition.iml" fileurl="file://$PROJECT_DIR$/project/sbt_project_definition.iml"/>
       <module filepath="$PROJECT_DIR$/subproject2/subproject2.iml" fileurl="file://$PROJECT_DIR$/subproject2/subproject2.iml"/>
       <module filepath="$PROJECT_DIR$/subproject1/subproject1.iml" fileurl="file://$PROJECT_DIR$/subproject1/subproject1.iml"/>
+      <module filepath="$PROJECT_DIR$//scripted-test.iml" fileurl="file://$PROJECT_DIR$//scripted-test.iml"/>
     </modules>
   </component>
 </project>
