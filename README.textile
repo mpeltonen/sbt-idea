@@ -81,6 +81,20 @@ h3. Usage as processor
 
 Check out sbt's "processor documentation":http://code.google.com/p/simple-build-tool/wiki/Processors for further details.
 
+4. Upgrade to a new version 
+
+To upgrade to a new version of the plugin you need to remove the old version first
+
+<pre>
+ > *remove idea
+ > *idea is com.github.mpeltonen sbt-idea-processor 0.2-SNAPSHOT
+ ...
+ > update
+ ...
+ > idea
+ ...
+</pre>
+
 h2. Configuration
 
 h3. Properties
