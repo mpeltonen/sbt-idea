@@ -11,7 +11,7 @@ h2. Main features
 * Creates directory based IDEA project definition (.idea/) for sbt project.
 * Creates IDEA module (.iml) for every sbt subproject. Supports multi-module projects.
 * Creates IDEA module also for sbt project definition (optional, on by default).
-* Can be used as abt plugin or as sbt processor.
+* Can be used as sbt plugin or as sbt processor.
 
 h2. Usage
 
