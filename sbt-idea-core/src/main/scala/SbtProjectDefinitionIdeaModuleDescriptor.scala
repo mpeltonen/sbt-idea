@@ -8,7 +8,7 @@ import sbt.{Logger, BasicDependencyProject}
 import xml.{XML, Node}
 
 class SbtProjectDefinitionIdeaModuleDescriptor(val project: BasicDependencyProject, val log: Logger) extends SaveableXml with ProjectPaths {
-  val path = String.format("%s/project/sbt_project_definition.iml", projectPath)
+  val path = String.format("%s/project/project.iml", projectPath)
 
   def content: Node = {
     <module type="JAVA_MODULE" version="4">

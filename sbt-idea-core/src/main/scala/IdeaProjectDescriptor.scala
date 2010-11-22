@@ -20,7 +20,7 @@ class IdeaProjectDescriptor(val project: BasicDependencyProject, val log: Logger
       <modules>
       {
         env.includeSbtProjectDefinitionModule.value match {
-          case true => <module fileurl={"file://$PROJECT_DIR$/project/sbt_project_definition.iml"} filepath={"$PROJECT_DIR$/project/sbt_project_definition.iml"} />
+          case true => <module fileurl={"file://$PROJECT_DIR$/project/project.iml"} filepath={"$PROJECT_DIR$/project/project.iml"} />
           case _ =>
         }
       }
