@@ -9,7 +9,7 @@ import java.net.URL
 
 class Plugins(info: ProjectInfo) extends PluginDefinition(info) {
   val repo = "GH-pages repo" at "http://mpeltonen.github.com/maven/"
-  val idea = "com.github.mpeltonen" % "sbt-idea-plugin" % "0.1-SNAPSHOT"
+  val idea = "com.github.mpeltonen" % "sbt-idea-plugin" % "0.2-SNAPSHOT"
   val scripted = "org.scala-tools.sbt" % "scripted" % "0.7.4"
   val snuggletex_repo = "snuggletex_repo" at "http://www2.ph.ed.ac.uk/maven2"
   val t_repo = "t_repo" at "http://tristanhunt.com:8081/content/groups/public/"
