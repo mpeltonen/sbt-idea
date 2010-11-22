@@ -87,7 +87,7 @@ To upgrade to a new version of the plugin you need to remove the old version fir
 
 <pre>
  > *remove idea
- > *idea is com.github.mpeltonen sbt-idea-processor 0.2-SNAPSHOT
+ > *idea is com.github.mpeltonen sbt-idea-processor 0.1.0
  ...
  > update
  ...
