@@ -74,15 +74,17 @@ class IdeaProjectDescriptor(val project: BasicDependencyProject, val log: Logger
 
     if (projectPath.exists) {
       val configDir = new File(projectPath, ".idea")
+      def configFile(name: String) = new File(configDir, name)
       configDir.mkdirs
 
       Seq(
         "modules.xml" -> project(projectModuleManagerComponent),
-        "misc.xml" -> miscTransformer.transform(miscXml(configDir)).firstOption.get,
-        "vcs.xml" -> project(vcsComponent)
+        "misc.xml" -> miscTransformer.transform(miscXml(configDir)).firstOption.get
       ) foreach { case (fileName, xmlNode) => saveFile(configDir, fileName, xmlNode) }
 
-      val librariesDir = new File(configDir, "libraries")
+      if (!configFile("vcs.xml").exists) saveFile(configDir, "vcs.xml", project(vcsComponent))
+
+      val librariesDir = configFile("libraries")
       librariesDir.mkdirs
       saveFile(librariesDir, "buildScala.xml", libraryTableComponent("buildScala", buildScalaJarDir, true))
       saveFile(librariesDir, "defScala.xml", libraryTableComponent("defScala", defScalaJarDir, false))
