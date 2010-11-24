@@ -35,7 +35,7 @@ class Plugins(info: ProjectInfo) extends PluginDefinition(info) {
 
 <pre>
 import sbt._
-class MyProject(info: ProjectInfo) extends ParentProject(info) with IdeaProject {
+class MyProject(info: ProjectInfo) extends DefaultProject(info) with IdeaProject {
    // ...
 }
 </pre>
