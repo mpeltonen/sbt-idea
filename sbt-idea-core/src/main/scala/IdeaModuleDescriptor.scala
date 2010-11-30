@@ -37,8 +37,28 @@ class IdeaModuleDescriptor(val project: BasicDependencyProject, val log: Logger)
         }
         <exclude-output />
         <content url="file://$MODULE_DIR$">
-          { nodePerExistingSourceFolder("src/main/scala" :: "src/main/resources" :: "src/main/java" :: "src/it/scala" :: Nil) }
-          { nodePerExistingTestSourceFolder("src/test/scala" :: "src/test/resources" :: "src/test/java" :: Nil) }
+          {
+            project match {
+              case paths:ScalaPaths =>
+                sourceFolders(paths.mainSourceRoots -> false, paths.testSourceRoots -> true)
+              case _ =>
+                NodeSeq.Empty
+            }
+          }
+          {
+            project match {
+              case paths:BasicScalaPaths =>
+                sourceFolders(paths.mainResourcesPath -> false, paths.testResourcesPath -> true)
+            }
+          }
+          {
+            project match {
+              case it:BasicIntegrationTesting =>
+                val config = it.integrationTestCompileConfiguration
+                sourceFolders(config.sourceRoots -> true)
+              case _ => NodeSeq.Empty
+            }
+          }
           { if (env.excludeLibmanagedFolders.value) <excludeFolder url="file://$MODULE_DIR$/lib_managed" /> else scala.xml.Null }
           <excludeFolder url="file://$MODULE_DIR$/target" />
         </content>
@@ -124,15 +144,13 @@ class IdeaModuleDescriptor(val project: BasicDependencyProject, val log: Logger)
     </module>
   }
 
-  def nodePerExistingSourceFolder(paths: List[String]): NodeBuffer = nodePerExistingFolder(paths, false)
-  def nodePerExistingTestSourceFolder(paths: List[String]): NodeBuffer = nodePerExistingFolder(paths, true)
-
-  def nodePerExistingFolder(paths: List[String], isTestSourceFolders: Boolean): NodeBuffer = {
-    val nodes = new scala.xml.NodeBuffer
-    paths.filter(new File(projectPath, _).exists()).foreach(nodes &+ sourceFolder(_, isTestSourceFolders))
-    nodes
+  def sourceFolders(folders:(PathFinder, Boolean)*) = {
+    val nodes = folders.foldRight(List[Node]()){ (folder, a) =>
+      val (pathFinder, test) = folder
+      pathFinder.get.toList.sort(_.name < _.name).map(path => sourceFolder(path.projectRelativePath, test)) ::: a
+    }
+    NodeSeq fromSeq nodes
   }
-
   def sourceFolder(path: String, isTestSourceFolder: Boolean) = <sourceFolder url={"file://$MODULE_DIR$/" + path} isTestSource={isTestSourceFolder.toString} />
 
   def webFacet(webProject: DefaultWebProject): Node = {
