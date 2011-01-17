@@ -104,7 +104,7 @@ class IdeaModuleDescriptor(val project: BasicDependencyProject, val log: Logger)
           val classes = classpathJars --- sources --- javadoc
 
           def cut(name: String, c: String) = name.substring(0, name.length - c.length)
-          def named(pf: PathFinder, suffix: String) = Map() ++ pf.getFiles.map(file =>
+          def named(pf: PathFinder, suffix: String) = Map() ++ pf.getFiles.toList.sort(_.getAbsolutePath < _.getAbsolutePath).map(file =>
             cut(file.getName, suffix) -> relativePath(file))
 
           val namedSources = named(sources, SourcesJar)
@@ -134,7 +134,7 @@ class IdeaModuleDescriptor(val project: BasicDependencyProject, val log: Logger)
 
           val names = namedClasses.keySet
           val libs = new scala.xml.NodeBuffer
-          names.foreach {
+          names.toList.sort(_ < _).foreach {
             name =>
               libs &+ moduleLibrary(scope(name), namedSources.get(name), namedJavadoc.get(name), namedClasses.get(name), true)
           }
