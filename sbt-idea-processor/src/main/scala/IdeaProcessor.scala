@@ -31,8 +31,10 @@ class IdeaProcessor extends BasicProcessor {
         new SbtProjectDefinitionIdeaModuleDescriptor(project, project.log).save
       }
     }
-    if(isModule(project))
-      new IdeaModuleDescriptor(project, project.log).save
+    project match {
+      case pp: ParentProject => new ParentProjectIdeaModuleDescriptor(pp, project.log).save
+      case bdp: BasicDependencyProject => new IdeaModuleDescriptor(bdp, project.log).save
+    }
   }
   
   def isRoot(project:Project) = project.rootProject eq project
