@@ -27,7 +27,11 @@ class IdeaProjectDescriptor(val project: BasicDependencyProject, val log: Logger
       {
         val mainModule = List(("", project.name))
         (childProjects ::: mainModule).map { case (modulePath, moduleName) =>
-          <module fileurl={String.format("file://$PROJECT_DIR$/%s/%s.iml", modulePath, moduleName)} filepath={String.format("$PROJECT_DIR$/%s/%s.iml", modulePath, moduleName)} />
+          val pathPrefix = modulePath match {
+            case "" => ""
+            case p => "/" + p
+          }
+          <module fileurl={String.format("file://$PROJECT_DIR$%s/%s.iml", pathPrefix, moduleName)} filepath={String.format("$PROJECT_DIR$%s/%s.iml", pathPrefix, moduleName)} />
         }
       }
       </modules>
