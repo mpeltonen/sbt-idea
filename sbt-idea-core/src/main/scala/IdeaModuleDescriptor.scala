@@ -59,8 +59,12 @@ class IdeaModuleDescriptor(val project: BasicDependencyProject, val log: Logger)
               case _ => NodeSeq.Empty
             }
           }
-          { if (env.excludeLibmanagedFolders.value) <excludeFolder url="file://$MODULE_DIR$/lib_managed" /> else scala.xml.Null }
-          <excludeFolder url="file://$MODULE_DIR$/target" />
+          {
+            env.excludedFolders.value.split(",").toList.map(_.trim).sort(_ < _).map { entry =>
+              log.info(String.format("Excluding folder %s\n", entry))
+              <excludeFolder url={String.format("file://$MODULE_DIR$/%s", entry)} />
+            }
+          }
         </content>
         {
           project match {

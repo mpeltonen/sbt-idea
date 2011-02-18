@@ -107,7 +107,7 @@ with desired properties. Currently supported properties are:
 | project.output.path | If defined, use this (project relative) directory as output path for all modules, instead of sbt's output path | no default |
 | java.language.level | Value of the 'languageLevel' attribute of ProjectRootManager component | JDK_1_6 |
 | include.sbt.project.definition.module | Generate Idea Module also for sbt project definition code | true |
-| exclude.libmanaged.folders | Mark lib_managed -folders as excluded, causing them to be invisible in IDEA's project view | false |
+| excluded.folders | Comma separated list of folders in module root directory that will be marked as excluded, causing them to be invisible in IDEA's project view | target |
 | compile.with.idea | If defined, sbt's target resources and test-resources folders will not be added to classpath (since Idea copies them during compile) | false | 
 
 h3. Documentation URL
