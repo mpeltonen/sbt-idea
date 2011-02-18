@@ -82,9 +82,12 @@ class IdeaProjectDescriptor(val project: BasicDependencyProject, val log: Logger
       configDir.mkdirs
 
       Seq(
-        "modules.xml" -> project(projectModuleManagerComponent),
-        "misc.xml" -> miscTransformer.transform(miscXml(configDir)).firstOption.get
-      ) foreach { case (fileName, xmlNode) => saveFile(configDir, fileName, xmlNode) }
+        "modules.xml" -> Some(project(projectModuleManagerComponent)),
+        "misc.xml" -> miscXml(configDir).map(miscTransformer.transform).map(_.firstOption.get)
+      ) foreach { 
+        case (fileName, Some(xmlNode)) => saveFile(configDir, fileName, xmlNode) 
+        case _ =>
+      }
 
       if (!configFile("vcs.xml").exists) saveFile(configDir, "vcs.xml", project(vcsComponent))
 
@@ -99,10 +102,15 @@ class IdeaProjectDescriptor(val project: BasicDependencyProject, val log: Logger
 
   val defaultMiscXml = project(<component name="ProjectRootManager"/>, <component name="ProjectDetails"/>)
 
-  private def miscXml(configDir: File): Node = try {
-    XML.loadFile(new File(configDir, "misc.xml"))
+  private def miscXml(configDir: File): Option[Node] = try {
+    Some(XML.loadFile(new File(configDir, "misc.xml")))
   } catch {
-    case e: java.io.FileNotFoundException => defaultMiscXml
+    case e: java.io.FileNotFoundException => Some(defaultMiscXml)
+    case e: org.xml.sax.SAXParseException => {
+      log.error("Existing .idea/misc.xml is not well-formed. Reset to default [y/n]?")
+      val key = System.console.reader.read
+      if (key == 121 /*y*/ || key == 89 /*Y*/ ) Some(defaultMiscXml) else None
+    }
   }
 
   private object miscTransformer extends RuleTransformer(
