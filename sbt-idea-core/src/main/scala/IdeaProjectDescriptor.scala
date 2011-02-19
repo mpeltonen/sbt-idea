@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2010, Mikko Peltonen, Ismael Juma, Jon-Anders Teigen
+ * Copyright (C) 2010, Mikko Peltonen, Ismael Juma, Jon-Anders Teigen, Jason Zaugg
  * Licensed under the new BSD License.
  * See the LICENSE file for details.
  */
