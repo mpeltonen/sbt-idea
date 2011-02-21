@@ -27,7 +27,7 @@ h3. Usage as plugin
 import sbt._
 class Plugins(info: ProjectInfo) extends PluginDefinition(info) {
   val sbtIdeaRepo = "sbt-idea-repo" at "http://mpeltonen.github.com/maven/"
-  val sbtIdea = "com.github.mpeltonen" % "sbt-idea-plugin" % "0.2.0"
+  val sbtIdea = "com.github.mpeltonen" % "sbt-idea-plugin" % "0.3.0"
 }
 </pre>
 
@@ -69,7 +69,7 @@ h3. Usage as processor
 
 <pre>
  > *sbtIdeaRepo at http://mpeltonen.github.com/maven/
- > *idea is com.github.mpeltonen sbt-idea-processor 0.2.0
+ > *idea is com.github.mpeltonen sbt-idea-processor 0.3.0
  ...
  > update
  ...
@@ -87,7 +87,7 @@ To upgrade to a new version of the plugin you need to remove the old version fir
 
 <pre>
  > *remove idea
- > *idea is com.github.mpeltonen sbt-idea-processor 0.2.0
+ > *idea is com.github.mpeltonen sbt-idea-processor 0.3.0
  ...
  > update
  ...
