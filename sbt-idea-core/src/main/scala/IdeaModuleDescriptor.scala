@@ -13,6 +13,9 @@ class IdeaModuleDescriptor(val project: BasicDependencyProject, val log: Logger)
   val env = new IdeaEnvironment(project.rootProject)
 
   def content: Node = {
+    def isDependencyProject(p: Project) = p != project && !p.isInstanceOf[ParentProject]
+    val dependencyProjects = project.projectClosure.filter(isDependencyProject)
+
     <module type="JAVA_MODULE" version="4">
       <component name="FacetManager">
         <facet type="scala" name="Scala">
@@ -84,8 +87,7 @@ class IdeaModuleDescriptor(val project: BasicDependencyProject, val log: Logger)
         <orderEntry type="sourceFolder" forTests="false"/>
         <orderEntry type="library" name="buildScala" level="project"/>
         {
-          def isDependencyProject(p: Project) = p != project && !p.isInstanceOf[ParentProject]
-          project.projectClosure.filter(isDependencyProject).map { dep =>
+          dependencyProjects.map { dep =>
             log.info("Project dependency: " + dep.name)
             <orderEntry type="module" module-name={dep.name} />
           }
@@ -101,11 +103,22 @@ class IdeaModuleDescriptor(val project: BasicDependencyProject, val log: Logger)
           val JavaDocs = GlobFilter("*" + JavaDocJar)
 
           val classpathJars = ideClasspath ** Jars
-          val allJars = (project.unmanagedClasspath +++ project.managedDependencyPath) ** Jars
+
+          def projectJars(project: BasicDependencyProject): PathFinder =
+            ((project.unmanagedClasspath +++ project.managedDependencyPath) ** Jars)
+
+          val allJars = projectJars(project)
+
+          // exclude dependencies already declared in module dependencies
+          val alreadyDeclared = dependencyProjects.flatMap{
+            case p: BasicDependencyProject => List(projectJars(p).getFiles.map(_.getName))
+            case _ => List()
+          }.foldLeft(Set.empty[String])(_++_)
 
           val sources = allJars ** Sources
           val javadoc = allJars ** JavaDocs
-          val classes = classpathJars --- sources --- javadoc
+          val allClasses = classpathJars --- sources --- javadoc
+          val classes = allClasses.filter(p => !alreadyDeclared(p.name))
 
           def cut(name: String, c: String) = name.substring(0, name.length - c.length)
           def named(pf: PathFinder, suffix: String) = Map() ++ pf.getFiles.toList.sort(_.getAbsolutePath < _.getAbsolutePath).map(file =>
