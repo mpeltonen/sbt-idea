@@ -6,7 +6,7 @@
 
 import sbt._
 
-class IdeaEnvironment(project: Project) extends BasicEnvironment {
+class IdeaProjectEnvironment(project: Project) extends BasicEnvironment {
   lazy val projectJdkName = propertyOptional[String]("1.6", true)
   lazy val javaLanguageLevel = propertyOptional[String]("JDK_1_6", true)
   lazy val includeSbtProjectDefinitionModule = propertyOptional[Boolean](true, true)

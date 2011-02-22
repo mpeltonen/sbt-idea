@@ -110,6 +110,11 @@ with desired properties. Currently supported properties are:
 | excluded.folders | Comma separated list of folders in module root directory that will be marked as excluded, causing them to be invisible in IDEA's project view | target |
 | compile.with.idea | If defined, sbt's target resources and test-resources folders will not be added to classpath (since Idea copies them during compile) | false | 
 
+Workstation specific configuration is defined in file $HOME/.sbt-idea. Supported properties are:
+
+|_. Property |_. Description |_. Default value |
+| web.facet | Generate web facet for DefaultWebProject's (Idea Community Edition does not support web facets). | true |
+
 h3. Documentation URL
 
 IDEA has an option of specifying a documentation URL for a dependency artifact. When documentation URL for a library containing given class is specified, pressing Shift+F1 when cursor is over a method or class will open default browser at the corresponding API doc page. You can specify this documentation url in sbt project definition by adding extra attribute called "docUrl" into dependency declaration. For example:

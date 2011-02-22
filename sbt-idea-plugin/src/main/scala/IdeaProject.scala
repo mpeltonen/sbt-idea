@@ -8,7 +8,7 @@ import sbt._
 
 trait IdeaProject extends BasicDependencyProject {
 
-  lazy val env = new IdeaEnvironment(this)
+  lazy val env = new IdeaProjectEnvironment(this)
 
   lazy val idea = task {  createIdeaProject; None  } describedAs("Creates IntelliJ IDEA project files.")
 

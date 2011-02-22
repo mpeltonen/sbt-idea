@@ -8,7 +8,7 @@ import sbt._
 import xml.Node
 
 class ParentProjectIdeaModuleDescriptor(val project: ParentProject, val log: Logger) extends SaveableXml with ProjectPaths {
-  val env = new IdeaEnvironment(project.rootProject)
+  val env = new IdeaProjectEnvironment(project.rootProject)
   val path = String.format("%s/%s.iml", projectPath, project.name)
 
   def content: Node =

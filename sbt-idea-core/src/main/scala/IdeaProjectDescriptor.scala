@@ -10,7 +10,7 @@ import xml.transform.{RewriteRule, RuleTransformer}
 import xml.{Text, Elem, XML, Node}
 
 class IdeaProjectDescriptor(val project: BasicDependencyProject, val log: Logger) extends ProjectPaths {
-  val env = new IdeaEnvironment(project)
+  val env = new IdeaProjectEnvironment(project)
   val vcsName = List("svn", "Git").foldLeft("") { (res, vcs) =>
     if (project.path("." + vcs.toLowerCase).exists) vcs else res
   }

@@ -23,7 +23,7 @@ class IdeaProcessor extends BasicProcessor {
   }
 
   def createIdeaProject(project:BasicDependencyProject){
-    val env = new IdeaEnvironment(project)
+    val env = new IdeaProjectEnvironment(project)
 
     if(isRoot(project)){
       new IdeaProjectDescriptor(project, project.log).save

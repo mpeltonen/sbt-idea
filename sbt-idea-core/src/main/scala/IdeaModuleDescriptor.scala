@@ -10,7 +10,8 @@ import xml.{UnprefixedAttribute, NodeSeq, Node, NodeBuffer}
 
 class IdeaModuleDescriptor(val project: BasicDependencyProject, val log: Logger) extends SaveableXml with ProjectPaths {
   val path = String.format("%s/%s.iml", projectPath, project.name)
-  val env = new IdeaEnvironment(project.rootProject)
+  val env = new IdeaProjectEnvironment(project.rootProject)
+  val userEnv = new IdeaUserEnvironment(project.rootProject)
 
   def content: Node = {
     def isDependencyProject(p: Project) = p != project && !p.isInstanceOf[ParentProject]
@@ -26,7 +27,7 @@ class IdeaModuleDescriptor(val project: BasicDependencyProject, val log: Logger)
         </facet>
         {
           project match {
-            case webProject: DefaultWebProject => webFacet(webProject)
+            case webProject: DefaultWebProject if (userEnv.webFacet.value == true) => webFacet(webProject)
             case _ => scala.xml.Null
           }
         }
