@@ -27,7 +27,7 @@ h3. Usage as plugin
 import sbt._
 class Plugins(info: ProjectInfo) extends PluginDefinition(info) {
   val sbtIdeaRepo = "sbt-idea-repo" at "http://mpeltonen.github.com/maven/"
-  val sbtIdea = "com.github.mpeltonen" % "sbt-idea-plugin" % "0.3.0"
+  val sbtIdea = "com.github.mpeltonen" % "sbt-idea-plugin" % "0.4.0"
 }
 </pre>
 
@@ -69,7 +69,7 @@ h3. Usage as processor
 
 <pre>
  > *sbtIdeaRepo at http://mpeltonen.github.com/maven/
- > *idea is com.github.mpeltonen sbt-idea-processor 0.3.0
+ > *idea is com.github.mpeltonen sbt-idea-processor 0.4.0
  ...
  > update
  ...
@@ -87,7 +87,7 @@ To upgrade to a new version of the plugin you need to remove the old version fir
 
 <pre>
  > *remove idea
- > *idea is com.github.mpeltonen sbt-idea-processor 0.3.0
+ > *idea is com.github.mpeltonen sbt-idea-processor 0.4.0
  ...
  > update
  ...
@@ -110,7 +110,7 @@ with desired properties. Currently supported properties are:
 | excluded.folders | Comma separated list of folders in module root directory that will be marked as excluded, causing them to be invisible in IDEA's project view | target |
 | compile.with.idea | If defined, sbt's target resources and test-resources folders will not be added to classpath (since Idea copies them during compile) | false | 
 
-Starting from (not yet released) version 0.4.0, Workstation specific configuration can be defined in file $HOME/.sbt-idea. Supported properties are:
+Starting from version 0.4.0, Workstation specific configuration can be defined in file $HOME/.sbt-idea. Supported properties are:
 
 |_. Property |_. Description |_. Default value |
 | web.facet | Generate web facet for DefaultWebProject's (Idea Community Edition does not support web facets). | true |
