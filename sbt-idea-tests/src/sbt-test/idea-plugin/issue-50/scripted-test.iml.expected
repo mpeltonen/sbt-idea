@@ -1,0 +1,36 @@
+<module version="4" type="JAVA_MODULE">
+  <component name="FacetManager">
+    <facet name="Scala" type="scala">
+      <configuration>
+        <option name="compilerLibraryLevel" value="Project"/>
+        <option name="compilerLibraryName" value="buildScala"/>
+      </configuration>
+    </facet>
+  </component>
+  <component name="NewModuleRootManager" inherit-compiler-output="false">
+    <output url="file://$MODULE_DIR$/target/scala_2.7.7/classes"/>
+    <output-test url="file://$MODULE_DIR$/target/scala_2.7.7/test-classes"/>
+    <exclude-output/>
+    <content url="file://$MODULE_DIR$">
+      <excludeFolder url="file://$MODULE_DIR$/target"/>
+    </content>
+    <orderEntry type="inheritedJdk"/>
+    <orderEntry forTests="false" type="sourceFolder"/>
+    <orderEntry name="buildScala" type="library" level="project"/>
+    <orderEntry type="module-library" exported=" ">
+      <library>
+        <CLASSES><root url="jar://$MODULE_DIR$/lib_managed/scala_2.7.7/compile/slf4j-api-1.6.0.jar!/"/></CLASSES>
+        <JAVADOC></JAVADOC>
+        <SOURCES></SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" exported=" " scope="TEST">
+      <library>
+        <CLASSES><root url="jar://$MODULE_DIR$/lib_managed/scala_2.7.7/test/slf4j-simple-1.6.0.jar!/"/></CLASSES>
+        <JAVADOC></JAVADOC>
+        <SOURCES></SOURCES>
+      </library>
+    </orderEntry>
+  </component>
+</module>
+

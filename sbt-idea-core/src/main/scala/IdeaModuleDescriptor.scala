@@ -122,7 +122,7 @@ class IdeaModuleDescriptor(val project: BasicDependencyProject, val log: Logger)
           val classes = allClasses.filter(p => !alreadyDeclared((p.name, p.asFile.length)))
 
           def cut(name: String, c: String) = name.substring(0, name.length - c.length)
-          def named(pf: PathFinder, suffix: String) = Map() ++ pf.getFiles.toList.sort(_.getAbsolutePath < _.getAbsolutePath).map(file =>
+          def named(pf: PathFinder, suffix: String) = Map() ++ pf.getFiles.toList.sort(_.getAbsolutePath > _.getAbsolutePath).map(file =>
             cut(file.getName, suffix) -> relativePath(file))
 
           val namedSources = named(sources, SourcesJar)
@@ -130,7 +130,7 @@ class IdeaModuleDescriptor(val project: BasicDependencyProject, val log: Logger)
           val namedClasses = named(classes, Jar)
 
           val defaultJars = defaultClasspath ** Jars
-          val testJars = testClasspath ** Jars
+          val testJars = (testClasspath ** Jars).filter(p => !defaultJars.get.map(_.name).toList.contains(p.name))
           val runtimeJars = runtimeClasspath ** Jars
           val providedJars = providedClasspath ** Jars
 
