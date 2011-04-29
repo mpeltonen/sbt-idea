@@ -109,17 +109,19 @@ class IdeaModuleDescriptor(val project: BasicDependencyProject, val log: Logger)
             ((project.unmanagedClasspath +++ project.managedDependencyPath) ** Jars)
 
           val allJars = projectJars(project)
-
-          // exclude dependencies already declared in module dependencies
+          // exclude dependencies already declared in module dependencies within the same scope
+          def nameWithScope(f: File): String = {
+            f.getAbsolutePath.split(File.separator).reverse.take(2).reverse.toList.mkString(File.separator)
+          }
           val alreadyDeclared = dependencyProjects.flatMap{
-            case p: BasicDependencyProject => List(projectJars(p).getFiles.map(f => (f.getName, f.length)))
+            case p: BasicDependencyProject => List(projectJars(p).getFiles.map(f => (nameWithScope(f), f.length)))
             case _ => List()
           }.foldLeft(Set.empty[(String, Long)])(_++_)
 
           val sources = allJars ** Sources
           val javadoc = allJars ** JavaDocs
           val allClasses = classpathJars --- sources --- javadoc
-          val classes = allClasses.filter(p => !alreadyDeclared((p.name, p.asFile.length)))
+          val classes = allClasses.filter(p => !alreadyDeclared((nameWithScope(p.asFile), p.asFile.length)))
 
           def cut(name: String, c: String) = name.substring(0, name.length - c.length)
           def named(pf: PathFinder, suffix: String) = Map() ++ pf.getFiles.toList.sort(_.getAbsolutePath > _.getAbsolutePath).map(file =>
