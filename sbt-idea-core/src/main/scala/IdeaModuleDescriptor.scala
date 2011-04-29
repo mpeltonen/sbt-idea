@@ -132,9 +132,12 @@ class IdeaModuleDescriptor(val project: BasicDependencyProject, val log: Logger)
           val namedClasses = named(classes, Jar)
 
           val defaultJars = defaultClasspath ** Jars
-          val testJars = (testClasspath ** Jars).filter(p => !defaultJars.get.map(_.name).toList.contains(p.name))
-          val runtimeJars = runtimeClasspath ** Jars
-          val providedJars = providedClasspath ** Jars
+          val defaultJarNames = defaultJars.get.map(_.name).toList
+          val runtimeJars = (runtimeClasspath ** Jars).filter(p => !defaultJarNames.contains(p.name))
+          val runtimeJarNames = runtimeJars.get.map(_.name).toList
+          val providedJars = (providedClasspath ** Jars).filter(p => !defaultJarNames.contains(p.name))
+          val providedJarNames = providedJars.get.map(_.name).toList
+          val testJars = (testClasspath ** Jars).filter(p => !(defaultJarNames ++ runtimeJarNames ++ providedJarNames).contains(p.name))
 
           val defaultScope = named(defaultJars, Jar)
           val testScope = named(testJars, Jar)
