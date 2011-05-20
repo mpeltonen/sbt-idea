@@ -11,16 +11,16 @@ object SbtIdeaPlugin extends Plugin {
   val ideaProjectName = SettingKey[String]("idea-project-name")
   val ideaProjectGroup = SettingKey[String]("idea-project-group")
   val sbtScalaInstance = SettingKey[ScalaInstance]("sbt-scala-instance")
-  override lazy val settings = Seq(Keys.commands += ideaCommand,
-    ideaProjectName := "IdeaProject",
-    sbtScalaInstance in Scope.GlobalScope <<= Keys.appConfiguration(appConf => ScalaInstance("2.8.1", appConf.provider.scalaProvider.launcher)))
+  override lazy val settings = Seq(Keys.commands += ideaCommand, ideaProjectName := "IdeaProject")
 
   private lazy val ideaCommand = Command.command("gen-idea")(doCommand)
 
   def doCommand(state: State): State = {
-    val sbtScalaVersion = "2.8.1"
-    val sbtVersion = "0.9.8-SNAPSHOT"
-    println("sbtVersion = " + sbtVersion)
+    val provider = state.configuration.provider
+    val sbtScalaVersion = provider.scalaProvider.version
+    val sbtVersion = provider.id.version
+    val sbtInstance = ScalaInstance(sbtScalaVersion, provider.scalaProvider.launcher)
+
     val extracted = Project.extract(state)
     val buildStruct = extracted.structure
     val buildUnit = buildStruct.units(buildStruct.root)
@@ -29,9 +29,8 @@ object SbtIdeaPlugin extends Plugin {
     val projectList = buildUnit.defined.map { case (id, proj) => (ProjectRef(uri, id) -> proj) }
     val subProjects = projectList.map { case (projRef, project) => projectData(projRef, project, buildStruct, state) }.toList
 
-    val sbtInstance = sbtScalaInstance in Scope.GlobalScope get buildStruct.data
     val scalaInstances = subProjects.map(_.scalaInstance).distinct
-    val scalaLibs = (sbtInstance.get :: scalaInstances).map(toIdeaLib(_))
+    val scalaLibs = (sbtInstance :: scalaInstances).map(toIdeaLib(_))
 
     val ideaLibs = subProjects.flatMap(_.libraries.map(modRef => modRef.library)).toList.distinct
 
@@ -61,8 +60,8 @@ object SbtIdeaPlugin extends Plugin {
   }
 
   def projectData(projectRef: ProjectRef, project: ResolvedProject, buildStruct: BuildStructure, state: State): SubProjectInfo = {
-    def setting[A](key: SettingKey[A], errorMessage: => String, configuration: Configuration = Configurations.Compile) = {
-      (key in (projectRef, configuration) get buildStruct.data) match {
+    def setting[A](key: ScopedSetting[A], errorMessage: => String) = {
+      (key in projectRef get buildStruct.data) match {
         case Some(result) => result
         case None => logger(state).error(errorMessage); throw new IllegalArgumentException()
       }
@@ -71,25 +70,24 @@ object SbtIdeaPlugin extends Plugin {
     val projectName = setting(Keys.name, "Missing project name!")
     logger(state).info("Trying to create an Idea module " + projectName)
 
-    val ideaGroup = setting(ideaProjectGroup, "Missing ideaProjectGroup", Configurations.Default)
+    val ideaGroup = setting(ideaProjectGroup, "Missing ideaProjectGroup")
     val scalaInstance = setting(Keys.scalaInstance, "Missing scala instance")
 
     val scalaVersion = setting(Keys.scalaVersion, "Missing Scala version!")
     val baseDirectory = setting(Keys.baseDirectory, "Missing base directory!")
     val target = setting(Keys.target, "Missing target directory")
-    val compileDirectories = Directories(
-      setting(Keys.unmanagedSourceDirectories, "Missing unmanaged source directories!"),
-      setting(Keys.unmanagedResourceDirectories, "Missing unmanaged resource directories!"),
-      setting(Keys.classDirectory, "Missing class directory!"))
 
-    val testDirectories = Directories(
-      setting(Keys.unmanagedSourceDirectories, "Missing unmanaged test source directories!", Configurations.Test),
-      setting(Keys.unmanagedResourceDirectories, "Missing unmanaged test resource directories!", Configurations.Test),
-      setting(Keys.classDirectory, "Missing test class directory!", Configurations.Test))
+    def directoriesFor(config: Configuration) = Directories(
+        setting(Keys.unmanagedSourceDirectories in config, "Missing unmanaged source directories!"),
+        setting(Keys.unmanagedResourceDirectories in config, "Missing unmanaged resource directories!"),
+        setting(Keys.classDirectory in config, "Missing class directory!"))
+
+    val compileDirectories: Directories = directoriesFor(Configurations.Compile)
+    val testDirectories: Directories = directoriesFor(Configurations.Test)
 
     val scalaLib = IdeaModuleLibRef(IdeaLibrary.CompileScope, toIdeaLib(scalaInstance))
 
-    val deps = setting(Keys.libraryDependencies, "Missing deps", Configurations.Default)
+    val deps = setting(Keys.libraryDependencies, "Missing deps")
 
     val libraries = EvaluateTask.evaluateTask(buildStruct, Keys.update, state, projectRef, false, EvaluateTask.SystemProcessors) match {
       case Some(Value(report)) => convertDeps(report, deps)

@@ -10,7 +10,7 @@ import sbt._
 import xml.Node
 
 class ParentProjectIdeaModuleDescriptor(val projectInfo: IdeaProjectInfo, val env: IdeaProjectEnvironment, val log: Logger) extends SaveableXml {
-  val path = String.format("%s/.idea2/%s.iml", projectInfo.baseDir.getAbsolutePath, projectInfo.name)
+  val path = String.format("%s/.idea/%s.iml", projectInfo.baseDir.getAbsolutePath, projectInfo.name)
 
   def content: Node =
    <module type="JAVA_MODULE" version="4">

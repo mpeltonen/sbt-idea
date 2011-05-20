@@ -29,7 +29,9 @@ object OutputUtil {
 
 class IdeaProjectDescriptor(val projectInfo: IdeaProjectInfo, val env: IdeaProjectEnvironment, val log: Logger) {
 
-  def projectRelative(file: File) = IO.relativize(projectInfo.baseDir, file).get
+  def projectRelative(file: File) = {
+    IO.relativize(projectInfo.baseDir, file.getCanonicalFile).map ("$PROJECT_DIR$/" + _).getOrElse(file.getCanonicalPath)
+  }
 
   val vcsName = List("svn", "Git").foldLeft("") { (res, vcs) =>
     if (new File(projectInfo.baseDir, "." + vcs.toLowerCase).exists) vcs else res
@@ -66,18 +68,18 @@ class IdeaProjectDescriptor(val projectInfo: IdeaProjectInfo, val env: IdeaProje
         <CLASSES>
           {
           library.classes.map(file => {
-            <root url={String.format("jar://$PROJECT_DIR$/%s!/", projectRelative(file))} />
+            <root url={String.format("jar://%s!/", projectRelative(file))} />
           })
           }
         </CLASSES>
         <JAVADOC />
         {
-        library.javaDocs.map(file => <root url={String.format("jar://$PROJECT_DIR$/%s!/", projectRelative(file))} />)
+        library.javaDocs.map(file => <root url={String.format("jar://%s!/", projectRelative(file))} />)
         }
         <SOURCES>
           {
           library.sources.map(file => {
-            <root url={String.format("jar://$PROJECT_DIR$/%s!/", projectRelative(file))} />
+            <root url={String.format("jar://%s!/", projectRelative(file))} />
           })
           }
         </SOURCES>
