@@ -1,4 +1,4 @@
-package com.intellij.idea
+package org.sbtidea
 
 import sbt._
 import sbt.Load.BuildStructure

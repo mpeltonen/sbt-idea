@@ -1,4 +1,4 @@
-package com.intellij.idea
+package org.sbtidea
 
 import sbt.{ModuleReport, ConfigurationReport, UpdateReport, ModuleID, ScalaInstance}
 
@@ -22,7 +22,7 @@ object SbtIdeaModuleMapping {
   }
 
   private def toScope(conf: String) = {
-    import com.intellij.idea.IdeaLibrary._
+    import org.sbtidea.IdeaLibrary._
     conf match {
       case "compile" => CompileScope
       case "runtime" => RuntimeScope

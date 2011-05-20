@@ -1,4 +1,4 @@
-package com.intellij.idea
+package org.sbtidea
 
 import java.io.File
 // cheating for now
