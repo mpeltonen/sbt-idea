@@ -90,7 +90,7 @@ object SbtIdeaPlugin extends Plugin {
     val deps = setting(Keys.libraryDependencies, "Missing deps")
 
     val libraries = EvaluateTask.evaluateTask(buildStruct, Keys.update, state, projectRef, false, EvaluateTask.SystemProcessors) match {
-      case Some(Value(report)) => convertDeps(report, deps)
+      case Some(Value(report)) => convertDeps(report, deps, scalaInstance.version)
       case _ => Seq.empty[IdeaModuleLibRef]
     }
 

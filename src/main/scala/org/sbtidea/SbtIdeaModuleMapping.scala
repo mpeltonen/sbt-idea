@@ -10,8 +10,12 @@ object SbtIdeaModuleMapping {
       instance.extraJars.filter(_.getAbsolutePath.endsWith("-sources.jar")))
   }
 
+  private def equivModule(m1: ModuleID, m2: ModuleID, scalaVersion: String) = {
+    def name(m: ModuleID): String =
+      if (m.crossVersion) m.name + "_" + scalaVersion else m.name
 
-  private def equivModule(m1: ModuleID, m2: ModuleID) = (m1.organization == m2.organization) && (m1.name == m2.name)
+    m1.organization == m2.organization && name(m1) == name(m2)
+  }
 
   private def ideaLibFromModule(moduleReport: ModuleReport) = {
     val module = moduleReport.module
@@ -32,22 +36,23 @@ object SbtIdeaModuleMapping {
     }
   }
 
-  private def convertConfigReport(configReport: ConfigurationReport, deps: Seq[ModuleID]) = {
+  private def convertConfigReport(configReport: ConfigurationReport, deps: Seq[ModuleID], scalaVersion: String) = {
     val scope = toScope(configReport.configuration)
-    val depFilter = libDepFilter(deps, configReport.configuration) _
+    val depFilter = libDepFilter(deps, configReport.configuration, scalaVersion) _
+
     configReport.modules.filter(modReport => depFilter(modReport.module)).map( moduleReport => {
       IdeaModuleLibRef(scope, ideaLibFromModule(moduleReport))
     })
   }
 
-  private def libDepFilter(deps: Seq[ModuleID], configuration: String)(module: ModuleID): Boolean = {
-    deps.exists(libModule => {
+  private def libDepFilter(deps: Seq[ModuleID], configuration: String, scalaVersion: String)(module: ModuleID): Boolean = {
+    deps.exists { libModule =>
       val libConf = libModule.configurations.getOrElse("compile")
-        (libConf == configuration) && equivModule(libModule, module)
-    })
+      libConf == configuration && equivModule(libModule, module, scalaVersion)
+    }
   }
 
-  def convertDeps(report: UpdateReport, deps: Seq[ModuleID]): Seq[IdeaModuleLibRef] = {
-    report.configurations.flatMap(convertConfigReport(_, deps))
+  def convertDeps(report: UpdateReport, deps: Seq[ModuleID], scalaVersion: String): Seq[IdeaModuleLibRef] = {
+    report.configurations.flatMap(convertConfigReport(_, deps, scalaVersion))
   }
 }
