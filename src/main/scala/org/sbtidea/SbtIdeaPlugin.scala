@@ -53,6 +53,7 @@ object SbtIdeaPlugin extends Plugin {
     rootFiles.save()
 
     val imlDir = new File(projectInfo.baseDir, env.modulePath.get)
+    imlDir.mkdirs()
     for (subProj <- subProjects) {
       val module = new IdeaModuleDescriptor(imlDir, projectInfo.baseDir, subProj, env, userEnv, logger(state))
       module.save()
