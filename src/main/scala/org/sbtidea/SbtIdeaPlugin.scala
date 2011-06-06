@@ -37,9 +37,11 @@ object SbtIdeaPlugin extends Plugin {
     val subProjects = projectList.map { case (projRef, project) => projectData(projRef, project, buildStruct,
       state, args) }.toList
 
+    val scalaInstances = subProjects.map(_.scalaInstance).distinct
+    val scalaLibs = (sbtInstance :: scalaInstances).map(toIdeaLib(_))
     val ideaLibs = subProjects.flatMap(_.libraries.map(modRef => modRef.library)).toList.distinct
 
-    val projectInfo = IdeaProjectInfo(buildUnit.localBase, name.getOrElse("Unknown"), subProjects, ideaLibs)
+    val projectInfo = IdeaProjectInfo(buildUnit.localBase, name.getOrElse("Unknown"), subProjects, ideaLibs ::: scalaLibs)
 
     val env = IdeaProjectEnvironment(projectJdkName = "1.6", javaLanguageLevel = "JDK_1_6",
       includeSbtProjectDefinitionModule = true, projectOutputPath = None, excludedFolders = "target",
