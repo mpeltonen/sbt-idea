@@ -109,7 +109,7 @@ class IdeaProjectDescriptor(val projectInfo: IdeaProjectInfo, val env: IdeaProje
 
       Seq(
         "modules.xml" -> Some(project(projectModuleManagerComponent)),
-        "misc.xml" -> miscXml(configDir).map(miscTransformer.transform).map(_.firstOption.get)
+        "misc.xml" -> miscXml(configDir).map(miscTransformer.transform).map(_.head)
       ) foreach { 
         case (fileName, Some(xmlNode)) => saveFile(configDir, fileName, xmlNode) 
         case _ =>
