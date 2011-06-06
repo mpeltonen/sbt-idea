@@ -21,7 +21,8 @@ case class IdeaModuleLibRef(config: IdeaLibrary.Scope, library: IdeaLibrary)
 case class Directories(sources: Seq[File], resources: Seq[File], outDir: File)
 
 case class SubProjectInfo(baseDir: File, name: String, dependencyProjects: List[String], compileDirs: Directories,
-                          testDirs: Directories, libraries: Seq[IdeaModuleLibRef], scalaInstance: ScalaInstance, ideaGroup: String, webAppPath: Option[File])
+                          testDirs: Directories, libraries: Seq[IdeaModuleLibRef], scalaInstance: ScalaInstance,
+                          ideaGroup: Option[String], webAppPath: Option[File])
 
 case class IdeaProjectInfo(baseDir: File, name: String, childProjects: List[SubProjectInfo], ideaLibs: List[IdeaLibrary])
 

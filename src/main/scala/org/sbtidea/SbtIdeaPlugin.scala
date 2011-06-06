@@ -69,17 +69,19 @@ object SbtIdeaPlugin extends Plugin {
 
   def projectData(projectRef: ProjectRef, project: ResolvedProject, buildStruct: BuildStructure,
                   state: State, args: Seq[String]): SubProjectInfo = {
+
+    def optionalSetting[A](key: ScopedSetting[A]) = key in projectRef get buildStruct.data
+
     def setting[A](key: ScopedSetting[A], errorMessage: => String) = {
-      (key in projectRef get buildStruct.data) match {
-        case Some(result) => result
-        case None => logger(state).error(errorMessage); throw new IllegalArgumentException()
+      optionalSetting(key) getOrElse {
+        logger(state).error(errorMessage); throw new IllegalArgumentException()
       }
     }
 
     val projectName = setting(Keys.name, "Missing project name!")
     logger(state).info("Trying to create an Idea module " + projectName)
 
-    val ideaGroup = setting(ideaProjectGroup, "Missing ideaProjectGroup")
+    val ideaGroup = optionalSetting(ideaProjectGroup)
     val scalaInstance = setting(Keys.scalaInstance, "Missing scala instance")
 
     val baseDirectory = setting(Keys.baseDirectory, "Missing base directory!")

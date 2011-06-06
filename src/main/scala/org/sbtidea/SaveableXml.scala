@@ -17,10 +17,10 @@ trait SaveableXml {
 
   def save() {
     val file = new File(path)
-    if(file.getParentFile.exists) {
-      import OutputUtil.saveFile
-      saveFile(file, content)
-      log.info("Created " + path)
-    } else log.error("Skipping " + path + " since directory does not exist")
+    file.getParentFile.mkdirs()
+
+    import OutputUtil.saveFile
+    saveFile(file, content)
+    log.info("Created " + path)
   }
 }
