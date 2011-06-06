@@ -29,12 +29,9 @@ object SbtIdeaPlugin extends Plugin {
     val projectList = buildUnit.defined.map { case (id, proj) => (ProjectRef(uri, id) -> proj) }
     val subProjects = projectList.map { case (projRef, project) => projectData(projRef, project, buildStruct, state) }.toList
 
-    val scalaInstances = subProjects.map(_.scalaInstance).distinct
-    val scalaLibs = (sbtInstance :: scalaInstances).map(toIdeaLib(_))
-
     val ideaLibs = subProjects.flatMap(_.libraries.map(modRef => modRef.library)).toList.distinct
 
-    val projectInfo = IdeaProjectInfo(buildUnit.localBase, name.getOrElse("Unknown"), subProjects, ideaLibs ::: scalaLibs)
+    val projectInfo = IdeaProjectInfo(buildUnit.localBase, name.getOrElse("Unknown"), subProjects, ideaLibs)
 
     val env = IdeaProjectEnvironment(projectJdkName = "1.6", javaLanguageLevel = "JDK_1_6",
       includeSbtProjectDefinitionModule = true, projectOutputPath = None, excludedFolders = "target",
@@ -73,7 +70,6 @@ object SbtIdeaPlugin extends Plugin {
     val ideaGroup = setting(ideaProjectGroup, "Missing ideaProjectGroup")
     val scalaInstance = setting(Keys.scalaInstance, "Missing scala instance")
 
-    val scalaVersion = setting(Keys.scalaVersion, "Missing Scala version!")
     val baseDirectory = setting(Keys.baseDirectory, "Missing base directory!")
     val target = setting(Keys.target, "Missing target directory")
 
@@ -85,8 +81,6 @@ object SbtIdeaPlugin extends Plugin {
     val compileDirectories: Directories = directoriesFor(Configurations.Compile)
     val testDirectories: Directories = directoriesFor(Configurations.Test)
 
-    val scalaLib = IdeaModuleLibRef(IdeaLibrary.CompileScope, toIdeaLib(scalaInstance))
-
     val deps = setting(Keys.libraryDependencies, "Missing deps")
 
     val libraries = EvaluateTask.evaluateTask(buildStruct, Keys.update, state, projectRef, false, EvaluateTask.SystemProcessors) match {
@@ -95,6 +89,6 @@ object SbtIdeaPlugin extends Plugin {
     }
 
     SubProjectInfo(baseDirectory, projectName, project.uses.map(_.project).toList, compileDirectories,
-      testDirectories, scalaLib +: libraries, scalaInstance, ideaGroup, None)
+      testDirectories, libraries, scalaInstance, ideaGroup, None)
   }
 }
