@@ -8,6 +8,7 @@ import sbt.complete.Parsers._
 import java.io.File
 import collection.Seq
 import SbtIdeaModuleMapping._
+import java.lang.IllegalArgumentException
 
 object SbtIdeaPlugin extends Plugin {
   val ideaProjectName = SettingKey[String]("idea-project-name")
@@ -95,8 +96,11 @@ object SbtIdeaPlugin extends Plugin {
     val compileDirectories: Directories = directoriesFor(Configurations.Compile)
     val testDirectories: Directories = directoriesFor(Configurations.Test)
 
-    val deps = setting(Keys.libraryDependencies, "Missing deps")
-
+    val deps = EvaluateTask.evaluateTask(buildStruct, Keys.externalDependencyClasspath in Configurations.Test, state, projectRef, false, EvaluateTask.SystemProcessors) match {
+      case Some(Value(deps)) => deps
+      case _ => logger(state).error("Failed to obtain dependency classpath"); throw new IllegalArgumentException()
+    }
+    
     val libraries = EvaluateTask.evaluateTask(buildStruct, Keys.update, state, projectRef, false, EvaluateTask.SystemProcessors) match {
 
       case Some(Value(report)) =>

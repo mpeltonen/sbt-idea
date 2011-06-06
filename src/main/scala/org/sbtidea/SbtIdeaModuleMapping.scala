@@ -1,6 +1,6 @@
 package org.sbtidea
 
-import sbt.{ModuleReport, ConfigurationReport, UpdateReport, ModuleID, ScalaInstance}
+import sbt._
 
 object SbtIdeaModuleMapping {
 
@@ -36,24 +36,25 @@ object SbtIdeaModuleMapping {
     }
   }
 
-  private def convertConfigReport(configReport: ConfigurationReport, deps: Seq[ModuleID], scalaVersion: String) = {
-    val scope = toScope(configReport.configuration)
-    val depFilter = libDepFilter(deps, configReport.configuration, scalaVersion) _
+  private def mapToIdeaModuleLibs(configuration: String, modules: Seq[ModuleReport], deps: Keys.Classpath) = {
+    val scope = toScope(configuration)
+    val depFilter = libDepFilter(deps) _
 
-    configReport.modules.filter(modReport => depFilter(modReport.module)).map( moduleReport => {
+    modules.filter(modReport => depFilter(modReport)).map( moduleReport => {
       (IdeaModuleLibRef(scope, ideaLibFromModule(moduleReport)), moduleReport.module)
     })
   }
 
-  private def libDepFilter(deps: Seq[ModuleID], configuration: String, scalaVersion: String)(module: ModuleID): Boolean = {
-    deps.exists { libModule =>
-      val libConf = libModule.configurations.getOrElse("compile")
-      libConf == configuration && equivModule(libModule, module, scalaVersion)
-    }
+  private def libDepFilter(deps: Keys.Classpath)(moduleReport: ModuleReport): Boolean = {
+    deps.files.exists(dep => moduleReport.artifacts.exists(_._2 == dep))
   }
 
-  def convertDeps(report: UpdateReport, deps: Seq[ModuleID], scalaVersion: String): Seq[(IdeaModuleLibRef, ModuleID)] = {
-    report.configurations.flatMap(convertConfigReport(_, deps, scalaVersion))
+  def convertDeps(report: UpdateReport, deps: Keys.Classpath, scalaVersion: String): Seq[(IdeaModuleLibRef, ModuleID)] = {
+    Seq("compile", "runtime", "test", "provided").flatMap(report.configuration).foldLeft(Seq[(IdeaModuleLibRef, ModuleID)]()) { (acc, configReport) =>
+      val filteredModules = configReport.modules.filterNot(m1 =>
+        acc.exists { case (_, m2) => equivModule(m1.module, m2, scalaVersion) })
+      acc ++ mapToIdeaModuleLibs(configReport.configuration, filteredModules, deps)
+    }
   }
 
   def addClassifiers(ideaModuleLibRefs: Seq[(IdeaModuleLibRef, ModuleID)], report: UpdateReport): Seq[(IdeaModuleLibRef, ModuleID)] = {
