@@ -41,7 +41,7 @@ object SbtIdeaModuleMapping {
     val depFilter = libDepFilter(deps, configReport.configuration, scalaVersion) _
 
     configReport.modules.filter(modReport => depFilter(modReport.module)).map( moduleReport => {
-      IdeaModuleLibRef(scope, ideaLibFromModule(moduleReport))
+      (IdeaModuleLibRef(scope, ideaLibFromModule(moduleReport)), moduleReport.module)
     })
   }
 
@@ -52,7 +52,44 @@ object SbtIdeaModuleMapping {
     }
   }
 
-  def convertDeps(report: UpdateReport, deps: Seq[ModuleID], scalaVersion: String): Seq[IdeaModuleLibRef] = {
+  def convertDeps(report: UpdateReport, deps: Seq[ModuleID], scalaVersion: String): Seq[(IdeaModuleLibRef, ModuleID)] = {
     report.configurations.flatMap(convertConfigReport(_, deps, scalaVersion))
+  }
+
+  def addClassifiers(ideaModuleLibRefs: Seq[(IdeaModuleLibRef, ModuleID)], report: UpdateReport): Seq[(IdeaModuleLibRef, ModuleID)] = {
+
+    /* Both retrieved from UpdateTask, so we don't need to deal with crossVersion here */
+    def equivModule(m1: ModuleID, m2: ModuleID): Boolean =
+      m1.name == m2.name && m1.organization == m2.organization && m1.revision == m2.revision
+
+    val modifiedModuleLibRefs = {
+
+      report.configurations.flatMap { configReport =>
+          
+        configReport.modules.flatMap { moduleReport =>
+
+          ideaModuleLibRefs.find { case (moduleLibRef, moduleId) =>
+            moduleLibRef.config == toScope(configReport.configuration) && equivModule(moduleReport.module, moduleId)
+          } map { case (moduleLibRef, moduleId) =>
+
+            val ideaLibrary = {
+              val il = ideaLibFromModule(moduleReport)
+              il.copy(classes = il.classes ++ moduleLibRef.library.classes,
+                      javaDocs = il.javaDocs ++ moduleLibRef.library.javaDocs,
+                      sources = il.sources ++ moduleLibRef.library.sources)
+            }
+
+            moduleLibRef.copy(library = ideaLibrary) -> moduleId
+          }
+        }
+      }
+    }
+
+    val unmodifiedModuleLibRefs = ideaModuleLibRefs.filterNot { case (_, m1) =>
+      modifiedModuleLibRefs.exists { case (_, m2) => equivModule(m1, m2) }
+    }
+
+    modifiedModuleLibRefs ++ unmodifiedModuleLibRefs
+
   }
 }

@@ -84,11 +84,27 @@ object SbtIdeaPlugin extends Plugin {
     val deps = setting(Keys.libraryDependencies, "Missing deps")
 
     val libraries = EvaluateTask.evaluateTask(buildStruct, Keys.update, state, projectRef, false, EvaluateTask.SystemProcessors) match {
-      case Some(Value(report)) => convertDeps(report, deps, scalaInstance.version)
-      case _ => Seq.empty[IdeaModuleLibRef]
+
+      case Some(Value(report)) =>
+        val libraries = convertDeps(report, deps, scalaInstance.version)
+
+        EvaluateTask.evaluateTask(buildStruct, Keys.updateClassifiers, state, projectRef, false, EvaluateTask.SystemProcessors) match {
+
+          case Some(Value(report)) =>
+            val withClassifiers = addClassifiers(libraries, report)
+
+            EvaluateTask.evaluateTask(buildStruct, Keys.updateSbtClassifiers, state, projectRef, false, EvaluateTask.SystemProcessors) match {
+              case Some(Value(report)) => addClassifiers(withClassifiers, report)
+              case _ => withClassifiers
+            }
+
+          case _ => libraries
+        }
+
+      case _ => Seq.empty
     }
 
     SubProjectInfo(baseDirectory, projectName, project.uses.map(_.project).toList, compileDirectories,
-      testDirectories, libraries, scalaInstance, ideaGroup, None)
+      testDirectories, libraries.map(_._1), scalaInstance, ideaGroup, None)
   }
 }
