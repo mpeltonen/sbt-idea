@@ -37,17 +37,17 @@ class IdeaProjectDescriptor(val projectInfo: IdeaProjectInfo, val env: IdeaProje
     if (new File(projectInfo.baseDir, "." + vcs.toLowerCase).exists) vcs else res
   }
 
-  private def moduleEntry(pathPrefix: String, moduleName: String, groupName: String) = {
-    val tmp = <module fileurl={String.format("file://$PROJECT_DIR$%s/%s.iml", pathPrefix, moduleName)} filepath={String.format("$PROJECT_DIR$%s/%s.iml", pathPrefix, moduleName)} />
-    if (groupName.length > 0) tmp % new UnprefixedAttribute("group", groupName, scala.xml.Null) else tmp
-  }
+  private def moduleEntry(pathPrefix: String, moduleName: String, groupName: Option[String]) =
+    <module fileurl={String.format("file://$PROJECT_DIR$%s/%s.iml", pathPrefix, moduleName)}
+            filepath={String.format("$PROJECT_DIR$%s/%s.iml", pathPrefix, moduleName)}
+            group={groupName map xml.Text} />
 
   private def projectModuleManagerComponent: xml.Node =
     <component name="ProjectModuleManager">
       <modules>
       {
         env.includeSbtProjectDefinitionModule match {
-          case true => moduleEntry("/" + env.modulePath.get, "project", "")
+          case true => moduleEntry("/" + env.modulePath.get, "project", None)
           case _ =>
         }
       }
