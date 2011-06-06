@@ -19,7 +19,7 @@ object SbtIdeaModuleMapping {
 
   private def ideaLibFromModule(moduleReport: ModuleReport) = {
     val module = moduleReport.module
-    IdeaLibrary(module.organization + "_" + module.name,
+    IdeaLibrary(module.organization + "_" + module.name + "_" + module.revision,
       classes = moduleReport.artifacts.collect{ case (artifact, file) if (artifact.classifier == None) => file },
       javaDocs = moduleReport.artifacts.collect{ case (artifact, file) if (artifact.classifier == Some("javadoc")) => file },
       sources = moduleReport.artifacts.collect{ case (artifact, file) if (artifact.classifier == Some("sources")) => file })
