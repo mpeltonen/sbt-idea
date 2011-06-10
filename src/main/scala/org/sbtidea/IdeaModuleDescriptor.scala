@@ -87,7 +87,7 @@ class IdeaModuleDescriptor(val imlDir: File, projectRoot: File, val project: Sub
           //FIXME Take dependency scope into account
           project.dependencyProjects.distinct.map { name =>
             log.debug("Project dependency: " + name)
-            <orderEntry type="module" module-name={name} />
+            <orderEntry type="module" module-name={name} exported=""/>
           }
         }
       </component>
