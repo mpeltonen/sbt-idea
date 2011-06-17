@@ -25,9 +25,12 @@ object SbtIdeaPlugin extends Plugin {
 
   def doCommand(state: State, args: Seq[String]): State = {
     val provider = state.configuration.provider
+
     val sbtScalaVersion = provider.scalaProvider.version
     val sbtVersion = provider.id.version
     val sbtInstance = ScalaInstance(sbtScalaVersion, provider.scalaProvider.launcher)
+    val sbtProject = BuildPaths.projectStandard(state.baseDir)
+    val sbtOut = BuildPaths.crossPath(BuildPaths.outputDirectory(sbtProject), sbtInstance)
 
     val extracted = Project.extract(state)
     val buildStruct = extracted.structure
@@ -61,8 +64,9 @@ object SbtIdeaPlugin extends Plugin {
       val module = new IdeaModuleDescriptor(imlDir, projectInfo.baseDir, subProj, env, userEnv, logger(state))
       module.save()
     }
+
     val sbtDef = new SbtProjectDefinitionIdeaModuleDescriptor(imlDir, projectInfo.baseDir,
-      new File(projectInfo.baseDir, "project"), sbtScalaVersion, sbtVersion, logger(state))
+      new File(projectInfo.baseDir, "project"), sbtScalaVersion, sbtVersion, sbtOut, logger(state))
     sbtDef.save()
 
     state
