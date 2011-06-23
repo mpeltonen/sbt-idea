@@ -2,7 +2,7 @@ A "simple-build-tool":http://code.google.com/p/simple-build-tool/ plugin/process
 
 h2. Requirements
 
-* Sbt version 0.7.x (not compatible with 0.5.x series).
+* Sbt version 0.7.x. *NOTE: For SBT 0.10 version of the plugin, see "branch sbt-0.10":https://github.com/mpeltonen/sbt-idea/tree/sbt-0.10*
 * IntelliJ Idea version 9.0.3 (Scala plugin 0.3.2039). Not fully compatible with Scala plugin versions prior to
   0.3.2039 because of changes in config xml format.
 
