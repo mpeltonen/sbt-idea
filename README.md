@@ -1,9 +1,13 @@
-Until builds are published to a Maven repository, add the following to ~/.sbt/plugins/project/Build.scala:
+Installation
+------------
 
-	import sbt._
+Add the following lines to ~/.sbt/plugins/build.sbt:
 
-	object MyPlugins extends Build {
-  		lazy val root = Project("root", file(".")) dependsOn (uri("git://github.com/ijuma/sbt-idea.git#sbt-0.10"))
-	}
+    resolvers += "sbt-idea-repo" at "http://mpeltonen.github.com/maven/"
+    
+    libraryDependencies += "com.github.mpeltonen" %% "sbt-idea" % "0.10.0-SNAPSHOT"
 
-Then run `gen-idea` from a SBT shell.
+Usage
+-----
+
+Run `gen-idea` from a SBT shell.
