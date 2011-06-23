@@ -1,3 +1,8 @@
+Requirements
+------------
+
+* [SBT 0.10+](https://github.com/harrah/xsbt/wiki)
+
 Installation
 ------------
 
