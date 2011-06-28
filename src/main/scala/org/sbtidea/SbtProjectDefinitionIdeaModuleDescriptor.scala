@@ -16,6 +16,7 @@ class SbtProjectDefinitionIdeaModuleDescriptor(val imlDir: File,
                                                val sbtScalaVersion: String,
                                                sbtVersion: String,
                                                sbtOut:File,
+                                               classpath: Seq[File],
                                                val log: Logger) extends SaveableXml {
   val path = String.format("%s/project.iml", imlDir.getAbsolutePath)
 
@@ -25,8 +26,12 @@ class SbtProjectDefinitionIdeaModuleDescriptor(val imlDir: File,
   
   val scalaDir = "scala-" + sbtScalaVersion
   val sbtLibsRootDir = relativePath(new File(rootProjectDir, "project/boot/" + scalaDir + "/org.scala-tools.sbt/sbt/" + sbtVersion))
-  
-  
+
+  private[this] def isSource(file: File) = file.getName.endsWith("-sources.jar")
+  private[this] def isJavaDoc(file: File) = file.getName.endsWith("-javadoc.jar")
+  private[this] def isJar(file: File) = !isSource(file) && !isJavaDoc(file) && file.getName.endsWith(".jar")
+  private[this] def isClassDir(file: File) = !isSource(file) && !isJavaDoc(file) && !file.getName.endsWith(".jar")
+
   def content: Node = {
 <module type="JAVA_MODULE" version="4">
   <component name="FacetManager">
@@ -70,12 +75,15 @@ class SbtProjectDefinitionIdeaModuleDescriptor(val imlDir: File,
     <orderEntry type="module-library">
       <library name="plugins">
         <CLASSES>
-          <root url={"file://" + relativePath(sbtProjectDir) + "/plugins/lib"} />
-          <root url={"file://" + relativePath(sbtProjectDir) + "/plugins/lib"} />
+          { classpath.collect { case fileDep if (isClassDir(fileDep))  => <root url={"file://" + relativePath(fileDep) } /> } }
+          { classpath.collect { case fileDep if (isJar(fileDep))  => <root url={"jar://" + relativePath(fileDep) + "!/" } /> } }
         </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-        <jarDirectory url={"file://" + relativePath(sbtProjectDir) + "/plugins/lib"} recursive="false" />
+        <JAVADOC>
+          { classpath.collect { case fileDep if (isJavaDoc(fileDep))  => <root url={"jar://" + relativePath(fileDep) + "!/" } /> } }
+        </JAVADOC>
+        <SOURCES>
+          { classpath.collect { case fileDep if (isSource(fileDep))  => <root url={"jar://" + relativePath(fileDep) + "!/" } /> } }
+        </SOURCES>
       </library>
     </orderEntry>
   </component>

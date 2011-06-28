@@ -14,6 +14,7 @@ object SbtIdeaPlugin extends Plugin {
   val ideaProjectName = SettingKey[String]("idea-project-name")
   val ideaProjectGroup = SettingKey[String]("idea-project-group")
   val sbtScalaInstance = SettingKey[ScalaInstance]("sbt-scala-instance")
+  val ideaIgnoreModule = SettingKey[Boolean]("idea-ignore-module")
   override lazy val settings = Seq(Keys.commands += ideaCommand, ideaProjectName := "IdeaProject")
 
   private val WithClassifiers = "with-classifiers"
@@ -35,11 +36,18 @@ object SbtIdeaPlugin extends Plugin {
     val extracted = Project.extract(state)
     val buildStruct = extracted.structure
     val buildUnit = buildStruct.units(buildStruct.root)
+
     val uri = buildStruct.root
     val name: Option[String] = ideaProjectName in extracted.currentRef get buildStruct.data
     val projectList = buildUnit.defined.map { case (id, proj) => (ProjectRef(uri, id) -> proj) }
-    val subProjects = projectList.map { case (projRef, project) => projectData(projRef, project, buildStruct,
-      state, args) }.toList
+
+    def ignoreModule(projectRef: ProjectRef): Boolean = {
+      (ideaIgnoreModule in projectRef get buildStruct.data).getOrElse(false)
+    }
+
+    val subProjects = projectList.collect {
+      case (projRef, project) if (!ignoreModule(projRef)) => projectData(projRef, project, buildStruct, state, args)
+    }.toList
 
     val scalaInstances = subProjects.map(_.scalaInstance).distinct
     val scalaLibs = (sbtInstance :: scalaInstances).map(toIdeaLib(_))
@@ -66,7 +74,7 @@ object SbtIdeaPlugin extends Plugin {
     }
 
     val sbtDef = new SbtProjectDefinitionIdeaModuleDescriptor(imlDir, projectInfo.baseDir,
-      new File(projectInfo.baseDir, "project"), sbtScalaVersion, sbtVersion, sbtOut, logger(state))
+      new File(projectInfo.baseDir, "project"), sbtScalaVersion, sbtVersion, sbtOut, buildUnit.classpath, logger(state))
     sbtDef.save()
 
     state
@@ -92,11 +100,19 @@ object SbtIdeaPlugin extends Plugin {
     val baseDirectory = setting(Keys.baseDirectory, "Missing base directory!")
     val target = setting(Keys.target, "Missing target directory")
 
-    def directoriesFor(config: Configuration) = Directories(
-        setting(Keys.unmanagedSourceDirectories in config, "Missing unmanaged source directories!"),
+    def directoriesFor(config: Configuration) = {
+      val hasSourceGen = optionalSetting(Keys.sourceGenerators in config).exists(!_.isEmpty)
+      val managedSourceDirs = if (hasSourceGen) {
+        setting(Keys.managedSourceDirectories in config, "Missing managed source directories!")
+      }
+      else Seq.empty[File]
+
+      Directories(
+        setting(Keys.unmanagedSourceDirectories in config, "Missing unmanaged source directories!") ++
+                managedSourceDirs,
         setting(Keys.unmanagedResourceDirectories in config, "Missing unmanaged resource directories!"),
         setting(Keys.classDirectory in config, "Missing class directory!"))
-
+    }
     val compileDirectories: Directories = directoriesFor(Configurations.Compile)
     val testDirectories: Directories = directoriesFor(Configurations.Test)
 
