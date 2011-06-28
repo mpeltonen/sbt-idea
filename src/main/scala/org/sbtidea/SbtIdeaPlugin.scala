@@ -3,9 +3,12 @@ package org.sbtidea
 import sbt._
 import sbt.Load.BuildStructure
 import sbt.CommandSupport._
+import sbt.complete._
+import sbt.complete.Parsers._
 import java.io.File
 import collection.Seq
 import SbtIdeaModuleMapping._
+import java.lang.IllegalArgumentException
 
 object SbtIdeaPlugin extends Plugin {
   val ideaProjectName = SettingKey[String]("idea-project-name")
@@ -13,13 +16,21 @@ object SbtIdeaPlugin extends Plugin {
   val sbtScalaInstance = SettingKey[ScalaInstance]("sbt-scala-instance")
   override lazy val settings = Seq(Keys.commands += ideaCommand, ideaProjectName := "IdeaProject")
 
-  private lazy val ideaCommand = Command.command("gen-idea")(doCommand)
+  private val WithClassifiers = "with-classifiers"
+  private val WithSbtClassifiers = "with-sbt-classifiers"
+  
+  private val args = (Space ~> WithClassifiers | Space ~> WithSbtClassifiers).*
 
-  def doCommand(state: State): State = {
+  private lazy val ideaCommand = Command("gen-idea")(_ => args)(doCommand)
+
+  def doCommand(state: State, args: Seq[String]): State = {
     val provider = state.configuration.provider
+
     val sbtScalaVersion = provider.scalaProvider.version
     val sbtVersion = provider.id.version
     val sbtInstance = ScalaInstance(sbtScalaVersion, provider.scalaProvider.launcher)
+    val sbtProject = BuildPaths.projectStandard(state.baseDir)
+    val sbtOut = BuildPaths.crossPath(BuildPaths.outputDirectory(sbtProject), sbtInstance)
 
     val extracted = Project.extract(state)
     val buildStruct = extracted.structure
@@ -27,11 +38,11 @@ object SbtIdeaPlugin extends Plugin {
     val uri = buildStruct.root
     val name: Option[String] = ideaProjectName in extracted.currentRef get buildStruct.data
     val projectList = buildUnit.defined.map { case (id, proj) => (ProjectRef(uri, id) -> proj) }
-    val subProjects = projectList.map { case (projRef, project) => projectData(projRef, project, buildStruct, state) }.toList
+    val subProjects = projectList.map { case (projRef, project) => projectData(projRef, project, buildStruct,
+      state, args) }.toList
 
     val scalaInstances = subProjects.map(_.scalaInstance).distinct
     val scalaLibs = (sbtInstance :: scalaInstances).map(toIdeaLib(_))
-
     val ideaLibs = subProjects.flatMap(_.libraries.map(modRef => modRef.library)).toList.distinct
 
     val projectInfo = IdeaProjectInfo(buildUnit.localBase, name.getOrElse("Unknown"), subProjects, ideaLibs ::: scalaLibs)
@@ -48,32 +59,36 @@ object SbtIdeaPlugin extends Plugin {
     rootFiles.save()
 
     val imlDir = new File(projectInfo.baseDir, env.modulePath.get)
+    imlDir.mkdirs()
     for (subProj <- subProjects) {
       val module = new IdeaModuleDescriptor(imlDir, projectInfo.baseDir, subProj, env, userEnv, logger(state))
       module.save()
     }
+
     val sbtDef = new SbtProjectDefinitionIdeaModuleDescriptor(imlDir, projectInfo.baseDir,
-      new File(projectInfo.baseDir, "project"), sbtScalaVersion, sbtVersion, logger(state))
+      new File(projectInfo.baseDir, "project"), sbtScalaVersion, sbtVersion, sbtOut, logger(state))
     sbtDef.save()
 
     state
   }
 
-  def projectData(projectRef: ProjectRef, project: ResolvedProject, buildStruct: BuildStructure, state: State): SubProjectInfo = {
+  def projectData(projectRef: ProjectRef, project: ResolvedProject, buildStruct: BuildStructure,
+                  state: State, args: Seq[String]): SubProjectInfo = {
+
+    def optionalSetting[A](key: ScopedSetting[A]) = key in projectRef get buildStruct.data
+
     def setting[A](key: ScopedSetting[A], errorMessage: => String) = {
-      (key in projectRef get buildStruct.data) match {
-        case Some(result) => result
-        case None => logger(state).error(errorMessage); throw new IllegalArgumentException()
+      optionalSetting(key) getOrElse {
+        logger(state).error(errorMessage); throw new IllegalArgumentException()
       }
     }
 
     val projectName = setting(Keys.name, "Missing project name!")
     logger(state).info("Trying to create an Idea module " + projectName)
 
-    val ideaGroup = setting(ideaProjectGroup, "Missing ideaProjectGroup")
+    val ideaGroup = optionalSetting(ideaProjectGroup)
     val scalaInstance = setting(Keys.scalaInstance, "Missing scala instance")
 
-    val scalaVersion = setting(Keys.scalaVersion, "Missing Scala version!")
     val baseDirectory = setting(Keys.baseDirectory, "Missing base directory!")
     val target = setting(Keys.target, "Missing target directory")
 
@@ -85,16 +100,38 @@ object SbtIdeaPlugin extends Plugin {
     val compileDirectories: Directories = directoriesFor(Configurations.Compile)
     val testDirectories: Directories = directoriesFor(Configurations.Test)
 
-    val scalaLib = IdeaModuleLibRef(IdeaLibrary.CompileScope, toIdeaLib(scalaInstance))
-
-    val deps = setting(Keys.libraryDependencies, "Missing deps")
-
+    val deps = EvaluateTask.evaluateTask(buildStruct, Keys.externalDependencyClasspath in Configurations.Test, state, projectRef, false, EvaluateTask.SystemProcessors) match {
+      case Some(Value(deps)) => deps
+      case _ => logger(state).error("Failed to obtain dependency classpath"); throw new IllegalArgumentException()
+    }
+    
     val libraries = EvaluateTask.evaluateTask(buildStruct, Keys.update, state, projectRef, false, EvaluateTask.SystemProcessors) match {
-      case Some(Value(report)) => convertDeps(report, deps)
-      case _ => Seq.empty[IdeaModuleLibRef]
+
+      case Some(Value(report)) =>
+        val libraries = convertDeps(report, deps, scalaInstance.version)
+
+        val withClassifiers = {
+          if (args.contains(WithClassifiers)) {
+            EvaluateTask.evaluateTask(buildStruct, Keys.updateClassifiers, state, projectRef, false, EvaluateTask.SystemProcessors) match {
+              case Some(Value(report)) => addClassifiers(libraries, report)
+              case _ => libraries
+            }
+          }
+          else libraries
+        }
+
+        if (args.contains(WithSbtClassifiers)) {
+          EvaluateTask.evaluateTask(buildStruct, Keys.updateSbtClassifiers, state, projectRef, false, EvaluateTask.SystemProcessors) match {
+            case Some(Value(report)) => addClassifiers(withClassifiers, report)
+            case _ => withClassifiers
+          }
+        }
+        else withClassifiers
+
+      case _ => Seq.empty
     }
 
     SubProjectInfo(baseDirectory, projectName, project.uses.map(_.project).toList, compileDirectories,
-      testDirectories, scalaLib +: libraries, scalaInstance, ideaGroup, None)
+      testDirectories, libraries.map(_._1), scalaInstance, ideaGroup, None)
   }
 }

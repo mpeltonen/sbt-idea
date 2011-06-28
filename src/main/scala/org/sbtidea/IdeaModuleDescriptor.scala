@@ -50,7 +50,7 @@ class IdeaModuleDescriptor(val imlDir: File, projectRoot: File, val project: Sub
           { testSources.map(sourceFolder(_, true)) }
           { testResources.map(sourceFolder(_, true)) }
           {
-            env.excludedFolders.split(",").toList.map(_.trim).sort(_ < _).map { entry =>
+            env.excludedFolders.split(",").toList.map(_.trim).sorted.map { entry =>
               log.info(String.format("Excluding folder %s\n", entry))
               <excludeFolder url={String.format("file://%s", relativePath(new File(project.baseDir, entry)))} />
             }
@@ -84,9 +84,10 @@ class IdeaModuleDescriptor(val imlDir: File, projectRoot: File, val project: Sub
         }
 
         {
-          project.dependencyProjects.map { name =>
+          //FIXME Take dependency scope into account
+          project.dependencyProjects.distinct.map { name =>
             log.debug("Project dependency: " + name)
-            <orderEntry type="module" module-name={name} />
+            <orderEntry type="module" module-name={name} exported=""/>
           }
         }
       </component>

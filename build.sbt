@@ -1,5 +1,11 @@
 sbtPlugin := true
 
-name := "xsbt-idea"
+organization := "com.github.mpeltonen"
 
-organization := "org.sbtidea"
+name := "sbt-idea"
+
+version := "0.10.0-SNAPSHOT"
+
+scalacOptions := Seq("-deprecation", "-unchecked")
+
+publishTo := Some(Resolver.file("GitHub Pages", file("../mpeltonen.github.com/maven/")))

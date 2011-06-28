@@ -10,8 +10,13 @@ import xml.{XML, Node}
 import java.io.File
 import sbt.{IO, Logger}
 
-class SbtProjectDefinitionIdeaModuleDescriptor(val imlDir: File, val rootProjectDir: File, sbtProjectDir: File,
-                                               val sbtScalaVersion: String, sbtVersion: String, val log: Logger) extends SaveableXml {
+class SbtProjectDefinitionIdeaModuleDescriptor(val imlDir: File,
+                                               val rootProjectDir: File,
+                                               sbtProjectDir: File,
+                                               val sbtScalaVersion: String,
+                                               sbtVersion: String,
+                                               sbtOut:File,
+                                               val log: Logger) extends SaveableXml {
   val path = String.format("%s/project.iml", imlDir.getAbsolutePath)
 
   def relativePath(file: File) = {
@@ -32,7 +37,9 @@ class SbtProjectDefinitionIdeaModuleDescriptor(val imlDir: File, val rootProject
       </configuration>
     </facet>
   </component>
-  <component name="NewModuleRootManager" inherit-compiler-output="true">
+  <component name="NewModuleRootManager">
+    <output url={"file://" + relativePath(sbtOut)}/>
+    <output-test url={"file://" + relativePath(sbtOut)}/>
     <exclude-output />
     <content url={"file://" + relativePath(sbtProjectDir)}>
       <sourceFolder url={"file://" + relativePath(sbtProjectDir)} isTestSource="false" />
