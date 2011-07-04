@@ -91,7 +91,10 @@ object SbtIdeaPlugin extends Plugin {
       }
     }
 
-    val projectName = setting(Keys.name, "Missing project name!")
+    // The SBT project name and id can be different, we choose the id as the
+    // IDEA project name. It must be consistent with the value of SubProjectInfo#dependencyProjects.
+    val projectName = project.id
+
     logger(state).info("Trying to create an Idea module " + projectName)
 
     val ideaGroup = optionalSetting(ideaProjectGroup)
@@ -107,9 +110,20 @@ object SbtIdeaPlugin extends Plugin {
       }
       else Seq.empty[File]
 
+      // By default, SBT considers .scala files in the base directory as a project as compile
+      // scoped sources. SBT itself uses this structure.
+      //
+      // This doesn't fit so well in IDEA, it only has a concept of source directories, not source files.
+      // So we begrudgingly add the root dir as a source dir *only* if we find some .scala files there.
+      val baseDirs = {
+        val baseDir = setting(Keys.baseDirectory, "Missing base directory!")
+        val baseDirDirectlyContainsSources = baseDir.listFiles().exists(f => f.isFile && f.ext == "scala")
+        if (config.name == "compile" && baseDirDirectlyContainsSources) Seq[File](baseDir) else Seq[File]()
+      }
+
       Directories(
         setting(Keys.unmanagedSourceDirectories in config, "Missing unmanaged source directories!") ++
-                managedSourceDirs,
+                managedSourceDirs  ++ baseDirs,
         setting(Keys.unmanagedResourceDirectories in config, "Missing unmanaged resource directories!"),
         setting(Keys.classDirectory in config, "Missing class directory!"))
     }
