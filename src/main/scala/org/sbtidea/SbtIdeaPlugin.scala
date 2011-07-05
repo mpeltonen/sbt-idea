@@ -19,7 +19,7 @@ object SbtIdeaPlugin extends Plugin {
 
   private val WithClassifiers = "with-classifiers"
   private val WithSbtClassifiers = "with-sbt-classifiers"
-  
+
   private val args = (Space ~> WithClassifiers | Space ~> WithSbtClassifiers).*
 
   private lazy val ideaCommand = Command("gen-idea")(_ => args)(doCommand)
@@ -39,7 +39,9 @@ object SbtIdeaPlugin extends Plugin {
 
     val uri = buildStruct.root
     val name: Option[String] = ideaProjectName in extracted.currentRef get buildStruct.data
-    val projectList = buildUnit.defined.map { case (id, proj) => (ProjectRef(uri, id) -> proj) }
+    val projectList = buildUnit.defined.map {
+      case (id, proj) => (ProjectRef(uri, id) -> proj)
+    }
 
     def ignoreModule(projectRef: ProjectRef): Boolean = {
       (ideaIgnoreModule in projectRef get buildStruct.data).getOrElse(false)
@@ -87,7 +89,8 @@ object SbtIdeaPlugin extends Plugin {
 
     def setting[A](key: ScopedSetting[A], errorMessage: => String) = {
       optionalSetting(key) getOrElse {
-        logger(state).error(errorMessage); throw new IllegalArgumentException()
+        logger(state).error(errorMessage);
+        throw new IllegalArgumentException()
       }
     }
 
@@ -123,45 +126,19 @@ object SbtIdeaPlugin extends Plugin {
 
       Directories(
         setting(Keys.unmanagedSourceDirectories in config, "Missing unmanaged source directories!") ++
-                managedSourceDirs  ++ baseDirs,
+                managedSourceDirs ++ baseDirs,
         setting(Keys.unmanagedResourceDirectories in config, "Missing unmanaged resource directories!"),
         setting(Keys.classDirectory in config, "Missing class directory!"))
     }
     val compileDirectories: Directories = directoriesFor(Configurations.Compile)
     val testDirectories: Directories = directoriesFor(Configurations.Test)
-
-    val deps = EvaluateTask.evaluateTask(buildStruct, Keys.externalDependencyClasspath in Configurations.Test, state, projectRef, false, EvaluateTask.SystemProcessors) match {
-      case Some(Value(deps)) => deps
-      case _ => logger(state).error("Failed to obtain dependency classpath"); throw new IllegalArgumentException()
-    }
-    
-    val libraries = EvaluateTask.evaluateTask(buildStruct, Keys.update, state, projectRef, false, EvaluateTask.SystemProcessors) match {
-
-      case Some(Value(report)) =>
-        val libraries = convertDeps(report, deps, scalaInstance.version)
-
-        val withClassifiers = {
-          if (args.contains(WithClassifiers)) {
-            EvaluateTask.evaluateTask(buildStruct, Keys.updateClassifiers, state, projectRef, false, EvaluateTask.SystemProcessors) match {
-              case Some(Value(report)) => addClassifiers(libraries, report)
-              case _ => libraries
-            }
-          }
-          else libraries
-        }
-
-        if (args.contains(WithSbtClassifiers)) {
-          EvaluateTask.evaluateTask(buildStruct, Keys.updateSbtClassifiers, state, projectRef, false, EvaluateTask.SystemProcessors) match {
-            case Some(Value(report)) => addClassifiers(withClassifiers, report)
-            case _ => withClassifiers
-          }
-        }
-        else withClassifiers
-
-      case _ => Seq.empty
-    }
-
+    val librariesExtractor = new SbtIdeaModuleMapping.LibrariesExtractor(buildStruct, state, projectRef,
+      logger(state), scalaInstance, 
+      withClassifiers = args.contains(WithClassifiers),
+      withSbtClassifiers = args.contains(WithSbtClassifiers)
+    )
     SubProjectInfo(baseDirectory, projectName, project.uses.map(_.project).toList, compileDirectories,
-      testDirectories, libraries.map(_._1), scalaInstance, ideaGroup, None)
+      testDirectories, librariesExtractor.allLibraries, scalaInstance, ideaGroup, None)
   }
+
 }
