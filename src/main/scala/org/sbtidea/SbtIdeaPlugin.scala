@@ -75,7 +75,7 @@ object SbtIdeaPlugin extends Plugin {
       module.save()
     }
 
-    // Run the `update-classifiers` task to download and find the path of the SBT sources.
+    // Run the `update-sbt-classifiers` task to download and find the path of the SBT sources.
     // See https://github.com/harrah/xsbt/issues/88 for a problem with this in SBT 0.10.0
     //
     // Workaround is to add this resolver to your build (or, temporarily, to your build session).
