@@ -20,15 +20,15 @@ object SbtIdeaModuleMapping {
    *   * `unmanagedClasspath`
    */
   final class LibrariesExtractor(buildStruct: Load.BuildStructure, state: State, projectRef: ProjectRef, logger: Logger,
-                           scalaInstance: ScalaInstance, withClassifiers: Boolean, withSbtClassifiers: Boolean) {
+                                 scalaInstance: ScalaInstance, withClassifiers: Boolean) {
 
     def allLibraries: Seq[IdeaModuleLibRef] = managedLibraries ++ unmanagedLibraries
 
     /**
      * Creates an IDEA library entry for each entry in `externalDependencyClasspath` in `Test` and `Compile.
      *
-     * The result of `update`, `updateClassfiers`, and `updateSbtClassfiers` is used to find the
-     * location on disk of the library, by default in $HOME/.ivy2/cache
+     * The result of `update`, `updateClassifiers`, and is used to find the location of the library,
+     * by default in $HOME/.ivy2/cache
      */
     def managedLibraries: Seq[IdeaModuleLibRef] = {
       val deps = evaluateTask(Keys.externalDependencyClasspath in Configurations.Test) match {
@@ -40,23 +40,12 @@ object SbtIdeaModuleMapping {
         case Some(Value(report)) =>
           val libraries: Seq[(IdeaModuleLibRef, ModuleID)] = convertDeps(report, deps, scalaInstance.version)
 
-          val librariesWithClassifiers = {
-            if (withClassifiers) {
-              evaluateTask(Keys.updateClassifiers) match {
-                case Some(Value(report)) => addClassifiers(libraries, report)
-                case _ => libraries
-              }
+          if (withClassifiers) {
+            evaluateTask(Keys.updateClassifiers) match {
+              case Some(Value(report)) => addClassifiers(libraries, report)
+              case _ => libraries
             }
-            else libraries
-          }
-
-          if (withSbtClassifiers) {
-            evaluateTask(Keys.updateSbtClassifiers) match {
-              case Some(Value(report)) => addClassifiers(librariesWithClassifiers, report)
-              case _ => librariesWithClassifiers
-            }
-          }
-          else librariesWithClassifiers
+          } else libraries
 
         case _ => Seq.empty
       }
@@ -76,7 +65,8 @@ object SbtIdeaModuleMapping {
       def unmanagedLibrariesFor(config: Configuration): Seq[IdeaModuleLibRef] = {
         evaluateTask(Keys.unmanagedClasspath in config) match {
           case Some(Value(unmanagedClassPathSeq)) =>
-            /** Uses naming convention to look for an artifact with `classifier` in the same directory as `orig`. */
+
+            /**Uses naming convention to look for an artifact with `classifier` in the same directory as `orig`. */
             def classifier(orig: File, classifier: String): Option[File] = file(orig.getAbsolutePath.replace(".jar", "-%s.jar".format(classifier))) match {
               case x if x.exists => Some(x)
               case _ => None
@@ -99,7 +89,7 @@ object SbtIdeaModuleMapping {
       compileUnmanagedLibraries ++ testUnmanagedLibraries
     }
 
-    private def evaluateTask[T](taskKey : sbt.Project.ScopedKey[sbt.Task[T]]) =
+    private def evaluateTask[T](taskKey: sbt.Project.ScopedKey[sbt.Task[T]]) =
       EvaluateTask.evaluateTask(buildStruct, taskKey, state, projectRef, false, EvaluateTask.SystemProcessors)
   }
 
@@ -109,7 +99,7 @@ object SbtIdeaModuleMapping {
     m1.organization == m2.organization && name(m1) == name(m2)
   }
 
-  private def ideaLibFromModule(moduleReport: ModuleReport) = {
+  private def ideaLibFromModule(moduleReport: ModuleReport): IdeaLibrary = {
     val module = moduleReport.module
     def findByClassifier(classifier: Option[String]) = moduleReport.artifacts.collect {
       case (artifact, file) if (artifact.classifier == classifier) => file
@@ -198,5 +188,15 @@ object SbtIdeaModuleMapping {
 
     modifiedModuleLibRefs ++ unmodifiedModuleLibRefs
 
+  }
+
+  def extractLibraries(report: UpdateReport): Seq[IdeaLibrary] = {
+    report.configurations.flatMap {
+      configReport =>
+        configReport.modules.map {
+          moduleReport =>
+            ideaLibFromModule(moduleReport)
+        }
+    }
   }
 }

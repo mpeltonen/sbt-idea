@@ -75,8 +75,25 @@ object SbtIdeaPlugin extends Plugin {
       module.save()
     }
 
+    // Run the `update-classifiers` task to download and find the path of the SBT sources.
+    // See https://github.com/harrah/xsbt/issues/88 for a problem with this in SBT 0.10.0
+    //
+    // Workaround is to add this resolver to your build (or, temporarily, to your build session).
+    //
+    // resolvers += Resolver.url("typesafe-snapshots") artifacts "http://repo.typesafe.com/typesafe/ivy-snapshots/[organisation]/[module]/[revision]/jars/[artifact](-[classifier]).[ext]"
+    //
+    val sbtModuleSourceFiles: Seq[File] = {
+      val sbtLibs: Seq[IdeaLibrary] = if (args.contains(WithSbtClassifiers)) {
+        EvaluateTask.evaluateTask(buildStruct, Keys.updateSbtClassifiers, state, projectList.head._1, false, EvaluateTask.SystemProcessors) match {
+          case Some(Value(report)) => extractLibraries(report)
+          case _ => Seq()
+        }
+      } else Seq()
+      sbtLibs.flatMap(_.sources)
+    }
+
     val sbtDef = new SbtProjectDefinitionIdeaModuleDescriptor(imlDir, projectInfo.baseDir,
-      new File(projectInfo.baseDir, "project"), sbtScalaVersion, sbtVersion, sbtOut, buildUnit.classpath, logger(state))
+      new File(projectInfo.baseDir, "project"), sbtScalaVersion, sbtVersion, sbtOut, buildUnit.classpath, sbtModuleSourceFiles, logger(state))
     sbtDef.save()
 
     state
@@ -133,9 +150,8 @@ object SbtIdeaPlugin extends Plugin {
     val compileDirectories: Directories = directoriesFor(Configurations.Compile)
     val testDirectories: Directories = directoriesFor(Configurations.Test)
     val librariesExtractor = new SbtIdeaModuleMapping.LibrariesExtractor(buildStruct, state, projectRef,
-      logger(state), scalaInstance, 
-      withClassifiers = args.contains(WithClassifiers),
-      withSbtClassifiers = args.contains(WithSbtClassifiers)
+      logger(state), scalaInstance,
+      withClassifiers = args.contains(WithClassifiers)
     )
     SubProjectInfo(baseDirectory, projectName, project.uses.map(_.project).toList, compileDirectories,
       testDirectories, librariesExtractor.allLibraries, scalaInstance, ideaGroup, None)
