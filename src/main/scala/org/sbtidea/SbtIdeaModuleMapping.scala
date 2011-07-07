@@ -162,7 +162,7 @@ object SbtIdeaModuleMapping {
 
               ideaModuleLibRefs.find {
                 case (moduleLibRef, moduleId) =>
-                  moduleLibRef.config == toScope(configReport.configuration) && equivModule(moduleReport.module, moduleId)
+                  (moduleLibRef.config == toScope(configReport.configuration) || configReport.configuration == "default") && equivModule(moduleReport.module, moduleId)
               } map {
                 case (moduleLibRef, moduleId) =>
 
