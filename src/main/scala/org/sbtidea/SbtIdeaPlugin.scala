@@ -15,7 +15,9 @@ object SbtIdeaPlugin extends Plugin {
   val ideaProjectGroup = SettingKey[String]("idea-project-group")
   val sbtScalaInstance = SettingKey[ScalaInstance]("sbt-scala-instance")
   val ideaIgnoreModule = SettingKey[Boolean]("idea-ignore-module")
-  override lazy val settings = Seq(Keys.commands += ideaCommand, ideaProjectName := "IdeaProject")
+  val ideaBasePackage = SettingKey[Option[String]]("idea-base-package", "The base package configured in the Scala Facet, used by IDEA to generated nested package clauses. For example, com.acme.wibble")
+
+  override lazy val settings = Seq(Keys.commands += ideaCommand, ideaProjectName := "IdeaProject", ideaBasePackage := None)
 
   private val WithClassifiers = "with-classifiers"
   private val WithSbtClassifiers = "with-sbt-classifiers"
@@ -153,8 +155,9 @@ object SbtIdeaPlugin extends Plugin {
       logger(state), scalaInstance,
       withClassifiers = args.contains(WithClassifiers)
     )
+    val basePackage = setting(ideaBasePackage, "missing IDEA base package")
     SubProjectInfo(baseDirectory, projectName, project.uses.map(_.project).toList, compileDirectories,
-      testDirectories, librariesExtractor.allLibraries, scalaInstance, ideaGroup, None)
+      testDirectories, librariesExtractor.allLibraries, scalaInstance, ideaGroup, None, basePackage)
   }
 
 }
