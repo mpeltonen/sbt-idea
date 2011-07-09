@@ -30,6 +30,9 @@ class IdeaModuleDescriptor(val imlDir: File, projectRoot: File, val project: Sub
       <component name="FacetManager">
         <facet type="scala" name="Scala">
           <configuration>
+            {
+              project.basePackage.map(bp => <option name="basePackage" value={bp} />).getOrElse(scala.xml.Null)
+            }
             <option name="compilerLibraryLevel" value="Project" />
             <option name="compilerLibraryName" value={ "scala-" + project.scalaInstance.version } />
           </configuration>
