@@ -72,10 +72,11 @@ class IdeaProjectDescriptor(val projectInfo: IdeaProjectInfo, val env: IdeaProje
           })
           }
         </CLASSES>
-        <JAVADOC />
+        <JAVADOC>
         {
         library.javaDocs.map(file => <root url={String.format("jar://%s!/", projectRelative(file))} />)
         }
+        </JAVADOC>
         <SOURCES>
           {
           library.sources.map(file => {
