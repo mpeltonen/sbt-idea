@@ -67,13 +67,12 @@ class SbtProjectDefinitionIdeaModuleDescriptor(val imlDir: File,
     <content url={"file://" + relativePath(sbtProjectDir)}>
       <sourceFolder url={"file://" + relativePath(sbtProjectDir)} isTestSource="false" />
       <sourceFolder url={"file://" + relativePath(sbtProjectDir) + "/plugins"} isTestSource="false" />
-      <excludeFolder url={"file://" + relativePath(sbtProjectDir) + "/boot"} />
-      <excludeFolder url={"file://" + relativePath(sbtProjectDir) + "/build"} />
-      <excludeFolder url={"file://" + relativePath(sbtProjectDir) + "/extra-install-files"} />
-      <excludeFolder url={"file://" + relativePath(sbtProjectDir) + "/plugins/lib"} />
-      <excludeFolder url={"file://" + relativePath(sbtProjectDir) + "/plugins/project"} />
-      <excludeFolder url={"file://" + relativePath(sbtProjectDir) + "/plugins/target"} />
-      <excludeFolder url={"file://" + relativePath(sbtProjectDir) + "/target"} />
+      {
+      val excluded = Seq("boot", "target", "plugins/target", "plugins/project/target")
+      for (e <- excluded) yield {
+        <excludeFolder url={"file://" + relativePath(sbtProjectDir) + "/" + e} />
+      }
+      }
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
