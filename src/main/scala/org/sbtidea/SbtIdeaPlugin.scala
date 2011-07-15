@@ -19,10 +19,10 @@ object SbtIdeaPlugin extends Plugin {
 
   override lazy val settings = Seq(Keys.commands += ideaCommand, ideaProjectName := "IdeaProject", ideaBasePackage := None)
 
-  private val WithClassifiers = "with-classifiers"
-  private val WithSbtClassifiers = "with-sbt-classifiers"
+  private val NoClassifiers = "no-classifiers"
+  private val NoSbtClassifiers = "no-sbt-classifiers"
 
-  private val args = (Space ~> WithClassifiers | Space ~> WithSbtClassifiers).*
+  private val args = (Space ~> NoClassifiers | Space ~> NoSbtClassifiers).*
 
   private lazy val ideaCommand = Command("gen-idea")(_ => args)(doCommand)
 
@@ -85,7 +85,7 @@ object SbtIdeaPlugin extends Plugin {
     // resolvers += Resolver.url("typesafe-snapshots") artifacts "http://repo.typesafe.com/typesafe/ivy-snapshots/[organisation]/[module]/[revision]/jars/[artifact](-[classifier]).[ext]"
     //
     val sbtModuleSourceFiles: Seq[File] = {
-      val sbtLibs: Seq[IdeaLibrary] = if (args.contains(WithSbtClassifiers)) {
+      val sbtLibs: Seq[IdeaLibrary] = if (!args.contains(NoSbtClassifiers)) {
         EvaluateTask.evaluateTask(buildStruct, Keys.updateSbtClassifiers, state, projectList.head._1, false, EvaluateTask.SystemProcessors) match {
           case Some(Value(report)) => extractLibraries(report)
           case _ => Seq()
@@ -153,7 +153,7 @@ object SbtIdeaPlugin extends Plugin {
     val testDirectories: Directories = directoriesFor(Configurations.Test)
     val librariesExtractor = new SbtIdeaModuleMapping.LibrariesExtractor(buildStruct, state, projectRef,
       logger(state), scalaInstance,
-      withClassifiers = args.contains(WithClassifiers)
+      withClassifiers = !args.contains(NoClassifiers)
     )
     val basePackage = setting(ideaBasePackage, "missing IDEA base package")
     SubProjectInfo(baseDirectory, projectName, project.uses.map(_.project).toList, compileDirectories,

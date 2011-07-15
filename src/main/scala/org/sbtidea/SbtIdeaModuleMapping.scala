@@ -121,27 +121,34 @@ object SbtIdeaModuleMapping {
     }
   }
 
-  private def mapToIdeaModuleLibs(configuration: String, modules: Seq[ModuleReport], deps: Keys.Classpath) = {
-    val scope = toScope(configuration)
-    val depFilter = libDepFilter(deps) _
+  private def mapToIdeaModuleLibs(configuration: String, modules: Seq[ModuleReport], deps: Keys.Classpath,
+                                  scalaVersion: String) = {
 
-    modules.filter(modReport => depFilter(modReport)).map(moduleReport => {
+    val scope = toScope(configuration)
+    val depFilter = libDepFilter(deps.flatMap(_.get(Keys.moduleID.key)), scalaVersion) _
+
+    modules.filter(modReport => depFilter(modReport.module)).map(moduleReport => {
       (IdeaModuleLibRef(scope, ideaLibFromModule(moduleReport)), moduleReport.module)
     })
   }
 
-  private def libDepFilter(deps: Keys.Classpath)(moduleReport: ModuleReport): Boolean = {
-    deps.files.exists(dep => moduleReport.artifacts.exists(_._2 == dep))
+  private def libDepFilter(deps: Seq[ModuleID], scalaVersion: String)(module: ModuleID): Boolean = {
+    deps.exists(equivModule(_, module, scalaVersion))
   }
 
   private def convertDeps(report: UpdateReport, deps: Keys.Classpath, scalaVersion: String): Seq[(IdeaModuleLibRef, ModuleID)] = {
+
+    //TODO If we could retrieve the correct configurations for the ModuleID, we could filter by configuration in
+    //mapToIdeaModuleLibs and remove the hardcoded configurations. Something like the following would be enough:
+    //report.configurations.flatMap(configReport => mapToIdeaModuleLibs(configReport.configuration, configReport.modules, deps))
+
     Seq("compile", "runtime", "test", "provided").flatMap(report.configuration).foldLeft(Seq[(IdeaModuleLibRef, ModuleID)]()) {
       (acc, configReport) =>
         val filteredModules = configReport.modules.filterNot(m1 =>
           acc.exists {
             case (_, m2) => equivModule(m1.module, m2, scalaVersion)
           })
-        acc ++ mapToIdeaModuleLibs(configReport.configuration, filteredModules, deps)
+        acc ++ mapToIdeaModuleLibs(configReport.configuration, filteredModules, deps, scalaVersion)
     }
   }
 
