@@ -125,7 +125,7 @@ object SbtIdeaModuleMapping {
                                   scalaVersion: String) = {
 
     val scope = toScope(configuration)
-    val depFilter = libDepFilter(deps.map(_.get(Keys.moduleID.key).get), scalaVersion) _
+    val depFilter = libDepFilter(deps.flatMap(_.get(Keys.moduleID.key)), scalaVersion) _
 
     modules.filter(modReport => depFilter(modReport.module)).map(moduleReport => {
       (IdeaModuleLibRef(scope, ideaLibFromModule(moduleReport)), moduleReport.module)
