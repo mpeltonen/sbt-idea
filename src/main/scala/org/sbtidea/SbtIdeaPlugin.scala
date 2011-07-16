@@ -13,7 +13,6 @@ import java.lang.IllegalArgumentException
 object SbtIdeaPlugin extends Plugin {
   val ideaProjectName = SettingKey[String]("idea-project-name")
   val ideaProjectGroup = SettingKey[String]("idea-project-group")
-  val sbtScalaInstance = SettingKey[ScalaInstance]("sbt-scala-instance")
   val ideaIgnoreModule = SettingKey[Boolean]("idea-ignore-module")
   val ideaBasePackage = SettingKey[Option[String]]("idea-base-package", "The base package configured in the Scala Facet, used by IDEA to generated nested package clauses. For example, com.acme.wibble")
 
