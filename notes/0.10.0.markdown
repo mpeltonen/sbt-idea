@@ -1,0 +1,12 @@
+Initial release of the plugin for sbt version 0.10.1
+
+Special thanks to [scroyston][1], [ijuma][2], [tackley][3], [retronym][4] and [teigen][5] for substantial contributions and making 0.10 version happen!
+
+Further details from [GitHub repository README][6]
+
+[1]: https://github.com/scroyston
+[2]: https://github.com/ijuma
+[3]: https://github.com/tackley
+[4]: https://github.com/retronym
+[5]: https://github.com/teigen
+[6]: https://github.com/mpeltonen/sbt-idea/tree/sbt-0.10
