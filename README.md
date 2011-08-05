@@ -1,7 +1,8 @@
 Requirements
 ------------
 
-* [sbt](https://github.com/harrah/xsbt/wiki) 0.10.1 (does not work/compile with sbt 0.10.0)
+* [sbt](https://github.com/harrah/xsbt/wiki) 0.10.1 (does not work/compile with sbt 0.10.0). NOTE: For sbt 0.7.x version of the plugin, see [branch sbt-0.7](https://github.com/mpeltonen/sbt-idea/tree/sbt-0.7)
+
 
 Installation
 ------------
