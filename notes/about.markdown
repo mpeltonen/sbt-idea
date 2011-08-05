@@ -1,5 +1,5 @@
-[sbt-idea][1] is a [simple-build-tool][2] plugin and processor that automates creation of [IntelliJ IDEA][3] project files from SBT project definition.
+[sbt-idea][1] is a [simple-build-tool][2] plugin that automates creation of [IntelliJ IDEA][3] project files from sbt project definition.
 
-[1]: http://github.com/mpeltonen/sbt-idea
-[2]: http://code.google.com/p/simple-build-tool/
+[1]: http://github.com/mpeltonen/sbt-idea/tree/sbt-0.10
+[2]: https://github.com/harrah/xsbt/wiki
 [3]: http://www.jetbrains.com/idea/
