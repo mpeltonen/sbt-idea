@@ -105,10 +105,14 @@ object SbtIdeaPlugin extends Plugin {
 
     def optionalSetting[A](key: ScopedSetting[A]) = key in projectRef get buildStruct.data
 
+    def logErrorAndFail(errorMessage: String): Nothing = {
+      logger(state).error(errorMessage);
+      throw new IllegalArgumentException()
+    }
+
     def setting[A](key: ScopedSetting[A], errorMessage: => String) = {
       optionalSetting(key) getOrElse {
-        logger(state).error(errorMessage);
-        throw new IllegalArgumentException()
+        logErrorAndFail(errorMessage)
       }
     }
 
@@ -119,7 +123,20 @@ object SbtIdeaPlugin extends Plugin {
     logger(state).info("Trying to create an Idea module " + projectName)
 
     val ideaGroup = optionalSetting(ideaProjectGroup)
-    val scalaInstance = setting(Keys.scalaInstance, "Missing scala instance")
+    val scalaInstance: ScalaInstance = {
+      val missingScalaInstanceMessage = "Missing scala instance"
+      // Compatibility from SBT 0.10.1 -> 0.10.2-SNAPSHOT
+      (Keys.scalaInstance: Any) match {
+        case k: ScopedSetting[_] =>
+          setting(k.asInstanceOf[ScopedSetting[ScalaInstance]], missingScalaInstanceMessage)
+        case t: TaskKey[_] =>
+          val scalaInstanceTaskKey = t.asInstanceOf[TaskKey[ScalaInstance]]
+          EvaluateTask.evaluateTask(buildStruct, scalaInstanceTaskKey, state, projectRef, false, EvaluateTask.SystemProcessors) match {
+            case Some(Value(instance)) => instance
+            case _ => logErrorAndFail(missingScalaInstanceMessage)
+          }
+      }
+    }
 
     val baseDirectory = setting(Keys.baseDirectory, "Missing base directory!")
     val target = setting(Keys.target, "Missing target directory")
