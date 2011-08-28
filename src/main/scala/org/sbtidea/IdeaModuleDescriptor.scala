@@ -53,9 +53,28 @@ class IdeaModuleDescriptor(val imlDir: File, projectRoot: File, val project: Sub
           { testSources.map(sourceFolder(_, true)) }
           { testResources.map(sourceFolder(_, true)) }
           {
-            env.excludedFolders.split(",").toList.map(_.trim).sorted.map { entry =>
-              log.info(String.format("Excluding folder %s\n", entry))
-              <excludeFolder url={String.format("file://%s", relativePath(new File(project.baseDir, entry)))} />
+
+            def dontExcludeManagedSources(toExclude:File):Seq[File] = {
+
+              def isParent(f:File):Boolean = {
+                f == toExclude || (f != null && isParent(f.getParentFile))
+              }
+
+              val managed = project.compileDirs.sources ++ project.testDirs.sources
+              val dontExclude = managed.exists(isParent)
+
+              if(dontExclude)
+                toExclude.listFiles().toSeq.filter(_.isDirectory).filterNot(managed.contains).flatMap(dontExcludeManagedSources)
+              else
+                Seq(toExclude)
+            }
+
+            env.excludedFolders.split(",").toList.map(_.trim)
+              .map(entry => new File(project.baseDir, entry))
+              .flatMap(dontExcludeManagedSources)
+              .sortBy(_.getName).map { exclude =>
+              log.info(String.format("Excluding folder %s\n", exclude))
+              <excludeFolder url={String.format("file://%s", relativePath(exclude))} />
             }
           }
         </content>
