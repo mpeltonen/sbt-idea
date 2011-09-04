@@ -8,10 +8,13 @@ object SbtIdeaBuild extends Build {
 		sbtPlugin := true,
 		organization := "com.github.mpeltonen",
 		name := "sbt-idea",
-		version := "0.10.1-SNAPSHOT",
+		version := "0.11.0-SNAPSHOT",
 		publishTo := Some(Resolver.file("Github Pages", Path.userHome / "git" / "mpeltonen.github.com" / "maven" asFile)(Patterns(true, Resolver.mavenStyleBasePattern))),
+		publishMavenStyle := true,
+		resolvers += Classpaths.typesafeSnapshots,
 		scalacOptions ++= Seq("-deprecation", "-unchecked"),
     libraryDependencies ++= scriptedTestHelperDependencies
+                
 	)
 
   private def scriptedTestHelperDependencies = Seq(
