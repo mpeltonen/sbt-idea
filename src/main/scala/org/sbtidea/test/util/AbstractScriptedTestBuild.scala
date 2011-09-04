@@ -15,7 +15,7 @@ abstract class AbstractScriptedTestBuild extends Build {
     val expectedFiles = listFiles(file("."), Seq("expected").toArray, true).toArray.map(_.asInstanceOf[File])
     Seq(expectedFiles: _*).map(assertExpectedXml).foldLeft[Option[String]](None) {
       (acc, fileResult) => if (acc.isDefined) acc else fileResult
-    } foreach error
+    } foreach sys.error
   }
 
   private def assertExpectedXml(expectedFile: File):Option[String] = {
