@@ -7,7 +7,7 @@ Requirements
 Installation
 ------------
 
-Add the following lines to ~/.sbt/plugins/build.sbt:
+Add the following lines to ~/.sbt/plugins/build.sbt or PROJECT_DIR/project/plugins/build.sbt
 
     resolvers += "sbt-idea-repo" at "http://mpeltonen.github.com/maven/"
     
