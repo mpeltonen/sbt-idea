@@ -8,7 +8,7 @@ Requirements
 Installation
 ------------
 
-*sbt 0.10.1:*
+**sbt 0.10.1:**
 
 Add the following lines to ~/.sbt/plugins/build.sbt or PROJECT_DIR/project/plugins/build.sbt
 
@@ -16,7 +16,7 @@ Add the following lines to ~/.sbt/plugins/build.sbt or PROJECT_DIR/project/plugi
     
     libraryDependencies += "com.github.mpeltonen" %% "sbt-idea" % "0.10.0"
 
-*sbt 0.11.0-RC1:*
+**sbt 0.11.0-RC1:**
 
 Add the following lines to ~/.sbt/plugins.sbt or PROJECT_DIR/project/plugins.sbt
 
