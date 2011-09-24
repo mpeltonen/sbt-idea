@@ -118,6 +118,7 @@ class IdeaProjectDescriptor(val projectInfo: IdeaProjectInfo, val env: IdeaProje
       Seq(
         "modules.xml" -> Some(project(projectModuleManagerComponent)),
         "misc.xml" -> miscXml(configDir).map(miscTransformer.transform).map(_.head),
+        "projectCodeStyle.xml" -> Some(defaultProjectCodeStyleXml),
         "encodings.xml" -> Some(defaultEncodingsXml)
       ) foreach { 
         case (fileName, Some(xmlNode)) => saveFile(configDir, fileName, xmlNode) 
@@ -137,6 +138,18 @@ class IdeaProjectDescriptor(val projectInfo: IdeaProjectInfo, val env: IdeaProje
       log.info("Created " + configDir)
     } else log.error("Skipping .idea creation for " + projectInfo.baseDir + " since directory does not exist")
   }
+
+  val defaultProjectCodeStyleXml =
+    <project version="4">
+      <component name="CodeStyleSettingsManager">
+        <option name="PER_PROJECT_SETTINGS">
+          <value>
+            <option name="LINE_SEPARATOR" value="&#10;" />
+          </value>
+        </option>
+        <option name="USE_PER_PROJECT_SETTINGS" value="true" />
+      </component>
+    </project>
 
   val defaultEncodingsXml =
     <project version="4">
