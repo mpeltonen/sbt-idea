@@ -52,14 +52,6 @@ class SbtProjectDefinitionIdeaModuleDescriptor(val imlDir: File,
 
   def content: Node = {
 <module type="JAVA_MODULE" version="4">
-  <component name="FacetManager">
-    <facet type="scala" name="Scala">
-      <configuration>
-        <option name="compilerLibraryLevel" value="Project" />
-        <option name="compilerLibraryName" value={scalaDir} />
-      </configuration>
-    </facet>
-  </component>
   <component name="NewModuleRootManager">
     <output url={"file://" + relativePath(sbtOut)}/>
     <output-test url={"file://" + relativePath(sbtOut)}/>
