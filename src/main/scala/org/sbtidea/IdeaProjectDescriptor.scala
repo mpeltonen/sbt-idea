@@ -11,7 +11,7 @@ import xml.transform.{RewriteRule, RuleTransformer}
 import java.io.{FileOutputStream, File}
 import java.nio.channels.Channels
 import util.control.Exception._
-import xml.{Text, Elem, UnprefixedAttribute, XML, Node}
+import xml.{Text, Elem, UnprefixedAttribute, XML, Node, Unparsed}
 
 object OutputUtil {
   def saveFile(dir: File, filename: String, node: xml.Node) { saveFile(new File(dir, filename), node) }
@@ -144,7 +144,7 @@ class IdeaProjectDescriptor(val projectInfo: IdeaProjectInfo, val env: IdeaProje
       <component name="CodeStyleSettingsManager">
         <option name="PER_PROJECT_SETTINGS">
           <value>
-            <option name="LINE_SEPARATOR" value="&#10;" />
+            <option name="LINE_SEPARATOR" value={Unparsed("&#10;")} />
           </value>
         </option>
         <option name="USE_PER_PROJECT_SETTINGS" value="true" />
