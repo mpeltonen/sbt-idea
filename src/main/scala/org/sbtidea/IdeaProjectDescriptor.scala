@@ -117,15 +117,20 @@ class IdeaProjectDescriptor(val projectInfo: IdeaProjectInfo, val env: IdeaProje
 
       Seq(
         "modules.xml" -> Some(project(projectModuleManagerComponent)),
-        "misc.xml" -> miscXml(configDir).map(miscTransformer.transform).map(_.head),
-        "projectCodeStyle.xml" -> Some(defaultProjectCodeStyleXml),
-        "encodings.xml" -> Some(defaultEncodingsXml)
+        "misc.xml" -> miscXml(configDir).map(miscTransformer.transform).map(_.head)
       ) foreach { 
         case (fileName, Some(xmlNode)) => saveFile(configDir, fileName, xmlNode) 
         case _ =>
       }
 
-      if (!configFile("vcs.xml").exists) saveFile(configDir, "vcs.xml", project(vcsComponent))
+      Seq(
+        "vcs.xml" -> Some(project(vcsComponent)),
+        "projectCodeStyle.xml" -> Some(defaultProjectCodeStyleXml),
+        "encodings.xml" -> Some(defaultEncodingsXml)
+      ) foreach { 
+        case (fileName, Some(xmlNode)) if (!configFile(fileName).exists) =>  saveFile(configDir, fileName, xmlNode)
+        case _ => 
+      }
 
       val librariesDir = configFile("libraries")
       librariesDir.mkdirs
