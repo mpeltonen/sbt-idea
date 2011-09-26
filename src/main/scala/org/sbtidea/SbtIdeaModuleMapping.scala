@@ -159,42 +159,21 @@ object SbtIdeaModuleMapping {
     def equivModule(m1: ModuleID, m2: ModuleID): Boolean =
       m1.name == m2.name && m1.organization == m2.organization && m1.revision == m2.revision
 
-    val modifiedModuleLibRefs = {
-
-      report.configurations.flatMap {
-        configReport =>
-
-          configReport.modules.flatMap {
-            moduleReport =>
-
-              ideaModuleLibRefs.find {
-                case (moduleLibRef, moduleId) =>
-                  (moduleLibRef.config == toScope(configReport.configuration) || configReport.configuration == "default") && equivModule(moduleReport.module, moduleId)
-              } map {
-                case (moduleLibRef, moduleId) =>
-
-                  val ideaLibrary = {
-                    val il = ideaLibFromModule(moduleReport)
-                    il.copy(classes = il.classes ++ moduleLibRef.library.classes,
-                      javaDocs = il.javaDocs ++ moduleLibRef.library.javaDocs,
-                      sources = il.sources ++ moduleLibRef.library.sources)
-                  }
-
-                  moduleLibRef.copy(library = ideaLibrary) -> moduleId
-              }
-          }
-      }
-    }
-
-    val unmodifiedModuleLibRefs = ideaModuleLibRefs.filterNot {
-      case (_, m1) =>
-        modifiedModuleLibRefs.exists {
-          case (_, m2) => equivModule(m1, m2)
+    ideaModuleLibRefs.map { case (moduleLibRef, moduleId) =>
+      val configsAndModules = report.configurations.flatMap(configReport => configReport.modules.map(configReport.configuration -> _))
+      configsAndModules.find { case (configuration, moduleReport) =>
+        moduleLibRef.config == toScope(configuration) && equivModule(moduleReport.module, moduleId)
+      } map { case (_, moduleReport) =>
+        val ideaLibrary = {
+          val il = ideaLibFromModule(moduleReport)
+          il.copy(classes = il.classes ++ moduleLibRef.library.classes,
+            javaDocs = il.javaDocs ++ moduleLibRef.library.javaDocs,
+            sources = il.sources ++ moduleLibRef.library.sources)
         }
+
+        moduleLibRef.copy(library = ideaLibrary) -> moduleId
+      } getOrElse (moduleLibRef -> moduleId)
     }
-
-    modifiedModuleLibRefs ++ unmodifiedModuleLibRefs
-
   }
 
   def extractLibraries(report: UpdateReport): Seq[IdeaLibrary] = {
