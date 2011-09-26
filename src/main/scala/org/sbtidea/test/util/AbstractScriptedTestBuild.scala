@@ -5,6 +5,7 @@ import org.apache.commons.io.FileUtils.listFiles
 import org.apache.commons.io.FilenameUtils.removeExtension
 import scala.xml.Utility.trim
 import xml.{PrettyPrinter, XML, Node}
+import collection.JavaConverters._
 
 abstract class AbstractScriptedTestBuild extends Build {
   lazy val assertExpectedXmlFiles = TaskKey[Unit]("assert-expected-xml-files")
@@ -12,8 +13,8 @@ abstract class AbstractScriptedTestBuild extends Build {
 	lazy val scriptedTestSettings = Seq(assertExpectedXmlFiles := assertXmlsTask)
 
   private def assertXmlsTask {
-    val expectedFiles = listFiles(file("."), Seq("expected").toArray, true).toArray.map(_.asInstanceOf[File])
-    Seq(expectedFiles: _*).map(assertExpectedXml).foldLeft[Option[String]](None) {
+    val expectedFiles = listFiles(file("."), Array("expected"), true).asScala
+    expectedFiles.map(assertExpectedXml).foldLeft[Option[String]](None) {
       (acc, fileResult) => if (acc.isDefined) acc else fileResult
     } foreach sys.error
   }
