@@ -6,6 +6,7 @@ import org.apache.commons.io.FilenameUtils.removeExtension
 import scala.xml.Utility.trim
 import xml.{PrettyPrinter, XML, Node}
 import collection.JavaConverters._
+import xml.transform.{RewriteRule, RuleTransformer}
 
 abstract class AbstractScriptedTestBuild extends Build {
   lazy val assertExpectedXmlFiles = TaskKey[Unit]("assert-expected-xml-files")
@@ -26,7 +27,29 @@ abstract class AbstractScriptedTestBuild extends Build {
   }
 
   private def assertExpectedXml(expectedFile: File, actualFile: File): Option[String] = {
-    val actualXml = trim(XML.loadFile(actualFile))
+
+    /* Strip the suffix that is randomly generated from content url so that comparisons can work */
+    def processActual(node: xml.Node): xml.Node = {
+      if (!actualFile.getName.contains(".iml")) node
+      else {
+        
+        def elementMatches(e: xml.Node): Boolean = {
+          val url = (e \ "@url").text
+          url.startsWith("file:///tmp/sbt_") && url.endsWith("/simple-project")
+        }
+
+        new RuleTransformer(new RewriteRule {
+          override def transform (n: Node): Seq[Node] = n match {
+            case e: xml.Elem if e.label == "content" && elementMatches(e) =>
+              <content url="file:///tmp/sbt_/simple-project">{e.child}</content>
+            case _ => n
+          }
+        }).transform(node).head
+
+      }
+    }
+
+    val actualXml = processActual(trim(XML.loadFile(actualFile)))
     val expectedXml = trim(XML.loadFile(expectedFile))
     if (!actualXml.equals(expectedXml)) Some(formatErrorMessage(actualFile, actualXml, expectedXml)) else None
   }
