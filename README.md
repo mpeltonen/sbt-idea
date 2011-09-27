@@ -1,8 +1,7 @@
 Requirements
 ------------
 
-* [sbt](https://github.com/harrah/xsbt/wiki) 0.10.1 (does not work/compile with sbt 0.10.0). NOTE: For sbt 0.7.x version of the plugin, see [branch sbt-0.7](https://github.com/mpeltonen/sbt-idea/tree/sbt-0.7)
-* or 0.11.0
+* [sbt](https://github.com/harrah/xsbt/wiki) 0.10.1 (does not work/compile with sbt 0.10.0) or later. NOTE: For sbt 0.7.x version of the plugin, see [branch sbt-0.7](https://github.com/mpeltonen/sbt-idea/tree/sbt-0.7)
 
 
 Installation
@@ -22,7 +21,7 @@ Add the following lines to ~/.sbt/plugins.sbt or PROJECT_DIR/project/plugins.sbt
 
     resolvers += "sbt-idea-repo" at "http://mpeltonen.github.com/maven/"
     
-    addSbtPlugin("com.github.mpeltonen" % "sbt-idea" % "0.11.0-SNAPSHOT")
+    addSbtPlugin("com.github.mpeltonen" % "sbt-idea" % "0.11.0")
 
 Usage
 -----
