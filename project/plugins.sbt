@@ -5,4 +5,4 @@ resolvers ++= Seq(
 
 libraryDependencies <+= sbtVersion("org.scala-tools.sbt" %% "scripted-plugin" % _)
 
-addSbtPlugin("com.github.mpeltonen" % "sbt-idea" % "0.11.0-SNAPSHOT")
+addSbtPlugin("com.github.mpeltonen" % "sbt-idea" % "0.11.0")
