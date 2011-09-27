@@ -1,0 +1,11 @@
+
+* Compatibility with sbt version 0.11.0 ([issue 88][5])
+* Do not exclude managed source folders under target ([issue 78][1])
+* Set default file encoding and line separator if not already set ([issue 89][2] and [issue 90][3])
+* Remove Scala facet from project definition module ([issue 92][4])
+
+[1]: https://github.com/mpeltonen/sbt-idea/issues/78
+[2]: https://github.com/mpeltonen/sbt-idea/issues/89
+[3]: https://github.com/mpeltonen/sbt-idea/issues/90
+[4]: https://github.com/mpeltonen/sbt-idea/issues/92
+[5]: https://github.com/mpeltonen/sbt-idea/issues/88
