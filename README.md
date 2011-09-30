@@ -17,7 +17,7 @@ Add the following lines to ~/.sbt/plugins/build.sbt or PROJECT_DIR/project/plugi
 
 **sbt 0.11.0:**
 
-Add the following lines to ~/.sbt/plugins.sbt or PROJECT_DIR/project/plugins.sbt
+Add the following lines to ~/.sbt/plugins/build.sbt or PROJECT_DIR/project/plugins.sbt
 
     resolvers += "sbt-idea-repo" at "http://mpeltonen.github.com/maven/"
     
