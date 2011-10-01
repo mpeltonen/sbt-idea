@@ -15,8 +15,16 @@ object SbtIdeaPlugin extends Plugin {
   val ideaProjectGroup = SettingKey[String]("idea-project-group")
   val ideaIgnoreModule = SettingKey[Boolean]("idea-ignore-module")
   val ideaBasePackage = SettingKey[Option[String]]("idea-base-package", "The base package configured in the Scala Facet, used by IDEA to generated nested package clauses. For example, com.acme.wibble")
+  val ideaSourcesClassifiers = SettingKey[Seq[String]]("idea-sources-classifiers")
+  val ideaJavadocsClassifiers = SettingKey[Seq[String]]("idea-javadocs-classifiers")
 
-  override lazy val settings = Seq(Keys.commands += ideaCommand, ideaProjectName := "IdeaProject", ideaBasePackage := None)
+  override lazy val settings = Seq(
+    Keys.commands += ideaCommand,
+    ideaProjectName := "IdeaProject",
+    ideaBasePackage := None,
+    ideaSourcesClassifiers := Seq("sources"),
+    ideaJavadocsClassifiers := Seq("javadoc")
+  )
 
   private val NoClassifiers = "no-classifiers"
   private val NoSbtClassifiers = "no-sbt-classifiers"
@@ -169,7 +177,9 @@ object SbtIdeaPlugin extends Plugin {
     val testDirectories: Directories = directoriesFor(Configurations.Test)
     val librariesExtractor = new SbtIdeaModuleMapping.LibrariesExtractor(buildStruct, state, projectRef,
       logger(state), scalaInstance,
-      withClassifiers = !args.contains(NoClassifiers)
+      withClassifiers = if (args.contains(NoClassifiers)) None else {
+        Some((setting(ideaSourcesClassifiers, "Missing idea-sources-classifiers"), setting(ideaJavadocsClassifiers, "Missing idea-javadocs-classifiers")))
+      }
     )
     val basePackage = setting(ideaBasePackage, "missing IDEA base package")
     SubProjectInfo(baseDirectory, projectName, project.uses.map(_.project).toList, compileDirectories,
