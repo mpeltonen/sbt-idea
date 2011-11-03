@@ -69,7 +69,7 @@ object SbtIdeaPlugin extends Plugin {
 
     val env = IdeaProjectEnvironment(projectJdkName = "1.6", javaLanguageLevel = "JDK_1_6",
       includeSbtProjectDefinitionModule = true, projectOutputPath = None, excludedFolders = "target",
-      compileWithIdea = false, modulePath = Some(".idea_modules"), useProjectFsc = if (args.contains(NoFsc)) false else true)
+      compileWithIdea = false, modulePath = Some(".idea_modules"), useProjectFsc = !args.contains(NoFsc))
 
     val userEnv = IdeaUserEnvironment(false)
 
