@@ -28,8 +28,9 @@ object SbtIdeaPlugin extends Plugin {
 
   private val NoClassifiers = "no-classifiers"
   private val NoSbtClassifiers = "no-sbt-classifiers"
+  private val NoFsc = "no-fsc"
 
-  private val args = (Space ~> NoClassifiers | Space ~> NoSbtClassifiers).*
+  private val args = (Space ~> NoClassifiers | Space ~> NoSbtClassifiers | Space ~> NoFsc).*
 
   private lazy val ideaCommand = Command("gen-idea")(_ => args)(doCommand)
 
@@ -68,7 +69,7 @@ object SbtIdeaPlugin extends Plugin {
 
     val env = IdeaProjectEnvironment(projectJdkName = "1.6", javaLanguageLevel = "JDK_1_6",
       includeSbtProjectDefinitionModule = true, projectOutputPath = None, excludedFolders = "target",
-      compileWithIdea = false, modulePath = Some(".idea_modules"))
+      compileWithIdea = false, modulePath = Some(".idea_modules"), useProjectFsc = !args.contains(NoFsc))
 
     val userEnv = IdeaUserEnvironment(false)
 

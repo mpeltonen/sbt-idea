@@ -35,6 +35,9 @@ class IdeaModuleDescriptor(val imlDir: File, projectRoot: File, val project: Sub
             }
             <option name="compilerLibraryLevel" value="Project" />
             <option name="compilerLibraryName" value={ "scala-" + project.scalaInstance.version } />
+            {
+              if (env.useProjectFsc) <option name="fsc" value="true" />
+            }
           </configuration>
         </facet>
         { if (project.webAppPath.isDefined && userEnv.webFacet == true) webFacet() else scala.xml.Null }
