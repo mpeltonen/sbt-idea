@@ -64,9 +64,13 @@ class IdeaModuleDescriptor(val project: BasicDependencyProject, val log: Logger)
             }
           }
           {
-            env.excludedFolders.value.split(",").toList.map(_.trim).sort(_ < _).map { entry =>
-              log.info(String.format("Excluding folder %s\n", entry))
-              <excludeFolder url={String.format("file://$MODULE_DIR$/%s", entry)} />
+            env.excludedFolders.value.split(",").toList.map(_.trim).sort(_ < _).flatMap { entry =>
+              if (entry.equals("")) {
+                None
+              } else {
+                log.info(String.format("Excluding folder %s\n", entry))
+                Some(<excludeFolder url={String.format("file://$MODULE_DIR$/%s", entry)} />)
+              }
             }
           }
         </content>
