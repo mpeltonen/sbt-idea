@@ -187,7 +187,7 @@ object SbtIdeaModuleMapping {
       configReport =>
         configReport.modules.map {
           moduleReport =>
-            ideaLibFromModule(moduleReport)
+            ideaLibFromModule(moduleReport, Some(Seq("sources"), Seq("javadoc")))
         }
     }
   }
