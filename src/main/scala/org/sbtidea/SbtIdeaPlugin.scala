@@ -112,17 +112,21 @@ object SbtIdeaPlugin extends Plugin {
   def projectData(projectRef: ProjectRef, project: ResolvedProject, buildStruct: BuildStructure,
                   state: State, args: Seq[String]): SubProjectInfo = {
 
-    def optionalSetting[A](key: ScopedSetting[A]) = key in projectRef get buildStruct.data
+    def optionalSetting[A](key: ScopedSetting[A]) : Option[A] = key in projectRef get buildStruct.data
 
     def logErrorAndFail(errorMessage: String): Nothing = {
       logger(state).error(errorMessage);
       throw new IllegalArgumentException()
     }
 
-    def setting[A](key: ScopedSetting[A], errorMessage: => String) = {
+    def setting[A](key: ScopedSetting[A], errorMessage: => String) : A = {
       optionalSetting(key) getOrElse {
         logErrorAndFail(errorMessage)
       }
+    }
+
+    def settingWithDefault[A](key: ScopedSetting[A], defaultValue: => A) : A = {
+      optionalSetting(key) getOrElse defaultValue
     }
 
     // The SBT project name and id can be different, we choose the id as the
@@ -150,7 +154,7 @@ object SbtIdeaPlugin extends Plugin {
     val baseDirectory = setting(Keys.baseDirectory, "Missing base directory!")
     val target = setting(Keys.target, "Missing target directory")
 
-    def directoriesFor(config: Configuration) = {
+    def sourceDirectoriesFor(config: Configuration) = {
       val hasSourceGen = optionalSetting(Keys.sourceGenerators in config).exists(!_.isEmpty)
       val managedSourceDirs = if (hasSourceGen) {
         setting(Keys.managedSourceDirectories in config, "Missing managed source directories!")
@@ -168,14 +172,19 @@ object SbtIdeaPlugin extends Plugin {
         if (config.name == "compile" && baseDirDirectlyContainsSources) Seq[File](baseDir) else Seq[File]()
       }
 
+      settingWithDefault(Keys.unmanagedSourceDirectories in config, Nil) ++ managedSourceDirs ++ baseDirs
+    }
+    def resourceDirectoriesFor(config: Configuration) = {
+      settingWithDefault(Keys.unmanagedResourceDirectories in config, Nil)
+    }
+    def directoriesFor(config: Configuration) = {
       Directories(
-        setting(Keys.unmanagedSourceDirectories in config, "Missing unmanaged source directories!") ++
-                managedSourceDirs ++ baseDirs,
-        setting(Keys.unmanagedResourceDirectories in config, "Missing unmanaged resource directories!"),
+        sourceDirectoriesFor(config),
+        resourceDirectoriesFor(config),
         setting(Keys.classDirectory in config, "Missing class directory!"))
     }
     val compileDirectories: Directories = directoriesFor(Configurations.Compile)
-    val testDirectories: Directories = directoriesFor(Configurations.Test) ++ directoriesFor(Configurations.IntegrationTest)
+    val testDirectories: Directories = directoriesFor(Configurations.Test).addSrc(sourceDirectoriesFor(Configurations.IntegrationTest)).addRes(resourceDirectoriesFor(Configurations.IntegrationTest))
     val librariesExtractor = new SbtIdeaModuleMapping.LibrariesExtractor(buildStruct, state, projectRef,
       logger(state), scalaInstance,
       withClassifiers = if (args.contains(NoClassifiers)) None else {
