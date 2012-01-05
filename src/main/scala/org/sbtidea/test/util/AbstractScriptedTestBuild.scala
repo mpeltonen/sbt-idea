@@ -32,10 +32,9 @@ abstract class AbstractScriptedTestBuild extends Build {
     def processActual(node: xml.Node): xml.Node = {
       if (!actualFile.getName.contains(".iml")) node
       else {
-        
         def elementMatches(e: xml.Node): Boolean = {
           val url = (e \ "@url").text
-          url.startsWith("file:///tmp/sbt_") && url.endsWith("/simple-project")
+          url.matches("file://.*/sbt_[a-f[0-9]]+/simple-project$")
         }
 
         new RuleTransformer(new RewriteRule {
@@ -45,7 +44,6 @@ abstract class AbstractScriptedTestBuild extends Build {
             case _ => n
           }
         }).transform(node).head
-
       }
     }
 
