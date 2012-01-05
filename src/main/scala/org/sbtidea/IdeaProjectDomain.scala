@@ -18,7 +18,11 @@ case class IdeaLibrary(name: String, classes: Seq[File], javaDocs: Seq[File], so
 
 case class IdeaModuleLibRef(config: IdeaLibrary.Scope, library: IdeaLibrary)
 
-case class Directories(sources: Seq[File], resources: Seq[File], outDir: File)
+case class Directories(sources: Seq[File], resources: Seq[File], outDir: File) {
+  def ++ (more : Directories) = {
+    Directories(sources ++ more.sources, resources ++ more.resources, outDir)
+  }
+}
 
 case class SubProjectInfo(baseDir: File, name: String, dependencyProjects: List[String], compileDirs: Directories,
                           testDirs: Directories, libraries: Seq[IdeaModuleLibRef], scalaInstance: ScalaInstance,

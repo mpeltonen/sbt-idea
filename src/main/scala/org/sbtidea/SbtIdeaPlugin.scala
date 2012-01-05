@@ -175,7 +175,7 @@ object SbtIdeaPlugin extends Plugin {
         setting(Keys.classDirectory in config, "Missing class directory!"))
     }
     val compileDirectories: Directories = directoriesFor(Configurations.Compile)
-    val testDirectories: Directories = directoriesFor(Configurations.Test)
+    val testDirectories: Directories = directoriesFor(Configurations.Test) ++ directoriesFor(Configurations.IntegrationTest)
     val librariesExtractor = new SbtIdeaModuleMapping.LibrariesExtractor(buildStruct, state, projectRef,
       logger(state), scalaInstance,
       withClassifiers = if (args.contains(NoClassifiers)) None else {
