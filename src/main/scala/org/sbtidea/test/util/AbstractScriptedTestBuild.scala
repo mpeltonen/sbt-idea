@@ -8,7 +8,7 @@ import xml.{PrettyPrinter, XML, Node}
 import collection.JavaConverters._
 import xml.transform.{RewriteRule, RuleTransformer}
 
-abstract class AbstractScriptedTestBuild extends Build {
+abstract class AbstractScriptedTestBuild(projectName : String) extends Build {
   lazy val assertExpectedXmlFiles = TaskKey[Unit]("assert-expected-xml-files")
 
 	lazy val scriptedTestSettings = Seq(assertExpectedXmlFiles := assertXmlsTask)
@@ -34,12 +34,13 @@ abstract class AbstractScriptedTestBuild extends Build {
         new RuleTransformer(new RewriteRule {
           def elementMatches(e: xml.Node): Boolean = {
             val url = (e \ "@url").text
-            url.matches("file://.*/sbt_[a-f[0-9]]+/simple-project$")
+            url.matches("file://.*/sbt_[a-f[0-9]]+/" + projectName + "$")
           }
 
           override def transform (n: Node): Seq[Node] = n match {
-            case e: xml.Elem if elementMatches(e) =>
-              <content url="file:///tmp/sbt_/simple-project">{e.child}</content>
+            case e: xml.Elem if elementMatches(e) => {
+              <content url={"file:///tmp/sbt_/" + projectName}>{e.child}</content>
+            }
             case _ => n
           }
         }).transform(node).head
@@ -48,7 +49,7 @@ abstract class AbstractScriptedTestBuild extends Build {
 
     val actualXml = processActual(trim(XML.loadFile(actualFile)))
     val expectedXml = trim(XML.loadFile(expectedFile))
-    if (!actualXml.equals(expectedXml)) Some(formatErrorMessage(actualFile, expectedXml, actualXml)) else None
+    if (!actualXml.equals(expectedXml)) Some(formatErrorMessage(actualFile, actualXml, expectedXml)) else None
   }
 
   private def formatErrorMessage(actualFile: File, actualXml: Node, expectedXml: Node): String = {
