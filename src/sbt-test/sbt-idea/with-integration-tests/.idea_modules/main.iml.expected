@@ -1,0 +1,32 @@
+<module version="4" type="JAVA_MODULE">
+  <component name="FacetManager">
+    <facet name="Scala" type="scala">
+      <configuration>
+        <option name="compilerLibraryLevel" value="Project"></option>
+        <option name="compilerLibraryName" value="scala-2.9.1"></option>
+        <option name="fsc" value="true" />
+      </configuration>
+    </facet>
+  </component>
+  <component name="NewModuleRootManager" inherit-compiler-output="false">
+    <output url="file://$MODULE_DIR$/../target/scala-2.9.1/classes"></output>
+    <output-test url="file://$MODULE_DIR$/../target/scala-2.9.1/test-classes"></output-test>
+    <exclude-output></exclude-output>
+    <content url="file:///tmp/sbt_/with-integration-tests">
+      <sourceFolder url="file://$MODULE_DIR$/../src/main/scala" isTestSource="false"></sourceFolder>
+      <sourceFolder url="file://$MODULE_DIR$/../src/main/java" isTestSource="false"></sourceFolder>
+      <sourceFolder url="file://$MODULE_DIR$/../src/main/resources" isTestSource="false"></sourceFolder>
+      <sourceFolder url="file://$MODULE_DIR$/../src/test/scala" isTestSource="true"></sourceFolder>
+      <sourceFolder url="file://$MODULE_DIR$/../src/test/java" isTestSource="true"></sourceFolder>
+      <sourceFolder url="file://$MODULE_DIR$/../src/it/scala" isTestSource="true"></sourceFolder>
+      <sourceFolder url="file://$MODULE_DIR$/../src/it/java" isTestSource="true"></sourceFolder>
+      <sourceFolder url="file://$MODULE_DIR$/../src/test/resources" isTestSource="true"></sourceFolder>
+      <sourceFolder url="file://$MODULE_DIR$/../src/it/resources" isTestSource="true"></sourceFolder>
+      <excludeFolder url="file://$MODULE_DIR$/../target"></excludeFolder>
+    </content>
+    <orderEntry type="inheritedJdk"></orderEntry>
+    <orderEntry type="sourceFolder" forTests="false"></orderEntry>
+    <orderEntry level="project" name="org.scala-lang_scala-library_2.9.1" type="library"></orderEntry>
+    <orderEntry level="project" name="junit_junit_4.8.2" type="library"></orderEntry>
+  </component>
+</module>
