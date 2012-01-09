@@ -49,9 +49,15 @@ object SbtIdeaPlugin extends Plugin {
 
     val uri = buildStruct.root
     val name: Option[String] = ideaProjectName in extracted.currentRef get buildStruct.data
-    val projectList = buildUnit.defined.map {
-      case (id, proj) => (ProjectRef(uri, id) -> proj)
-    }
+    val projectList = buildUnit.defined.flatMap {
+      case (id, proj) =>
+        var subs = for {
+          ref <- proj.aggregate
+          subProj <- Project.getProject(ref, buildStruct)
+        } yield (ref -> subProj)
+
+        (ProjectRef(uri, id) -> proj) :: subs.toList
+    }    
 
     def ignoreModule(projectRef: ProjectRef): Boolean = {
       (ideaIgnoreModule in projectRef get buildStruct.data).getOrElse(false)

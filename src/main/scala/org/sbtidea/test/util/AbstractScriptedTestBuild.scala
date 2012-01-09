@@ -29,10 +29,12 @@ abstract class AbstractScriptedTestBuild extends Build {
   private def assertExpectedXml(expectedFile: File, actualFile: File): Option[String] = {
     /* Strip the suffix that is randomly generated from content url so that comparisons can work */
     def processActual(node: xml.Node): xml.Node = {
+      if (!actualFile.getName.contains(".iml")) node
+      else {
         new RuleTransformer(new RewriteRule {
           def elementMatches(e: xml.Node): Boolean = {
-            var url = (e \ "@url").text
-            e.label == "content" && url.startsWith("file://") && url.endsWith("/simple-project")
+            val url = (e \ "@url").text
+            url.matches("file://.*/sbt_[a-f[0-9]]+/simple-project$")
           }
 
           override def transform (n: Node): Seq[Node] = n match {
@@ -41,6 +43,7 @@ abstract class AbstractScriptedTestBuild extends Build {
             case _ => n
           }
         }).transform(node).head
+      }
     }
 
     val actualXml = processActual(trim(XML.loadFile(actualFile)))
