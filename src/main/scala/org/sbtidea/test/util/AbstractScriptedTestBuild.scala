@@ -27,31 +27,25 @@ abstract class AbstractScriptedTestBuild extends Build {
   }
 
   private def assertExpectedXml(expectedFile: File, actualFile: File): Option[String] = {
-
     /* Strip the suffix that is randomly generated from content url so that comparisons can work */
     def processActual(node: xml.Node): xml.Node = {
-      if (!actualFile.getName.contains(".iml")) node
-      else {
-        
-        def elementMatches(e: xml.Node): Boolean = {
-          val url = (e \ "@url").text
-          url.startsWith("file:///tmp/sbt_") && url.endsWith("/simple-project")
-        }
-
         new RuleTransformer(new RewriteRule {
+          def elementMatches(e: xml.Node): Boolean = {
+            var url = (e \ "@url").text
+            e.label == "content" && url.startsWith("file://") && url.endsWith("/simple-project")
+          }
+
           override def transform (n: Node): Seq[Node] = n match {
-            case e: xml.Elem if e.label == "content" && elementMatches(e) =>
+            case e: xml.Elem if elementMatches(e) =>
               <content url="file:///tmp/sbt_/simple-project">{e.child}</content>
             case _ => n
           }
         }).transform(node).head
-
-      }
     }
 
     val actualXml = processActual(trim(XML.loadFile(actualFile)))
     val expectedXml = trim(XML.loadFile(expectedFile))
-    if (!actualXml.equals(expectedXml)) Some(formatErrorMessage(actualFile, actualXml, expectedXml)) else None
+    if (!actualXml.equals(expectedXml)) Some(formatErrorMessage(actualFile, expectedXml, actualXml)) else None
   }
 
   private def formatErrorMessage(actualFile: File, actualXml: Node, expectedXml: Node): String = {
