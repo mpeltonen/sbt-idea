@@ -1,0 +1,12 @@
+
+Main changes:
+
+* Bump up the version to 1.0.0 (main motivation was clearer separation from sbt version)
+* Support for FSC compiler in newer IntelliJ Scala plugins ([issue 105][1])
+* Support integration tests (src/it) ([issue 121][2])
+* Make 'no-sbt-classifiers' to be the default ([issue 119][3])
+
+[1]: https://github.com/mpeltonen/sbt-idea/pull/105
+[2]: https://github.com/mpeltonen/sbt-idea/pull/121
+[3]: https://github.com/mpeltonen/sbt-idea/issues/119
+
