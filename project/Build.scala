@@ -8,7 +8,7 @@ object SbtIdeaBuild extends Build {
     sbtPlugin := true,
     organization := "com.github.mpeltonen",
     name := "sbt-idea",
-    version := "1.0.0",
+    version := "1.1.0-SNAPSHOT",
     publishTo := Some(Resolver.file("Github Pages", Path.userHome / "git" / "mpeltonen.github.com" / "maven" asFile)(Patterns(true, Resolver.mavenStyleBasePattern))),
     publishMavenStyle := true,
     resolvers += Classpaths.typesafeSnapshots,
