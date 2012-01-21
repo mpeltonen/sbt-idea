@@ -27,10 +27,10 @@ object SbtIdeaPlugin extends Plugin {
   )
 
   private val NoClassifiers = "no-classifiers"
-  private val NoSbtClassifiers = "no-sbt-classifiers"
+  private val SbtClassifiers = "sbt-classifiers"
   private val NoFsc = "no-fsc"
 
-  private val args = (Space ~> NoClassifiers | Space ~> NoSbtClassifiers | Space ~> NoFsc).*
+  private val args = (Space ~> NoClassifiers | Space ~> SbtClassifiers | Space ~> NoFsc).*
 
   private lazy val ideaCommand = Command("gen-idea")(_ => args)(doCommand)
 
@@ -99,7 +99,7 @@ object SbtIdeaPlugin extends Plugin {
     // resolvers += Resolver.url("typesafe-snapshots") artifacts "http://repo.typesafe.com/typesafe/ivy-snapshots/[organisation]/[module]/[revision]/jars/[artifact](-[classifier]).[ext]"
     //
     val sbtModuleSourceFiles: Seq[File] = {
-      val sbtLibs: Seq[IdeaLibrary] = if (!args.contains(NoSbtClassifiers)) {
+      val sbtLibs: Seq[IdeaLibrary] = if (args.contains(SbtClassifiers)) {
         EvaluateTask.evaluateTask(buildStruct, Keys.updateSbtClassifiers, state, projectList.head._1, false, EvaluateTask.SystemProcessors) match {
           case Some(Value(report)) => extractLibraries(report)
           case _ => Seq()
