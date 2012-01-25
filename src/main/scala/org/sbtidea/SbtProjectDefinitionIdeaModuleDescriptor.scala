@@ -59,9 +59,9 @@ class SbtProjectDefinitionIdeaModuleDescriptor(projectName: String,
     <exclude-output />
     <content url={"file://" + relativePath(sbtProjectDir)}>
       <sourceFolder url={"file://" + relativePath(sbtProjectDir)} isTestSource="false" />
-      <sourceFolder url={"file://" + relativePath(sbtProjectDir) + "/plugins"} isTestSource="false" />
+      <sourceFolder url={"file://" + relativePath(sbtProjectDir) + "/project"} isTestSource="false" />
       {
-      val excluded = Seq("boot", "target", "plugins/target", "plugins/project/target")
+      val excluded = Seq("boot", "target", "project/target", "project/project/target")
       for (e <- excluded) yield {
         <excludeFolder url={"file://" + relativePath(sbtProjectDir) + "/" + e} />
       }
