@@ -108,9 +108,12 @@ object SbtIdeaPlugin extends Plugin {
       sbtLibs.flatMap(_.sources)
     }
 
-    val sbtDef = new SbtProjectDefinitionIdeaModuleDescriptor(imlDir, projectInfo.baseDir,
-      new File(projectInfo.baseDir, "project"), sbtScalaVersion, sbtVersion, sbtOut, buildUnit.classpath, sbtModuleSourceFiles, logger(state))
-    sbtDef.save()
+    // Create build projects
+    for (subProj <- subProjects) {
+      val sbtDef = new SbtProjectDefinitionIdeaModuleDescriptor(subProj.name, imlDir, subProj.baseDir,
+        new File(subProj.baseDir, "project"), sbtScalaVersion, sbtVersion, sbtOut, buildUnit.classpath, sbtModuleSourceFiles, logger(state))
+      sbtDef.save()
+    }
 
     state
   }

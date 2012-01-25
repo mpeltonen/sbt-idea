@@ -23,7 +23,8 @@ import sbt.{IO, Logger}
  * We don't need to pair them to the corresponding binary JAR file, rather we can just add them all to the
  * `sbt-and-plugins` module library.
  */
-class SbtProjectDefinitionIdeaModuleDescriptor(val imlDir: File,
+class SbtProjectDefinitionIdeaModuleDescriptor(projectName: String,
+                                               val imlDir: File,
                                                val rootProjectDir: File,
                                                sbtProjectDir: File,
                                                val sbtScalaVersion: String,
@@ -32,7 +33,7 @@ class SbtProjectDefinitionIdeaModuleDescriptor(val imlDir: File,
                                                classpath: Seq[File],
                                                sourceFiles: Seq[File],
                                                val log: Logger) extends SaveableXml {
-  val path = String.format("%s/project.iml", imlDir.getAbsolutePath)
+  val path = String.format("%s/%s-build.iml", imlDir.getAbsolutePath, projectName)
 
   // The classpath contains duplicate copies of JARs: one from the Ivy cache and and one from project boot. Assume the JAR name is unique, and
   // pick only one of these.

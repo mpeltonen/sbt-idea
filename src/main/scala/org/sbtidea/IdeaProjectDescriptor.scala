@@ -53,9 +53,11 @@ class IdeaProjectDescriptor(val projectInfo: IdeaProjectInfo, val env: IdeaProje
     <component name="ProjectModuleManager">
       <modules>
       {
-        env.includeSbtProjectDefinitionModule match {
-          case true => moduleEntry("/" + env.modulePath.get, "project", None)
-          case _ =>
+        if (env.includeSbtProjectDefinitionModule) {
+          for {moduleInfo <- projectInfo.childProjects
+               pathPrefix = if (env.modulePath.isDefined) "/" + env.modulePath.get else moduleInfo.baseDir.getCanonicalPath} yield {
+            moduleEntry("/" + env.modulePath.get, moduleInfo.name + "-build", None)
+          }
         }
       }
       {
