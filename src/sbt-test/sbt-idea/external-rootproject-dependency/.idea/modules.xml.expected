@@ -1,7 +1,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module filepath="$PROJECT_DIR$/.idea_modules/project.iml" fileurl="file://$PROJECT_DIR$/.idea_modules/project.iml"></module>
+      <module filepath="$PROJECT_DIR$/.idea_modules/root-project-build.iml" fileurl="file://$PROJECT_DIR$/.idea_modules/root-project-build.iml"></module>
+      <module filepath="$PROJECT_DIR$/.idea_modules/dependency-root-build.iml" fileurl="file://$PROJECT_DIR$/.idea_modules/dependency-root-build.iml"></module>
       <module filepath="$PROJECT_DIR$/.idea_modules/root-project.iml" fileurl="file://$PROJECT_DIR$/.idea_modules/root-project.iml"></module>
       <module filepath="$PROJECT_DIR$/.idea_modules/dependency-root.iml" fileurl="file://$PROJECT_DIR$/.idea_modules/dependency-root.iml"></module>
     </modules>
