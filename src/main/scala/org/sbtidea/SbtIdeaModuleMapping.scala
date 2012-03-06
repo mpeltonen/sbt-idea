@@ -21,7 +21,7 @@ object SbtIdeaModuleMapping {
    *   * `updateSbtClassifiers`
    *   * `unmanagedClasspath`
    */
-  final class LibrariesExtractor(buildStruct: Load.BuildStructure, state: State, projectRef: ProjectRef, logger: Logger,
+  final class LibrariesExtractor(buildStruct: Load.BuildStructure, state: State, projectRef: ProjectRef,
                                  scalaInstance: ScalaInstance, withClassifiers: Option[(Seq[SourcesClassifier], Seq[JavadocClassifier])]) {
 
     def allLibraries: Seq[IdeaModuleLibRef] = managedLibraries ++ unmanagedLibraries
@@ -35,7 +35,7 @@ object SbtIdeaModuleMapping {
     def managedLibraries: Seq[IdeaModuleLibRef] = {
       val deps = evaluateTask(Keys.externalDependencyClasspath in Configurations.Test) match {
         case Some(Value(deps)) => deps
-        case _ => logger.error("Failed to obtain dependency classpath"); throw new IllegalArgumentException()
+        case _ => state.log.error("Failed to obtain dependency classpath"); throw new IllegalArgumentException()
       }
       val libraries: Seq[(IdeaModuleLibRef, ModuleID)] = evaluateTask(Keys.update) match {
 
@@ -92,13 +92,13 @@ object SbtIdeaModuleMapping {
     }
 
     private def evaluateTask[T](taskKey: sbt.Project.ScopedKey[sbt.Task[T]]) =
-      EvaluateTask.evaluateTask(buildStruct, taskKey, state, projectRef, false, EvaluateTask.SystemProcessors)
+      EvaluateTask(buildStruct, taskKey, state, projectRef).map(_._2)
   }
 
   private def equivModule(m1: ModuleID, m2: ModuleID, scalaVersion: String) = {
-    def name(m: ModuleID): String = if (m.crossVersion) m.name + "_" + scalaVersion else m.name
+    val crossName: ModuleID => ModuleID = CrossVersion(scalaVersion, CrossVersion.binaryScalaVersion(scalaVersion))
 
-    m1.organization == m2.organization && name(m1) == name(m2)
+    m1.organization == m2.organization && crossName(m1).name == crossName(m2).name
   }
 
   private def ideaLibFromModule(configuration: String, module: ModuleID, artifacts: Seq[(Artifact, File)], classifiers: Option[(Seq[SourcesClassifier], Seq[JavadocClassifier])]): IdeaLibrary = {
