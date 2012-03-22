@@ -51,7 +51,7 @@ object SbtIdeaPlugin extends Plugin {
     val name: Option[String] = ideaProjectName in extracted.currentRef get buildStruct.data
     val projectList = {
       def getProjectList(proj: ResolvedProject): List[(ProjectRef, ResolvedProject)] = {
-        def processAggregates(aggregates: Seq[ProjectRef]): List[(ProjectRef, ResolvedProject)] = {
+        def processAggregates(aggregates: List[ProjectRef]): List[(ProjectRef, ResolvedProject)] = {
           aggregates match {
             case Nil => List.empty
             case ref :: tail => {
@@ -61,7 +61,7 @@ object SbtIdeaPlugin extends Plugin {
             }
           }
         }
-        processAggregates(proj.aggregate)
+        processAggregates(proj.aggregate.toList)
       }
 
       buildUnit.defined.flatMap {
