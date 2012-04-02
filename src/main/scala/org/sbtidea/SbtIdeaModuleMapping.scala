@@ -103,6 +103,13 @@ object SbtIdeaModuleMapping {
 
   private def ideaLibFromModule(moduleReport: ModuleReport, classifiers: Option[(Seq[SourcesClassifier], Seq[JavadocClassifier])] = None): IdeaLibrary = {
     val module = moduleReport.module
+    def findClasses = {
+      val sourceAndJavadocClassifiers: Seq[String] = classifiers map { case (a, b) => a ++ b } getOrElse Seq.empty
+      def isSourceOrJavadocArtifact(artifact: Artifact) = artifact.classifier map { sourceAndJavadocClassifiers contains _ } getOrElse false
+      moduleReport.artifacts.collect {
+        case (artifact, file) if !isSourceOrJavadocArtifact(artifact) => file
+      }
+    }
     def findByClassifier(classifier: Option[String]) = moduleReport.artifacts.collect {
       case (artifact, file) if (artifact.classifier == classifier) => file
     }
@@ -111,7 +118,7 @@ object SbtIdeaModuleMapping {
       case None => Seq[File]()
     }
     IdeaLibrary(module.organization + "_" + module.name + "_" + module.revision,
-      classes = findByClassifier(None),
+      classes = findClasses,
       sources = findByClassifiers(classifiers.map(_._1)),
       javaDocs = findByClassifiers(classifiers.map(_._2)))
   }
