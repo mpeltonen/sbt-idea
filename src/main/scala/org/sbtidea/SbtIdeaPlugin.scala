@@ -122,9 +122,12 @@ object SbtIdeaPlugin extends Plugin {
 
     // Create build projects
     for (subProj <- subProjects) {
-      val sbtDef = new SbtProjectDefinitionIdeaModuleDescriptor(subProj.name, imlDir, subProj.baseDir,
-        new File(subProj.baseDir, "project"), sbtScalaVersion, sbtVersion, sbtOut, buildUnit.classpath, sbtModuleSourceFiles, logger(state))
-      sbtDef.save()
+      val buildDefinitionDir = new File(subProj.baseDir, "project")
+      if (buildDefinitionDir.exists()) {
+        val sbtDef = new SbtProjectDefinitionIdeaModuleDescriptor(subProj.name, imlDir, subProj.baseDir,
+         buildDefinitionDir, sbtScalaVersion, sbtVersion, sbtOut, buildUnit.classpath, sbtModuleSourceFiles, logger(state))
+        sbtDef.save()
+      }
     }
 
     state
