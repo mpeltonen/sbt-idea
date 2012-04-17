@@ -44,7 +44,6 @@ class SbtProjectDefinitionIdeaModuleDescriptor(projectName: String,
   }
   
   val scalaDir = "scala-" + sbtScalaVersion
-  val sbtLibsRootDir = relativePath(new File(rootProjectDir, "project/boot/" + scalaDir + "/org.scala-tools.sbt/sbt/" + sbtVersion))
 
   private[this] def isSource(file: File) = file.getName.endsWith("-sources.jar")
   private[this] def isJavaDoc(file: File) = file.getName.endsWith("-javadoc.jar")
@@ -72,8 +71,6 @@ class SbtProjectDefinitionIdeaModuleDescriptor(projectName: String,
     <orderEntry type="module-library">
       <library name="sbt-and-plugins">
         <CLASSES>
-          <root url={"file://" + sbtLibsRootDir} />
-          <root url={"jar://" + sbtLibsRootDir + "/xsbti/interface-" + sbtVersion + ".jar!/"} />
           { distinctClassPath.collect { case fileDep if (isClassDir(fileDep))  => <root url={"file://" + relativePath(fileDep) } /> } }
           { distinctClassPath.collect { case fileDep if (isJar(fileDep))  => <root url={"jar://" + relativePath(fileDep) + "!/" } /> } }
         </CLASSES>
