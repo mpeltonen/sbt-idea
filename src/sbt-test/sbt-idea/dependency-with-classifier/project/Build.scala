@@ -4,6 +4,9 @@ import Keys.libraryDependencies
 
 object ScriptedTestBuild extends AbstractScriptedTestBuild("dependency-with-classifier") {
   lazy val root = Project("main", file("."), settings = Defaults.defaultSettings ++ scriptedTestSettings ++ Seq(
-    libraryDependencies += "com.github.scala-incubator.io" % "scala-io-core_2.9.1" % "0.3.0" classifier "test" intransitive()
+    libraryDependencies ++= Seq(
+      "com.googlecode.kiama" % "kiama_2.9.1" % "1.2.0" withSources() intransitive(),
+      "com.googlecode.kiama" % "kiama_2.9.1" % "1.2.0" % "test" classifier "test" withSources() intransitive()
+    )
   ))
 }

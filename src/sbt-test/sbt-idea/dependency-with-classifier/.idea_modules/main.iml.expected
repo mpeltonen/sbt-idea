@@ -24,6 +24,7 @@
     <orderEntry type="inheritedJdk"></orderEntry>
     <orderEntry type="sourceFolder" forTests="false"></orderEntry>
     <orderEntry level="project" name="org.scala-lang_scala-library_2.9.1" type="library"></orderEntry>
-    <orderEntry level="project" name="com.github.scala-incubator.io_scala-io-core_2.9.1_0.3.0" type="library"></orderEntry>
+    <orderEntry level="project" name="com.googlecode.kiama_kiama_2.9.1_1.2.0" type="library"></orderEntry>
+    <orderEntry level="project" scope="TEST" name="com.googlecode.kiama_kiama_2.9.1_1.2.0_test" type="library"></orderEntry>
   </component>
 </module>

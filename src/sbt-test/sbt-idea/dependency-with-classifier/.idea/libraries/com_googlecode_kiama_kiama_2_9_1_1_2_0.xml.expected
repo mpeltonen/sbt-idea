@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="com.googlecode.kiama_kiama_2.9.1_1.2.0">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.ivy2/cache/com.googlecode.kiama/kiama_2.9.1/jars/kiama_2.9.1-1.2.0.jar!/"></root>
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.ivy2/cache/com.googlecode.kiama/kiama_2.9.1/docs/kiama_2.9.1-1.2.0-javadoc.jar!/"></root>
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.ivy2/cache/com.googlecode.kiama/kiama_2.9.1/srcs/kiama_2.9.1-1.2.0-sources.jar!/"></root>
+    </SOURCES>
+  </library>
+</component>

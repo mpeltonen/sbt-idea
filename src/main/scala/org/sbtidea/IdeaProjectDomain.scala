@@ -14,7 +14,10 @@ object IdeaLibrary {
   case object ProvidedScope extends Scope("PROVIDED")
 }
 
-case class IdeaLibrary(name: String, classes: Seq[File], javaDocs: Seq[File], sources: Seq[File])
+case class IdeaLibrary(name: String, classes: Set[File], javaDocs: Set[File], sources: Set[File]) {
+  def hasClasses = !classes.isEmpty
+  def allFiles = classes ++ sources ++ javaDocs
+}
 
 case class IdeaModuleLibRef(config: IdeaLibrary.Scope, library: IdeaLibrary)
 
