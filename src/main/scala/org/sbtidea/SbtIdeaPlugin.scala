@@ -87,7 +87,7 @@ object SbtIdeaPlugin extends Plugin {
     val languageLevel = "JDK_" + jdkName.replace(".", "_")
     val env = IdeaProjectEnvironment(projectJdkName = jdkName, javaLanguageLevel = languageLevel,
       includeSbtProjectDefinitionModule = true, projectOutputPath = None, excludedFolders = "target",
-      compileWithIdea = false, modulePath = Some(".idea_modules"), useProjectFsc = !args.contains(NoFsc))
+      compileWithIdea = false, modulePath = ".idea_modules", useProjectFsc = !args.contains(NoFsc))
 
     val userEnv = IdeaUserEnvironment(false)
 
@@ -96,7 +96,7 @@ object SbtIdeaPlugin extends Plugin {
     val rootFiles = new IdeaProjectDescriptor(projectInfo, env, logger(state))
     rootFiles.save()
 
-    val imlDir = new File(projectInfo.baseDir, env.modulePath.get)
+    val imlDir = new File(projectInfo.baseDir, env.modulePath)
     imlDir.mkdirs()
     for (subProj <- subProjects) {
       val module = new IdeaModuleDescriptor(imlDir, projectInfo.baseDir, subProj, env, userEnv, logger(state))
