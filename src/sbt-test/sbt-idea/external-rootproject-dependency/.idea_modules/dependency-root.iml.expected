@@ -3,14 +3,14 @@
    <facet type="scala" name="Scala">
      <configuration>
        <option value="Project" name="compilerLibraryLevel"></option>
-       <option value="scala-2.9.1" name="compilerLibraryName"></option>
+       <option value="scala-2.9.2" name="compilerLibraryName"></option>
        <option value="true" name="fsc"></option>
      </configuration>
    </facet>
  </component>
  <component inherit-compiler-output="false" name="NewModuleRootManager">
-   <output url="file://$MODULE_DIR$/../dependency-project/target/scala-2.9.1/classes"></output>
-   <output-test url="file://$MODULE_DIR$/../dependency-project/target/scala-2.9.1/test-classes"></output-test>
+   <output url="file://$MODULE_DIR$/../dependency-project/target/scala-2.9.2/classes"></output>
+   <output-test url="file://$MODULE_DIR$/../dependency-project/target/scala-2.9.2/test-classes"></output-test>
    <exclude-output></exclude-output>
    <content url="file://$MODULE_DIR$/../dependency-project">
      <sourceFolder isTestSource="false" url="file://$MODULE_DIR$/../dependency-project/src/main/scala"></sourceFolder>
@@ -23,6 +23,6 @@
    </content>
    <orderEntry type="inheritedJdk"></orderEntry>
    <orderEntry forTests="false" type="sourceFolder"></orderEntry>
-   <orderEntry type="library" name="org.scala-lang_scala-library_2.9.1" level="project"></orderEntry>
+   <orderEntry type="library" name="org.scala-lang_scala-library_2.9.2" level="project"></orderEntry>
  </component>
 </module>
