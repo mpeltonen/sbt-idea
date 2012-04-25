@@ -26,7 +26,7 @@ case class Directories(sources: Seq[File], resources: Seq[File], outDir: File) {
   def addRes (moreResources: Seq[File]): Directories = Directories(sources, resources ++ moreResources, outDir)
 }
 
-case class SubProjectInfo(baseDir: File, name: String, dependencyProjects: List[String], compileDirs: Directories,
+case class SubProjectInfo(baseDir: File, name: String, dependencyProjects: List[String], classpathDeps: Seq[(File, Seq[File])], compileDirs: Directories,
                           testDirs: Directories, libraries: Seq[IdeaModuleLibRef], scalaInstance: ScalaInstance,
                           ideaGroup: Option[String], webAppPath: Option[File], basePackage: Option[String])
 

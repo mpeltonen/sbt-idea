@@ -115,6 +115,25 @@ class IdeaModuleDescriptor(val imlDir: File, projectRoot: File, val project: Sub
             <orderEntry type="module" module-name={name} exported=""/>
           }
         }
+        {
+          project.classpathDeps.map { case (classesDir, sourceDirs) =>
+            <orderEntry type="module-library">
+              <library>
+                <CLASSES>
+                  <root url={ "file://%s".format(classesDir.getAbsolutePath) } />
+                </CLASSES>
+                <JAVADOC />
+                <SOURCES>
+                {
+                  sourceDirs.filter(_.exists).map { srcDir =>
+                    <root url={ "file://%s".format(srcDir.getAbsolutePath) } />
+                  }
+                }
+                </SOURCES>
+              </library>
+            </orderEntry>
+          }
+        }
       </component>
     </module>
   }

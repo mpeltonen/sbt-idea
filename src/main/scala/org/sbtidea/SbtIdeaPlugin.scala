@@ -136,15 +136,15 @@ object SbtIdeaPlugin extends Plugin {
   def projectData(projectRef: ProjectRef, project: ResolvedProject, buildStruct: BuildStructure,
                   state: State, args: Seq[String]): SubProjectInfo = {
 
-    def optionalSetting[A](key: SettingKey[A]) : Option[A] = key in projectRef get buildStruct.data
+    def optionalSetting[A](key: SettingKey[A], pr: ProjectRef = projectRef) : Option[A] = key in pr get buildStruct.data
 
     def logErrorAndFail(errorMessage: String): Nothing = {
       state.log.error(errorMessage);
       throw new IllegalArgumentException()
     }
 
-    def setting[A](key: SettingKey[A], errorMessage: => String) : A = {
-      optionalSetting(key) getOrElse {
+    def setting[A](key: SettingKey[A], errorMessage: => String, pr: ProjectRef = projectRef) : A = {
+      optionalSetting(key, pr) getOrElse {
         logErrorAndFail(errorMessage)
       }
     }
@@ -215,7 +215,10 @@ object SbtIdeaPlugin extends Plugin {
       }
     )
     val basePackage = setting(ideaBasePackage, "missing IDEA base package")
-    SubProjectInfo(baseDirectory, projectName, project.uses.map(_.project).toList, compileDirectories,
+    val classpathDeps = project.dependencies.map { dep =>
+      (setting(Keys.classDirectory in Compile, "Missing class directory", dep.project), setting(Keys.sourceDirectories in Compile, "Missing source directory", dep.project))
+    }
+    SubProjectInfo(baseDirectory, projectName, project.uses.map(_.project).toList, classpathDeps, compileDirectories,
       testDirectories, librariesExtractor.allLibraries, scalaInstance, ideaGroup, None, basePackage)
   }
 
