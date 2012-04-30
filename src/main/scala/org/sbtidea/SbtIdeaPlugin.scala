@@ -9,6 +9,7 @@ import java.io.File
 import collection.Seq
 import SbtIdeaModuleMapping._
 import java.lang.IllegalArgumentException
+import xml.NodeSeq
 
 object SbtIdeaPlugin extends Plugin {
   val ideaProjectName = SettingKey[String]("idea-project-name")
@@ -17,13 +18,15 @@ object SbtIdeaPlugin extends Plugin {
   val ideaBasePackage = SettingKey[Option[String]]("idea-base-package", "The base package configured in the Scala Facet, used by IDEA to generated nested package clauses. For example, com.acme.wibble")
   val ideaSourcesClassifiers = SettingKey[Seq[String]]("idea-sources-classifiers")
   val ideaJavadocsClassifiers = SettingKey[Seq[String]]("idea-javadocs-classifiers")
+  val ideaExtraFacets = SettingKey[NodeSeq]("idea-extra-facets")
 
   override lazy val settings = Seq(
     Keys.commands += ideaCommand,
     ideaProjectName := "IdeaProject",
     ideaBasePackage := None,
     ideaSourcesClassifiers := Seq("sources"),
-    ideaJavadocsClassifiers := Seq("javadoc")
+    ideaJavadocsClassifiers := Seq("javadoc"),
+    ideaExtraFacets := NodeSeq.Empty
   )
 
   private val NoClassifiers = "no-classifiers"
@@ -215,11 +218,12 @@ object SbtIdeaPlugin extends Plugin {
       }
     )
     val basePackage = setting(ideaBasePackage, "missing IDEA base package")
+    val extraFacets = settingWithDefault(ideaExtraFacets, NodeSeq.Empty)
     val classpathDeps = project.dependencies.map { dep =>
       (setting(Keys.classDirectory in Compile, "Missing class directory", dep.project), setting(Keys.sourceDirectories in Compile, "Missing source directory", dep.project))
     }
     SubProjectInfo(baseDirectory, projectName, project.uses.map(_.project).toList, classpathDeps, compileDirectories,
-      testDirectories, librariesExtractor.allLibraries, scalaInstance, ideaGroup, None, basePackage)
+      testDirectories, librariesExtractor.allLibraries, scalaInstance, ideaGroup, None, basePackage, extraFacets)
   }
 
 }
