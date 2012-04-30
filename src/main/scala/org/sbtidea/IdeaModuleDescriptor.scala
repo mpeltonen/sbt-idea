@@ -41,6 +41,7 @@ class IdeaModuleDescriptor(val imlDir: File, projectRoot: File, val project: Sub
           </configuration>
         </facet>
         { if (project.webAppPath.isDefined && userEnv.webFacet == true) webFacet() else scala.xml.Null }
+        { project.extraFacets }
       </component>
       <component name="NewModuleRootManager" inherit-compiler-output={env.projectOutputPath.isDefined.toString}>
         {

@@ -1,6 +1,8 @@
 package org.sbtidea
 
 import java.io.File
+import xml.NodeSeq
+
 // cheating for now
 import sbt.ScalaInstance
 
@@ -28,7 +30,8 @@ case class Directories(sources: Seq[File], resources: Seq[File], outDir: File) {
 
 case class SubProjectInfo(baseDir: File, name: String, dependencyProjects: List[String], classpathDeps: Seq[(File, Seq[File])], compileDirs: Directories,
                           testDirs: Directories, libraries: Seq[IdeaModuleLibRef], scalaInstance: ScalaInstance,
-                          ideaGroup: Option[String], webAppPath: Option[File], basePackage: Option[String])
+                          ideaGroup: Option[String], webAppPath: Option[File], basePackage: Option[String],
+                          extraFacets: NodeSeq)
 
 case class IdeaProjectInfo(baseDir: File, name: String, childProjects: List[SubProjectInfo], ideaLibs: List[IdeaLibrary])
 
