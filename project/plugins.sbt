@@ -3,5 +3,5 @@ resolvers ++= Seq(
   "sbt-idea-repo" at "http://mpeltonen.github.com/maven/"
 )
 
-libraryDependencies <+= sbtVersion("org.scala-tools.sbt" %% "scripted-plugin" % _)
+libraryDependencies <+= sbtVersion("org.scala-sbt" %% "scripted-plugin" % _)
 
