@@ -1,18 +1,24 @@
 Requirements
 ------------
 
-* [sbt](https://github.com/harrah/xsbt/wiki) 0.11.2. NOTE: For sbt 0.7.x version of the plugin, see [branch sbt-0.7](https://github.com/mpeltonen/sbt-idea/tree/sbt-0.7)
+* [sbt](https://github.com/harrah/xsbt/wiki) 0.11.2 or 0.11.3. 
+* For sbt 0.12.x version of the plugin, see [branch sbt-0.12](https://github.com/mpeltonen/sbt-idea/tree/sbt-0.12#requirements)
+* For sbt 0.7.x version of the plugin, see [branch sbt-0.7](https://github.com/mpeltonen/sbt-idea/tree/sbt-0.7)
 
 
 Installation
 ------------
 
-Add the following lines to ~/.sbt/plugins/build.sbt or PROJECT_DIR/project/plugins.sbt
-
-    resolvers += "sbt-idea-repo" at "http://mpeltonen.github.com/maven/"
+Add the following line to ~/.sbt/plugins/build.sbt or PROJECT_DIR/project/plugins.sbt
 
     addSbtPlugin("com.github.mpeltonen" % "sbt-idea" % "1.0.0")
 
+To use the latest snapshot version, add also Sonatype snapshots repository resolver into the same file:
+
+    resolvers += "Sonatype snapshots" at "http://oss.sonatype.org/content/repositories/snapshots/"
+    
+    addSbtPlugin("com.github.mpeltonen" % "sbt-idea" % "1.1.0-SNAPSHOT")
+    
 Usage
 -----
 
