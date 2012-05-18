@@ -17,6 +17,7 @@ object SbtIdeaBuild extends Build {
     },
     publishMavenStyle := true,
     publishArtifact in Test := false,
+    pomIncludeRepository := (_ => false),
     pomExtra := extraPom,
     resolvers += Classpaths.typesafeSnapshots,
     scalacOptions ++= Seq("-deprecation", "-unchecked"),
