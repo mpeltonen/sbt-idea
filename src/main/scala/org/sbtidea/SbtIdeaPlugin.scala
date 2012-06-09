@@ -220,11 +220,13 @@ object SbtIdeaPlugin extends Plugin {
     )
     val basePackage = setting(ideaBasePackage, "missing IDEA base package")
     val extraFacets = settingWithDefault(ideaExtraFacets, NodeSeq.Empty)
-    val classpathDeps = project.dependencies.map { dep =>
-      (setting(Keys.classDirectory in Compile, "Missing class directory", dep.project), setting(Keys.sourceDirectories in Compile, "Missing source directory", dep.project))
+    def isAggregate(p: ClasspathDep[_]) = project.aggregate.exists(_ == p.project)
+    val classpathDeps = project.dependencies.filterNot(isAggregate).flatMap { dep =>
+      Seq(Compile, Test) map { scope =>
+        (setting(Keys.classDirectory in scope, "Missing class directory", dep.project), setting(Keys.sourceDirectories in scope, "Missing source directory", dep.project))
+      }
     }
     SubProjectInfo(baseDirectory, projectName, project.uses.map(_.project).toList, classpathDeps, compileDirectories,
       testDirectories, librariesExtractor.allLibraries, scalaInstance, ideaGroup, None, basePackage, extraFacets)
   }
-
 }

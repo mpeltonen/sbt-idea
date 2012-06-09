@@ -4,7 +4,7 @@ import Keys._
 object SbtIdeaBuild extends Build {
   lazy val sbtIdea = Project("sbt-idea", file("."), settings = mainSettings)
 
-  lazy val mainSettings: Seq[Project.Setting[_]] = Defaults.defaultSettings ++	ScriptedPlugin.scriptedSettings ++ Seq(
+  lazy val mainSettings: Seq[Project.Setting[_]] = Defaults.defaultSettings ++ ScriptedPlugin.scriptedSettings ++ Seq(
     sbtPlugin := true,
     organization := "com.github.mpeltonen",
     name := "sbt-idea",
