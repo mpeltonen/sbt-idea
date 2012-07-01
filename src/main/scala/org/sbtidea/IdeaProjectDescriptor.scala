@@ -73,30 +73,28 @@ class IdeaProjectDescriptor(val projectInfo: IdeaProjectInfo, val env: IdeaProje
 
   private def project(inner: xml.Node*): xml.Node = <project version="4">{inner}</project>
 
-  private def libraryTableComponent(library: IdeaLibrary): xml.Node =
+  private def libraryTableComponent(library: IdeaLibrary): xml.Node = {
+    def jarUrl(file: File) = <root url={String.format("jar://%s!/", projectRelative(file))}/>;
     <component name="libraryTable">
       <library name={library.name}>
         <CLASSES>
           {
-          library.classes.map(file => {
-            <root url={String.format("jar://%s!/", projectRelative(file))} />
-          })
+          library.classes.map(jarUrl(_))
           }
         </CLASSES>
         <JAVADOC>
         {
-        library.javaDocs.map(file => <root url={String.format("jar://%s!/", projectRelative(file))} />)
+        library.javaDocs.map(jarUrl(_))
         }
         </JAVADOC>
         <SOURCES>
           {
-          library.sources.map(file => {
-            <root url={String.format("jar://%s!/", projectRelative(file))} />
-          })
+          library.sources.map(jarUrl(_))
           }
         </SOURCES>
       </library>
     </component>
+  }
 
   private def projectRootManagerComponent: xml.Node =
       <component name="ProjectRootManager" version="2" languageLevel={env.javaLanguageLevel} assert-keyword="true" jdk-15="true" project-jdk-name={env.projectJdkName} project-jdk-type="JavaSDK" />
@@ -122,18 +120,19 @@ class IdeaProjectDescriptor(val projectInfo: IdeaProjectInfo, val env: IdeaProje
       Seq(
         "modules.xml" -> Some(project(projectModuleManagerComponent)),
         "misc.xml" -> miscXml(configDir).map(miscTransformer.transform).map(_.head)
-      ) foreach { 
-        case (fileName, Some(xmlNode)) => saveFile(configDir, fileName, xmlNode) 
+      ) foreach {
+        case (fileName, Some(xmlNode)) => saveFile(configDir, fileName, xmlNode)
         case _ =>
       }
 
       Seq(
         "vcs.xml" -> Some(project(vcsComponent)),
         "projectCodeStyle.xml" -> Some(defaultProjectCodeStyleXml),
-        "encodings.xml" -> Some(defaultEncodingsXml)
-      ) foreach { 
+        "encodings.xml" -> Some(defaultEncodingsXml),
+        "scala_compiler.xml" -> (if (env.useProjectFsc) Some(scalaCompilerXml) else None)
+      ) foreach {
         case (fileName, Some(xmlNode)) if (!configFile(fileName).exists) =>  saveFile(configDir, fileName, xmlNode)
-        case _ => 
+        case _ =>
       }
 
       val librariesDir = configFile("libraries")
@@ -146,6 +145,16 @@ class IdeaProjectDescriptor(val projectInfo: IdeaProjectInfo, val env: IdeaProje
 
       log.info("Created " + configDir)
     } else log.error("Skipping .idea creation for " + projectInfo.baseDir + " since directory does not exist")
+  }
+
+  val scalaCompilerXml = {
+    <project version="4">
+      <component name="ScalacSettings">
+          <option name="COMPILER_LIBRARY_NAME" value={projectInfo.childProjects.headOption.
+          map(p => SbtIdeaModuleMapping.toIdeaLib(p.scalaInstance).name).getOrElse("")}/>
+          <option name="COMPILER_LIBRARY_LEVEL" value="Project"/>
+      </component>
+    </project>
   }
 
   val defaultProjectCodeStyleXml =
@@ -166,7 +175,7 @@ class IdeaProjectDescriptor(val projectInfo: IdeaProjectInfo, val env: IdeaProje
         <file url="PROJECT" charset="UTF-8" />
       </component>
     </project>
-  
+
   val defaultMiscXml = <project version="4"> {projectRootManagerComponent} </project>
 
   private def miscXml(configDir: File): Option[Node] = try {
