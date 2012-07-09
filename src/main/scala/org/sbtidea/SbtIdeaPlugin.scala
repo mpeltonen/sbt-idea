@@ -89,9 +89,7 @@ object SbtIdeaPlugin extends Plugin {
 
     val projectInfo = IdeaProjectInfo(buildUnit.localBase, name.getOrElse("Unknown"), subProjects, ideaLibs ::: scalaLibs)
 
-    val jdkName = System.getProperty("java.version").substring(0,3)
-    val languageLevel = "JDK_" + jdkName.replace(".", "_")
-    val env = IdeaProjectEnvironment(projectJdkName = jdkName, javaLanguageLevel = languageLevel,
+    val env = IdeaProjectEnvironment(projectJdkName = SystemProps.jdkName, javaLanguageLevel = SystemProps.languageLevel,
       includeSbtProjectDefinitionModule = true, projectOutputPath = None, excludedFolders = "target",
       compileWithIdea = false, modulePath = ".idea_modules", useProjectFsc = !args.contains(NoFsc))
 
