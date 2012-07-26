@@ -8,9 +8,8 @@ package org.sbtidea
 
 import sbt._
 import java.io.File
-import xml.{UnprefixedAttribute, NodeSeq, Node, NodeBuffer, Text}
-import xml.Elem._
 
+import xml.{UnprefixedAttribute, Node, Text}
 
 
 class IdeaModuleDescriptor(val imlDir: File, projectRoot: File, val project: SubProjectInfo, val env: IdeaProjectEnvironment, val userEnv: IdeaUserEnvironment, val log: Logger) extends SaveableXml {
@@ -37,6 +36,12 @@ class IdeaModuleDescriptor(val imlDir: File, projectRoot: File, val project: Sub
             <option name="compilerLibraryName" value={ "scala-" + project.scalaInstance.version } />
             {
               if (env.useProjectFsc) <option name="fsc" value="true" />
+            }
+            {
+              if (env.scalacOptions.contains("-deprecation")) <option name="deprecationWarnings" value="true" />
+            }
+            {
+              if (env.scalacOptions.contains("-unchecked")) <option name="uncheckedWarnings" value="true" />
             }
           </configuration>
         </facet>
