@@ -3,7 +3,6 @@ package org.sbtidea
 import sbt._
 import sbt.Load.BuildStructure
 import sbt.CommandSupport._
-import sbt.complete._
 import sbt.complete.Parsers._
 import java.io.File
 import collection.Seq
@@ -90,9 +89,11 @@ object SbtIdeaPlugin extends Plugin {
 
     val projectInfo = IdeaProjectInfo(buildUnit.localBase, name.getOrElse("Unknown"), subProjects, ideaLibs ::: scalaLibs)
 
+    val scalacOptions = extracted.runTask(Keys.scalacOptions in Configurations.Compile, state)._2
     val env = IdeaProjectEnvironment(projectJdkName = SystemProps.jdkName, javaLanguageLevel = SystemProps.languageLevel,
       includeSbtProjectDefinitionModule = true, projectOutputPath = None, excludedFolders = "target",
-      compileWithIdea = false, modulePath = ".idea_modules", useProjectFsc = !args.contains(NoFsc))
+      compileWithIdea = false, modulePath = ".idea_modules", useProjectFsc = !args.contains(NoFsc),
+      scalacOptions = scalacOptions)
 
     val userEnv = IdeaUserEnvironment(false)
 
