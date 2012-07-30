@@ -79,8 +79,9 @@ object SbtIdeaPlugin extends Plugin {
       (ideaIgnoreModule in projectRef get buildStruct.data).getOrElse(false)
     }
 
+    val allProjectIds = projectList.values.map(_.id).toSet
     val subProjects = projectList.collect {
-      case (projRef, project) if (!ignoreModule(projRef)) => projectData(projRef, project, buildStruct, state, args)
+      case (projRef, project) if (!ignoreModule(projRef)) => projectData(projRef, project, buildStruct, state, args, allProjectIds)
     }.toList
 
     val scalaInstances = subProjects.map(_.scalaInstance).distinct
@@ -138,7 +139,7 @@ object SbtIdeaPlugin extends Plugin {
   }
 
   def projectData(projectRef: ProjectRef, project: ResolvedProject, buildStruct: BuildStructure,
-                  state: State, args: Seq[String]): SubProjectInfo = {
+                  state: State, args: Seq[String], allProjectIds: Set[String]): SubProjectInfo = {
 
     def optionalSetting[A](key: ScopedSetting[A], pr: ProjectRef = projectRef) : Option[A] = key in pr get buildStruct.data
 
@@ -222,13 +223,13 @@ object SbtIdeaPlugin extends Plugin {
     val basePackage = setting(ideaBasePackage, "missing IDEA base package")
     val packagePrefix = setting(ideaPackagePrefix, "missing package prefix")
     val extraFacets = settingWithDefault(ideaExtraFacets, NodeSeq.Empty)
-    def isAggregate(p: ClasspathDep[_]) = project.aggregate.exists(_ == p.project)
-    val classpathDeps = project.dependencies.filterNot(isAggregate).flatMap { dep =>
+    def isAggregate(p: String) = allProjectIds.toSeq.contains(p)
+    val classpathDeps = project.dependencies.filterNot(d => isAggregate(d.project.project)).flatMap { dep =>
       Seq(Compile, Test) map { scope =>
         (setting(Keys.classDirectory in scope, "Missing class directory", dep.project), setting(Keys.sourceDirectories in scope, "Missing source directory", dep.project))
       }
     }
-    SubProjectInfo(baseDirectory, projectName, project.uses.map(_.project).toList, classpathDeps, compileDirectories,
+    SubProjectInfo(baseDirectory, projectName, project.uses.map(_.project).filter(isAggregate).toList, classpathDeps, compileDirectories,
       testDirectories, librariesExtractor.allLibraries, scalaInstance, ideaGroup, None, basePackage, packagePrefix, extraFacets)
   }
 }
