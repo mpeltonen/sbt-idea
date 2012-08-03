@@ -1,0 +1,26 @@
+
+Changes:
+
+* Create sbt project definition module, if exists, for each subproject ([pull 128][1])
+* Recursive support for external multi-module project dependencies ([issue 126][2])
+* Support dependency artifacts that differ only by classifier and/or scope ([issue 145][3])
+* Use current Java version to set Project SDK ([issue 146][4])
+* Allow user-specified XML to be inserted into facet listing ([pull 149][5])
+* Set fsc library ([pull 158][6])
+* Add ideaPackagePrefix option ([pull 159][7])
+* set "deprecation" and "unchecked" scalac settings ([pull 163][8])
+* Support external project references (for example git:// urls)
+* Artifacts are now published to Maven Central (or Sonatype snapshots)
+* Sbt 0.12 support
+
+Many thanks to all contributors!
+
+[1]: https://github.com/mpeltonen/sbt-idea/pull/128
+[2]: https://github.com/mpeltonen/sbt-idea/issues/126
+[3]: https://github.com/mpeltonen/sbt-idea/issues/145
+[4]: https://github.com/mpeltonen/sbt-idea/issues/146
+[5]: https://github.com/mpeltonen/sbt-idea/pull/149
+[6]: https://github.com/mpeltonen/sbt-idea/pull/158
+[7]: https://github.com/mpeltonen/sbt-idea/pull/159
+[8]: https://github.com/mpeltonen/sbt-idea/pull/163
+
