@@ -43,6 +43,7 @@ class IdeaModuleDescriptor(val imlDir: File, projectRoot: File, val project: Sub
             {
               if (env.scalacOptions.contains("-unchecked")) <option name="uncheckedWarnings" value="true" />
             }
+            <option name="compilerOptions" value={ env.scalacOptions.mkString(" ") } />
           </configuration>
         </facet>
         { if (project.webAppPath.isDefined && userEnv.webFacet == true) webFacet() else scala.xml.Null }
