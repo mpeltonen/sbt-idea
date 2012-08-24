@@ -129,7 +129,8 @@ class IdeaProjectDescriptor(val projectInfo: IdeaProjectInfo, val env: IdeaProje
         "vcs.xml" -> Some(project(vcsComponent)),
         "projectCodeStyle.xml" -> Some(defaultProjectCodeStyleXml),
         "encodings.xml" -> Some(defaultEncodingsXml),
-        "scala_compiler.xml" -> (if (env.useProjectFsc) Some(scalaCompilerXml) else None)
+        "scala_compiler.xml" -> (if (env.useProjectFsc) Some(scalaCompilerXml) else None),
+        "highlighting.xml" -> (if (env.enableTypeHighlighting) Some(highlightingXml) else None)
       ) foreach {
         case (fileName, Some(xmlNode)) if (!configFile(fileName).exists) =>  saveFile(configDir, fileName, xmlNode)
         case _ =>
@@ -147,15 +148,22 @@ class IdeaProjectDescriptor(val projectInfo: IdeaProjectInfo, val env: IdeaProje
     } else log.error("Skipping .idea creation for " + projectInfo.baseDir + " since directory does not exist")
   }
 
-  val scalaCompilerXml = {
+  val scalaCompilerXml =
     <project version="4">
       <component name="ScalacSettings">
-          <option name="COMPILER_LIBRARY_NAME" value={projectInfo.childProjects.headOption.
-          map(p => SbtIdeaModuleMapping.toIdeaLib(p.scalaInstance).name).getOrElse("")}/>
-          <option name="COMPILER_LIBRARY_LEVEL" value="Project"/>
+        <option name="COMPILER_LIBRARY_NAME" value={projectInfo.childProjects.headOption.
+        map(p => SbtIdeaModuleMapping.toIdeaLib(p.scalaInstance).name).getOrElse("")}/>
+        <option name="COMPILER_LIBRARY_LEVEL" value="Project"/>
       </component>
     </project>
-  }
+
+  val highlightingXml =
+    <project version="4">
+      <component name="HighlightingAdvisor">
+        <option name="SUGGEST_TYPE_AWARE_HIGHLIGHTING" value="false"/>
+        <option name="TYPE_AWARE_HIGHLIGHTING_ENABLED" value="true"/>
+      </component>
+    </project>
 
   val defaultProjectCodeStyleXml =
     <project version="4">
