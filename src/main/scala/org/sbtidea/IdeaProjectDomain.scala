@@ -39,4 +39,5 @@ case class IdeaUserEnvironment(webFacet: Boolean)
 
 case class IdeaProjectEnvironment(projectJdkName :String, javaLanguageLevel: String,
                                   includeSbtProjectDefinitionModule: Boolean, projectOutputPath: Option[String],
-                                  excludedFolders: String, compileWithIdea: Boolean, modulePath: String, useProjectFsc: Boolean)
+                                  excludedFolders: String, compileWithIdea: Boolean, modulePath: String, useProjectFsc: Boolean,
+                                  enableTypeHighlighting: Boolean)
