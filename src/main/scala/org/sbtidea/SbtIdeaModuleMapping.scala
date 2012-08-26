@@ -30,7 +30,7 @@ object SbtIdeaModuleMapping {
     def allLibraries: Seq[IdeaModuleLibRef] = managedLibraries ++ unmanagedLibraries
 
     /**
-     * Creates an IDEA library entry for each entry in `externalDependencyClasspath` in `Test` and `Compile.
+     * Creates an IDEA library entry for each entry in `externalDependencyClasspath` in `Test` and `Compile`.
      *
      * The result of `update`, `updateClassifiers`, and is used to find the location of the library,
      * by default in $HOME/.ivy2/cache
@@ -59,7 +59,7 @@ object SbtIdeaModuleMapping {
     }
 
     /**
-     * Creates an IDEA library entry for each entry in `unmanagedClasspath` in `Test` and `Compile.
+     * Creates an IDEA library entry for each entry in `unmanagedClasspath` in `Test` and `Compile`.
      *
      * If the entry is both in the compile and test scopes, it is only added to the compile scope.
      *

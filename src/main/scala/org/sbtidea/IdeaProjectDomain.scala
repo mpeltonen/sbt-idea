@@ -31,8 +31,7 @@ case class Directories(sources: Seq[File], resources: Seq[File], outDir: File) {
 case class SubProjectInfo(baseDir: File, name: String, dependencyProjects: List[String], classpathDeps: Seq[(File, Seq[File])], compileDirs: Directories,
                           testDirs: Directories, libraries: Seq[IdeaModuleLibRef], scalaInstance: ScalaInstance,
                           ideaGroup: Option[String], webAppPath: Option[File], basePackage: Option[String],
-                          packagePrefix: Option[String],
-                          extraFacets: NodeSeq)
+                          packagePrefix: Option[String], extraFacets: NodeSeq, scalacOptions: Seq[String])
 
 case class IdeaProjectInfo(baseDir: File, name: String, childProjects: List[SubProjectInfo], ideaLibs: List[IdeaLibrary])
 
@@ -40,6 +39,4 @@ case class IdeaUserEnvironment(webFacet: Boolean)
 
 case class IdeaProjectEnvironment(projectJdkName :String, javaLanguageLevel: String,
                                   includeSbtProjectDefinitionModule: Boolean, projectOutputPath: Option[String],
-                                  excludedFolders: String, compileWithIdea: Boolean, modulePath: String, useProjectFsc: Boolean,
-                                   scalacOptions: Seq[String]) {
-}
+                                  excludedFolders: String, compileWithIdea: Boolean, modulePath: String, useProjectFsc: Boolean)
