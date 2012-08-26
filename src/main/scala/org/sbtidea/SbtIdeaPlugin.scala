@@ -89,11 +89,9 @@ object SbtIdeaPlugin extends Plugin {
 
     val projectInfo = IdeaProjectInfo(buildUnit.localBase, name.getOrElse("Unknown"), subProjects, ideaLibs ::: scalaLibs)
 
-    val scalacOptions = extracted.runTask(Keys.scalacOptions in Configurations.Compile, state)._2
     val env = IdeaProjectEnvironment(projectJdkName = SystemProps.jdkName, javaLanguageLevel = SystemProps.languageLevel,
       includeSbtProjectDefinitionModule = true, projectOutputPath = None, excludedFolders = "target",
-      compileWithIdea = false, modulePath = ".idea_modules", useProjectFsc = !args.contains(NoFsc),
-      scalacOptions = scalacOptions)
+      compileWithIdea = false, modulePath = ".idea_modules", useProjectFsc = !args.contains(NoFsc))
 
     val userEnv = IdeaUserEnvironment(false)
 
@@ -118,8 +116,8 @@ object SbtIdeaPlugin extends Plugin {
     //
     val sbtModuleSourceFiles: Seq[File] = {
       val sbtLibs: Seq[IdeaLibrary] = if (args.contains(SbtClassifiers)) {
-        EvaluateTask.evaluateTask(buildStruct, Keys.updateSbtClassifiers, state, projectList.head._1, false, EvaluateTask.SystemProcessors) match {
-          case Some(Value(report)) => extractLibraries(report)
+        EvaluateTask(buildStruct, Keys.updateSbtClassifiers, state, projectList.head._1) match {
+          case Some((_, Value(report))) => extractLibraries(report)
           case _ => Seq()
         }
       } else Seq()
@@ -145,7 +143,7 @@ object SbtIdeaPlugin extends Plugin {
     def optionalSetting[A](key: ScopedSetting[A], pr: ProjectRef = projectRef) : Option[A] = key in pr get buildStruct.data
 
     def logErrorAndFail(errorMessage: String): Nothing = {
-      logger(state).error(errorMessage);
+      logger(state).error(errorMessage)
       throw new IllegalArgumentException()
     }
 
@@ -174,8 +172,8 @@ object SbtIdeaPlugin extends Plugin {
           setting(k.asInstanceOf[ScopedSetting[ScalaInstance]], missingScalaInstanceMessage)
         case t: TaskKey[_] =>
           val scalaInstanceTaskKey = t.asInstanceOf[TaskKey[ScalaInstance]]
-          EvaluateTask.evaluateTask(buildStruct, scalaInstanceTaskKey, state, projectRef, false, EvaluateTask.SystemProcessors) match {
-            case Some(Value(instance)) => instance
+          EvaluateTask(buildStruct, scalaInstanceTaskKey, state, projectRef) match {
+            case Some((_, Value(instance))) => instance
             case _ => logErrorAndFail(missingScalaInstanceMessage)
           }
       }
@@ -230,7 +228,13 @@ object SbtIdeaPlugin extends Plugin {
         (setting(Keys.classDirectory in scope, "Missing class directory", dep.project), setting(Keys.sourceDirectories in scope, "Missing source directory", dep.project))
       }
     }
+
+    val scalacOptions: Seq[String] = EvaluateTask(buildStruct, Keys.scalacOptions in Configurations.Compile, state, projectRef) match {
+      case Some((_, Value(options))) => options
+      case _ => Seq()
+    }
+
     SubProjectInfo(baseDirectory, projectName, project.uses.map(_.project).filter(isAggregate).toList, classpathDeps, compileDirectories,
-      testDirectories, librariesExtractor.allLibraries, scalaInstance, ideaGroup, None, basePackage, packagePrefix, extraFacets)
+      testDirectories, librariesExtractor.allLibraries, scalaInstance, ideaGroup, None, basePackage, packagePrefix, extraFacets, scalacOptions)
   }
 }

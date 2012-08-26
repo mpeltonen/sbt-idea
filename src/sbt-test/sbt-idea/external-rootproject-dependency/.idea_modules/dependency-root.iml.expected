@@ -5,7 +5,8 @@
        <option value="Project" name="compilerLibraryLevel"></option>
        <option value="scala-2.9.1" name="compilerLibraryName"></option>
        <option value="true" name="fsc"></option>
-       <option name="compilerOptions" value=""/>
+       <option value="true" name="deprecationWarnings"></option>
+       <option value="-deprecation" name="compilerOptions"/>
      </configuration>
    </facet>
  </component>
