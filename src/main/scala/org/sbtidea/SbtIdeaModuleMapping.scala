@@ -7,7 +7,10 @@ object SbtIdeaModuleMapping {
   type JavadocClassifier = String
 
   def toIdeaLib(instance: ScalaInstance) = {
-    IdeaLibrary("scala-" + instance.version, Set(instance.libraryJar, instance.compilerJar),
+    val coreJars = instance.jars.filter { jar =>
+      Seq("compiler", "library", "reflect").map("scala-%s.jar" format _).exists(_ == jar.getName)
+    }.toSet
+    IdeaLibrary("scala-" + instance.version, coreJars,
       instance.extraJars.filter(_.getAbsolutePath.endsWith("docs.jar")).toSet,
       instance.extraJars.filter(_.getAbsolutePath.endsWith("-sources.jar")).toSet)
   }
