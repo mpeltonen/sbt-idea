@@ -5,6 +5,7 @@
         <option name="compilerLibraryLevel" value="Project"></option>
         <option name="compilerLibraryName" value="scala-2.9.2"></option>
         <option name="fsc" value="true" />
+        <option name="compilerOptions" value=""/>
       </configuration>
     </facet>
   </component>
