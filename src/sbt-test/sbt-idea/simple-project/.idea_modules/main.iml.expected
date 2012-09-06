@@ -7,6 +7,7 @@
         <option name="fsc" value="true" />
         <option name="deprecationWarnings" value="true" />
         <option name="uncheckedWarnings" value="true" />
+        <option name="compilerOptions" value="-unchecked -deprecation"/>
       </configuration>
     </facet>
   </component>
