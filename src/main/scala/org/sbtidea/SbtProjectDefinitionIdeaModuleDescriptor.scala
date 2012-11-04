@@ -35,6 +35,11 @@ class SbtProjectDefinitionIdeaModuleDescriptor(projectName: String,
                                                val log: Logger) extends SaveableXml {
   val path = String.format("%s/%s-build.iml", imlDir.getAbsolutePath, projectName)
 
+  def removeIfExists():Unit = {
+    val file = new File(path)
+    if (file.exists) file.delete()
+  }
+
   // The classpath contains duplicate copies of JARs: one from the Ivy cache and and one from project boot. Assume the JAR name is unique, and
   // pick only one of these.
   val distinctClassPath: Seq[File] = classpath.groupBy(_.getName).toMap.mapValues(_.sortBy(_.getParent).head).values.toSeq
