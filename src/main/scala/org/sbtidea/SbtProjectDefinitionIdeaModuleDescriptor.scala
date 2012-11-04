@@ -53,7 +53,7 @@ class SbtProjectDefinitionIdeaModuleDescriptor(projectName: String,
   private[this] def isSource(file: File) = file.getName.endsWith("-sources.jar")
   private[this] def isJavaDoc(file: File) = file.getName.endsWith("-javadoc.jar")
   private[this] def isJar(file: File) = !isSource(file) && !isJavaDoc(file) && file.getName.endsWith(".jar")
-  private[this] def isClassDir(file: File) = !isSource(file) && !isJavaDoc(file) && !file.getName.endsWith(".jar")
+  private[this] def isClassDir(file: File) = file.exists && !isSource(file) && !isJavaDoc(file) && !file.getName.endsWith(".jar")
 
   def content: Node = {
 <module type="JAVA_MODULE" version="4">
