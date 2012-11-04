@@ -163,9 +163,9 @@ object SbtIdeaPlugin extends Plugin {
       optionalSetting(key) getOrElse defaultValue
     }
 
-    // The SBT project name and id can be different, we choose the id as the
-    // IDEA project name. It must be consistent with the value of SubProjectInfo#dependencyProjects.
-    val projectName = project.id
+    // The SBT project name and id can be different. For single-module projects, we choose the name as the
+    // IDEA project name, and for multi-module projects, the id as it must be consistent with the value of SubProjectInfo#dependencyProjects.
+    val projectName = if (allProjectIds.size == 1) setting(Keys.name, "Missing project name") else project.id
 
     logger(state).info("Trying to create an Idea module " + projectName)
 
