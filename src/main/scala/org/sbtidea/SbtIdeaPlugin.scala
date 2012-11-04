@@ -35,8 +35,9 @@ object SbtIdeaPlugin extends Plugin {
   private val SbtClassifiers = "sbt-classifiers"
   private val NoFsc = "no-fsc"
   private val NoTypeHighlighting = "no-type-highlighting"
+  private val NoSbtBuildModule = "no-sbt-build-module"
 
-  private val args = (Space ~> NoClassifiers | Space ~> SbtClassifiers | Space ~> NoFsc | Space ~> NoTypeHighlighting).*
+  private val args = (Space ~> NoClassifiers | Space ~> SbtClassifiers | Space ~> NoFsc | Space ~> NoTypeHighlighting | Space ~> NoSbtBuildModule).*
 
   private lazy val ideaCommand = Command("gen-idea")(_ => args)(doCommand)
 
@@ -91,7 +92,7 @@ object SbtIdeaPlugin extends Plugin {
     val projectInfo = IdeaProjectInfo(buildUnit.localBase, name.getOrElse("Unknown"), subProjects, ideaLibs ::: scalaLibs)
 
     val env = IdeaProjectEnvironment(projectJdkName = SystemProps.jdkName, javaLanguageLevel = SystemProps.languageLevel,
-      includeSbtProjectDefinitionModule = true, projectOutputPath = None, excludedFolders = "target",
+      includeSbtProjectDefinitionModule = !args.contains(NoSbtBuildModule), projectOutputPath = None, excludedFolders = "target",
       compileWithIdea = false, modulePath = ".idea_modules", useProjectFsc = !args.contains(NoFsc),
       enableTypeHighlighting = !args.contains(NoTypeHighlighting))
 
@@ -132,7 +133,10 @@ object SbtIdeaPlugin extends Plugin {
       if (buildDefinitionDir.exists()) {
         val sbtDef = new SbtProjectDefinitionIdeaModuleDescriptor(subProj.name, imlDir, subProj.baseDir,
          buildDefinitionDir, sbtScalaVersion, sbtVersion, sbtOut, buildUnit.classpath, sbtModuleSourceFiles, logger(state))
-        sbtDef.save()
+        if (args.contains(NoSbtBuildModule))
+          sbtDef.removeIfExists()
+        else
+          sbtDef.save()
       }
     }
 
