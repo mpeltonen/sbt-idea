@@ -56,7 +56,7 @@ object SbtIdeaModuleMapping {
     }
 
     /**
-     * Creates an IDEA library entry for each entry in `unmanagedClasspath` in `Test` and `Compile`.
+     * Creates an IDEA library entry for each entry in `unmanagedClasspath` in `Test`, `Compile` and `Runtime`.
      *
      * If the entry is both in the compile and test scopes, it is only added to the compile scope.
      *
@@ -78,17 +78,19 @@ object SbtIdeaModuleMapping {
               f = attributedFile.data
               if Seq("sources", "javadoc").forall(classifier => !f.name.endsWith("-%s.jar".format(classifier)))
               scope = toScope(config.name)
-              sources = classifier(f, "sources").toSet
-              javadocs = classifier(f, "javadoc").toSet
+              sources = if (f.name.endsWith(".jar")) classifier(f, "sources").toSet else Set[File]()
+              javadocs = if (f.name.endsWith(".jar")) classifier(f, "javadoc").toSet else Set[File]()
               ideaLib = IdeaLibrary(f.getName, classes = Set(f), sources = sources, javaDocs = javadocs)
             } yield IdeaModuleLibRef(scope, ideaLib)
           case _ => Seq()
         }
       }
 
+      def isIncludedIn(libs: Seq[IdeaModuleLibRef]) = (lib: IdeaModuleLibRef) => libs.exists(_.library == lib.library)
       val compileUnmanagedLibraries = unmanagedLibrariesFor(Configurations.Compile)
-      val testUnmanagedLibraries = unmanagedLibrariesFor(Configurations.Test).filterNot(libRef => compileUnmanagedLibraries.exists(_.library == libRef.library))
-      compileUnmanagedLibraries ++ testUnmanagedLibraries
+      val testUnmanagedLibraries = unmanagedLibrariesFor(Configurations.Test).filterNot(isIncludedIn(compileUnmanagedLibraries))
+      val runtimeUnmanagedLibraries = unmanagedLibrariesFor(Configurations.Runtime).filterNot(isIncludedIn(compileUnmanagedLibraries)).filterNot(isIncludedIn(testUnmanagedLibraries))
+      compileUnmanagedLibraries ++ testUnmanagedLibraries ++ runtimeUnmanagedLibraries
     }
 
     private def evaluateTask[T](taskKey: sbt.Project.ScopedKey[sbt.Task[T]]) =

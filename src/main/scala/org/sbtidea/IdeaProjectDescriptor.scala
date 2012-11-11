@@ -74,23 +74,21 @@ class IdeaProjectDescriptor(val projectInfo: IdeaProjectInfo, val env: IdeaProje
   private def project(inner: xml.Node*): xml.Node = <project version="4">{inner}</project>
 
   private def libraryTableComponent(library: IdeaLibrary): xml.Node = {
-    def jarUrl(file: File) = <root url={String.format("jar://%s!/", projectRelative(file))}/>;
+    def makeUrl(file: File) = {
+      val path = projectRelative(file);
+      val formatStr = if (path.endsWith(".jar")) "jar://%s!/" else "file://%s"
+      <root url={String.format(formatStr, path)}/>;
+    }
     <component name="libraryTable">
       <library name={library.name}>
         <CLASSES>
-          {
-          library.classes.map(jarUrl(_))
-          }
+          { library.classes map makeUrl }
         </CLASSES>
         <JAVADOC>
-        {
-        library.javaDocs.map(jarUrl(_))
-        }
+          { library.javaDocs map makeUrl }
         </JAVADOC>
         <SOURCES>
-          {
-          library.sources.map(jarUrl(_))
-          }
+          { library.sources map makeUrl }
         </SOURCES>
       </library>
     </component>
