@@ -47,7 +47,7 @@ class IdeaProjectDescriptor(val projectInfo: IdeaProjectInfo, val env: IdeaProje
   private def moduleEntry(pathPrefix: String, moduleName: String, groupName: Option[String]) =
     <module fileurl={String.format("file://$PROJECT_DIR$%s/%s.iml", pathPrefix, moduleName)}
             filepath={String.format("$PROJECT_DIR$%s/%s.iml", pathPrefix, moduleName)}
-            group={groupName map xml.Text} />
+            group={groupName map(xml.Text(_))} />
 
   private def projectModuleManagerComponent: xml.Node =
     <component name="ProjectModuleManager">
