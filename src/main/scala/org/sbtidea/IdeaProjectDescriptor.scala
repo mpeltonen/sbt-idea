@@ -138,7 +138,7 @@ class IdeaProjectDescriptor(val projectInfo: IdeaProjectInfo, val env: IdeaProje
       librariesDir.mkdirs
       for (ideaLib <- projectInfo.ideaLibs) {
         // MUST all be _
-        val filename = ideaLib.name.replace('.', '_').replace('-', '_') + ".xml"
+        val filename = ideaLib.id.replace('.', '_').replace('-', '_') + ".xml"
         saveFile(librariesDir, filename, libraryTableComponent(ideaLib))
       }
 

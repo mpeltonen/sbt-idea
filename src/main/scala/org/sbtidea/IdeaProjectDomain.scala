@@ -16,7 +16,7 @@ object IdeaLibrary {
   case object ProvidedScope extends Scope("PROVIDED")
 }
 
-case class IdeaLibrary(name: String, classes: Set[File], javaDocs: Set[File], sources: Set[File]) {
+case class IdeaLibrary(id: String, name: String, evictionId: String, classes: Set[File], javaDocs: Set[File], sources: Set[File]) {
   def hasClasses = !classes.isEmpty
   def allFiles = classes ++ sources ++ javaDocs
 }
