@@ -10,7 +10,8 @@ object SbtIdeaModuleMapping {
     val coreJars = instance.jars.filter { jar =>
       Seq("compiler", "library", "reflect").map("scala-%s.jar" format _).exists(_ == jar.getName)
     }.toSet
-    IdeaLibrary("scala-" + instance.version, coreJars,
+    val id = "scala-" + instance.version
+    IdeaLibrary(id, "Scala " + instance.version, id, coreJars,
       instance.extraJars.filter(_.getAbsolutePath.endsWith("docs.jar")).toSet,
       instance.extraJars.filter(_.getAbsolutePath.endsWith("-sources.jar")).toSet)
   }
@@ -83,7 +84,7 @@ object SbtIdeaModuleMapping {
               scope = toScope(config.name)
               sources = if (f.name.endsWith(".jar")) classifier(f, "sources").toSet else Set[File]()
               javadocs = if (f.name.endsWith(".jar")) classifier(f, "javadoc").toSet else Set[File]()
-              ideaLib = IdeaLibrary(f.getName, classes = Set(f), sources = sources, javaDocs = javadocs)
+              ideaLib = IdeaLibrary(f.getName, f.getName, f.getName, classes = Set(f), sources = sources, javaDocs = javadocs)
             } yield IdeaModuleLibRef(scope, ideaLib)
           case _ => Seq()
         }
@@ -121,12 +122,16 @@ object SbtIdeaModuleMapping {
       case Some(classifiers) => classifiers.foldLeft(Seq[File]()) { (acc, classifier) => acc ++ findByClassifier(Some(classifier)) }
       case None => Seq[File]()
     }
-    val name = module.organization + "_" + module.name + "_" + module.revision + (if (!configuration.isEmpty) "_" + configuration else "")
-      IdeaLibrary(name,
-        classes = findClasses.toSet,
-        sources = findByClassifiers(classifiers.map(_._1)).toSet,
-        javaDocs = findByClassifiers(classifiers.map(_._2)).toSet
-      )
+    val id = module.organization + "_" + module.name + "_" + module.revision + (if (!configuration.isEmpty) "_" + configuration else "")
+    val name = "SBT: " + module.organization + ":" + module.name + ":" + module.revision
+    val artifactId = module.organization + ":" + module.name
+    IdeaLibrary(id,
+      name,
+      artifactId,
+      classes = findClasses.toSet,
+      sources = findByClassifiers(classifiers.map(_._1)).toSet,
+      javaDocs = findByClassifiers(classifiers.map(_._2)).toSet
+    )
   }
 
   private def toScope(conf: String) = {
