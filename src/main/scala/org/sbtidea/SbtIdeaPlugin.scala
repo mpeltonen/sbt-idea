@@ -20,6 +20,7 @@ object SbtIdeaPlugin extends Plugin {
   val ideaSourcesClassifiers = SettingKey[Seq[String]]("idea-sources-classifiers")
   val ideaJavadocsClassifiers = SettingKey[Seq[String]]("idea-javadocs-classifiers")
   val ideaExtraFacets = SettingKey[NodeSeq]("idea-extra-facets")
+  val ideaIncludeScalaFacet = SettingKey[Boolean]("idea-include-scala-facet")
 
   override lazy val settings = Seq(
     Keys.commands += ideaCommand,
@@ -28,7 +29,8 @@ object SbtIdeaPlugin extends Plugin {
     ideaPackagePrefix := None,
     ideaSourcesClassifiers := Seq("sources"),
     ideaJavadocsClassifiers := Seq("javadoc"),
-    ideaExtraFacets := NodeSeq.Empty
+    ideaExtraFacets := NodeSeq.Empty,
+    ideaIncludeScalaFacet := true
   )
 
   private val NoClassifiers = "no-classifiers"
@@ -228,6 +230,7 @@ object SbtIdeaPlugin extends Plugin {
     val basePackage = setting(ideaBasePackage, "missing IDEA base package")
     val packagePrefix = setting(ideaPackagePrefix, "missing package prefix")
     val extraFacets = settingWithDefault(ideaExtraFacets, NodeSeq.Empty)
+    val includeScalaFacet = settingWithDefault(ideaIncludeScalaFacet, true)
     def isAggregate(p: String) = allProjectIds.toSeq.contains(p)
     val classpathDeps = project.dependencies.filterNot(d => isAggregate(d.project.project)).flatMap { dep =>
       Seq(Compile, Test) map { scope =>
@@ -241,6 +244,7 @@ object SbtIdeaPlugin extends Plugin {
     }
 
     SubProjectInfo(baseDirectory, projectName, project.uses.map(_.project).filter(isAggregate).toList, classpathDeps, compileDirectories,
-      testDirectories, librariesExtractor.allLibraries, scalaInstance, ideaGroup, None, basePackage, packagePrefix, extraFacets, scalacOptions)
+      testDirectories, librariesExtractor.allLibraries, scalaInstance, ideaGroup, None, basePackage, packagePrefix, extraFacets, scalacOptions,
+      includeScalaFacet)
   }
 }
