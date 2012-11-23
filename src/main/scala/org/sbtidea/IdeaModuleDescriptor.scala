@@ -178,8 +178,6 @@ class IdeaModuleDescriptor(val imlDir: File, projectRoot: File, val project: Sub
       .map(_._2.toSeq)
       .flatMap(libs => libs.find(_.config == IdeaLibrary.TestScope).map(testLib => testLib -> libs.filterNot(_ == testLib)))
 
-    evictions.map(e => e._1.library.id -> e._2.map(_.library.id)).map(e => println(e))
-
     evictions.foldLeft(libraries){(libs, e) =>
       val (evictor, evictees) = e
       val evictorIndex = libs.indexOf(evictor)
