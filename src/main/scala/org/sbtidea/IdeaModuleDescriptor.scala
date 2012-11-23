@@ -25,25 +25,7 @@ class IdeaModuleDescriptor(val imlDir: File, projectRoot: File, val project: Sub
   def content: Node = {
     <module type="JAVA_MODULE" version="4">
       <component name="FacetManager">
-        <facet type="scala" name="Scala">
-          <configuration>
-            {
-              project.basePackage.map(bp => <option name="basePackage" value={bp} />).getOrElse(scala.xml.Null)
-            }
-            <option name="compilerLibraryLevel" value="Project" />
-            <option name="compilerLibraryName" value={ "scala-" + project.scalaInstance.version } />
-            {
-              if (env.useProjectFsc) <option name="fsc" value="true" />
-            }
-            {
-              if (project.scalacOptions.contains("-deprecation")) <option name="deprecationWarnings" value="true" />
-            }
-            {
-              if (project.scalacOptions.contains("-unchecked")) <option name="uncheckedWarnings" value="true" />
-            }
-            <option name="compilerOptions" value={ project.scalacOptions.mkString(" ") } />
-          </configuration>
-        </facet>
+        { if (project.includeScalaFacet) scalaFacet else scala.xml.Null }
         { (for (wap <- project.webAppPath if userEnv.webFacet) yield webFacet(relativePath(wap))).getOrElse(scala.xml.Null) }
         { project.extraFacets }
       </component>
@@ -149,6 +131,28 @@ class IdeaModuleDescriptor(val imlDir: File, projectRoot: File, val project: Sub
     <sourceFolder url={"file://" + path}
                   isTestSource={isTestSourceFolder.toString}
                   packagePrefix={pkg} />
+  }
+
+  def scalaFacet: Node = {
+    <facet type="scala" name="Scala">
+      <configuration>
+        {
+          project.basePackage.map(bp => <option name="basePackage" value={bp} />).getOrElse(scala.xml.Null)
+        }
+        <option name="compilerLibraryLevel" value="Project" />
+        <option name="compilerLibraryName" value={ "scala-" + project.scalaInstance.version } />
+        {
+          if (env.useProjectFsc) <option name="fsc" value="true" />
+        }
+        {
+          if (project.scalacOptions.contains("-deprecation")) <option name="deprecationWarnings" value="true" />
+        }
+        {
+          if (project.scalacOptions.contains("-unchecked")) <option name="uncheckedWarnings" value="true" />
+        }
+        <option name="compilerOptions" value={ project.scalacOptions.mkString(" ") } />
+      </configuration>
+    </facet>
   }
 
   def webFacet(relativeWebAppPath: String): Node =
