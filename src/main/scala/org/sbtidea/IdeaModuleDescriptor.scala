@@ -15,14 +15,12 @@ import xml.{UnprefixedAttribute, Node, Text}
 class IdeaModuleDescriptor(val imlDir: File, projectRoot: File, val project: SubProjectInfo, val env: IdeaProjectEnvironment, val userEnv: IdeaUserEnvironment, val log: Logger) extends SaveableXml {
   val path = String.format("%s/%s.iml", imlDir.getAbsolutePath, project.name)
 
-  def relativePath(file: File) = {
-    IO.relativize(projectRoot, file.getCanonicalFile).map ("$MODULE_DIR$/../" + _).getOrElse(file.getCanonicalPath)
-  }
+  def relativePath(file: File) = IOUtils.relativePath(projectRoot, file, "$MODULE_DIR$/../")
 
-  val sources = project.compileDirs.sources.map(relativePath(_))
-  val resources = project.compileDirs.resources.map(relativePath(_))
-  val testSources = project.testDirs.sources.map(relativePath(_))
-  val testResources = project.testDirs.resources.map(relativePath(_))
+  val sources = project.compileDirs.sources.map(relativePath)
+  val resources = project.compileDirs.resources.map(relativePath)
+  val testSources = project.testDirs.sources.map(relativePath)
+  val testResources = project.testDirs.resources.map(relativePath)
 
   def content: Node = {
     <module type="JAVA_MODULE" version="4">
