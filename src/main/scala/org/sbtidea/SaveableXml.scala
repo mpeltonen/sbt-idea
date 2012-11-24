@@ -8,7 +8,7 @@ package org.sbtidea
 
 import java.io.File
 import sbt.Logger
-import xml.{Node, XML}
+import xml.Node
 
 trait SaveableXml {
   val log: Logger
@@ -19,8 +19,7 @@ trait SaveableXml {
     val file = new File(path)
     file.getParentFile.mkdirs()
 
-    import OutputUtil.saveFile
-    saveFile(file, content)
+    OutputUtil.saveFile(file, content)
     log.info("Created " + path)
   }
 }

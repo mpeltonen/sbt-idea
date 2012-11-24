@@ -44,7 +44,7 @@ class IdeaModuleDescriptor(val imlDir: File, projectRoot: File, val project: Sub
             <option name="compilerOptions" value={ project.scalacOptions.mkString(" ") } />
           </configuration>
         </facet>
-        { if (project.webAppPath.isDefined && userEnv.webFacet == true) webFacet() else scala.xml.Null }
+        { (for (wap <- project.webAppPath if userEnv.webFacet) yield webFacet(relativePath(wap))).getOrElse(scala.xml.Null) }
         { project.extraFacets }
       </component>
       <component name="NewModuleRootManager" inherit-compiler-output={env.projectOutputPath.isDefined.toString}>
@@ -62,13 +62,13 @@ class IdeaModuleDescriptor(val imlDir: File, projectRoot: File, val project: Sub
           { testResources.map(sourceFolder(_, true, project.packagePrefix)) }
           {
 
-            def dontExcludeManagedSources(toExclude:File):Seq[File] = {
+          val managed = project.compileDirs.sources ++ project.testDirs.sources
+
+          def dontExcludeManagedSources(toExclude:File):Seq[File] = {
 
               def isParent(f:File):Boolean = {
                 f == toExclude || (f != null && isParent(f.getParentFile))
               }
-
-              val managed = project.compileDirs.sources ++ project.testDirs.sources
               val dontExclude = managed.exists(isParent)
 
               if(dontExclude)
@@ -77,8 +77,8 @@ class IdeaModuleDescriptor(val imlDir: File, projectRoot: File, val project: Sub
                 Seq(toExclude)
             }
 
-            env.excludedFolders.split(",").toList.map(_.trim)
-              .map(entry => new File(project.baseDir, entry))
+            env.excludedFolders
+              .map(entry => new File(project.baseDir, entry.trim))
               .flatMap(dontExcludeManagedSources)
               .sortBy(_.getName).map { exclude =>
               log.info(String.format("Excluding folder %s\n", exclude))
@@ -151,16 +151,15 @@ class IdeaModuleDescriptor(val imlDir: File, projectRoot: File, val project: Sub
                   packagePrefix={pkg} />
   }
 
-  def webFacet(): Node = {
+  def webFacet(relativeWebAppPath: String): Node =
     <facet type="web" name="Web">
       <configuration>
         <descriptors>
-          <deploymentDescriptor name="web.xml" url={String.format("file://%s/WEB-INF/web.xml", relativePath(project.webAppPath.get))} />
+          <deploymentDescriptor name="web.xml" url={String.format("file://%s/WEB-INF/web.xml", relativeWebAppPath)}/>
         </descriptors>
         <webroots>
-          <root url={String.format("file://%s", relativePath(project.webAppPath.get))} relative="/" />
+          <root url={String.format("file://%s", relativeWebAppPath)} relative="/"/>
         </webroots>
       </configuration>
     </facet>
-  }
 }

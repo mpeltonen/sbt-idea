@@ -2,7 +2,6 @@ package org.sbtidea
 
 import sbt._
 import sbt.Load.BuildStructure
-import sbt.CommandSupport._
 import sbt.complete.Parsers._
 import java.io.File
 import collection.Seq
@@ -92,7 +91,7 @@ object SbtIdeaPlugin extends Plugin {
     val projectInfo = IdeaProjectInfo(buildUnit.localBase, name.getOrElse("Unknown"), subProjects, ideaLibs ::: scalaLibs)
 
     val env = IdeaProjectEnvironment(projectJdkName = SystemProps.jdkName, javaLanguageLevel = SystemProps.languageLevel,
-      includeSbtProjectDefinitionModule = !args.contains(NoSbtBuildModule), projectOutputPath = None, excludedFolders = "target",
+      includeSbtProjectDefinitionModule = !args.contains(NoSbtBuildModule), projectOutputPath = None, excludedFolders = Seq("target"),
       compileWithIdea = false, modulePath = ".idea_modules", useProjectFsc = !args.contains(NoFsc),
       enableTypeHighlighting = !args.contains(NoTypeHighlighting))
 
@@ -149,7 +148,7 @@ object SbtIdeaPlugin extends Plugin {
     def optionalSetting[A](key: SettingKey[A], pr: ProjectRef = projectRef) : Option[A] = key in pr get buildStruct.data
 
     def logErrorAndFail(errorMessage: String): Nothing = {
-      state.log.error(errorMessage);
+      state.log.error(errorMessage)
       throw new IllegalArgumentException()
     }
 

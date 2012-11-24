@@ -137,43 +137,39 @@ class IdeaProjectDescriptor(val projectInfo: IdeaProjectInfo, val env: IdeaProje
     } else log.error("Skipping .idea creation for " + projectInfo.baseDir + " since directory does not exist")
   }
 
-  val scalaCompilerXml =
-    <project version="4">
-      <component name="ScalacSettings">
-        <option name="COMPILER_LIBRARY_NAME" value={projectInfo.childProjects.headOption.
-        map(p => SbtIdeaModuleMapping.toIdeaLib(p.scalaInstance).name).getOrElse("")}/>
-        <option name="COMPILER_LIBRARY_LEVEL" value="Project"/>
-      </component>
-    </project>
+  val scalaCompilerXml = project(
+    <component name="ScalacSettings">
+      <option name="COMPILER_LIBRARY_NAME" value={projectInfo.childProjects.headOption.
+      map(p => SbtIdeaModuleMapping.toIdeaLib(p.scalaInstance).name).getOrElse("")}/>
+      <option name="COMPILER_LIBRARY_LEVEL" value="Project"/>
+    </component>
+  )
 
-  val highlightingXml =
-    <project version="4">
-      <component name="HighlightingAdvisor">
-        <option name="SUGGEST_TYPE_AWARE_HIGHLIGHTING" value="false"/>
-        <option name="TYPE_AWARE_HIGHLIGHTING_ENABLED" value="true"/>
-      </component>
-    </project>
+  val highlightingXml = project(
+    <component name="HighlightingAdvisor">
+      <option name="SUGGEST_TYPE_AWARE_HIGHLIGHTING" value="false"/>
+      <option name="TYPE_AWARE_HIGHLIGHTING_ENABLED" value="true"/>
+    </component>
+  )
 
-  val defaultProjectCodeStyleXml =
-    <project version="4">
-      <component name="CodeStyleSettingsManager">
-        <option name="PER_PROJECT_SETTINGS">
-          <value>
-            <option name="LINE_SEPARATOR" value={Unparsed("&#10;")} />
-          </value>
-        </option>
-        <option name="USE_PER_PROJECT_SETTINGS" value="true" />
-      </component>
-    </project>
+  val defaultProjectCodeStyleXml = project(
+    <component name="CodeStyleSettingsManager">
+      <option name="PER_PROJECT_SETTINGS">
+        <value>
+          <option name="LINE_SEPARATOR" value={Unparsed("&#10;")}/>
+        </value>
+      </option>
+      <option name="USE_PER_PROJECT_SETTINGS" value="true"/>
+    </component>
+  )
 
-  val defaultEncodingsXml =
-    <project version="4">
-      <component name="Encoding" useUTFGuessing="true" native2AsciiForPropertiesFiles="false" defaultCharsetForPropertiesFiles="ISO-8859-1">
-        <file url="PROJECT" charset="UTF-8" />
-      </component>
-    </project>
+  val defaultEncodingsXml = project(
+    <component name="Encoding" useUTFGuessing="true" native2AsciiForPropertiesFiles="false" defaultCharsetForPropertiesFiles="ISO-8859-1">
+      <file url="PROJECT" charset="UTF-8"/>
+    </component>
+  )
 
-  val defaultMiscXml = <project version="4"> {projectRootManagerComponent} </project>
+  val defaultMiscXml = project(projectRootManagerComponent)
 
   private def miscXml(configDir: File): Option[Node] = try {
     Some(XML.loadFile(new File(configDir, "misc.xml")))

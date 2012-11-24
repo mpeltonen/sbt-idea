@@ -24,8 +24,8 @@ case class IdeaLibrary(name: String, classes: Set[File], javaDocs: Set[File], so
 case class IdeaModuleLibRef(config: IdeaLibrary.Scope, library: IdeaLibrary)
 
 case class Directories(sources: Seq[File], resources: Seq[File], outDir: File) {
-  def addSrc (moreSources: Seq[File]): Directories = Directories(sources ++ moreSources, resources, outDir)
-  def addRes (moreResources: Seq[File]): Directories = Directories(sources, resources ++ moreResources, outDir)
+  def addSrc(moreSources: Seq[File]): Directories = copy(sources = sources ++ moreSources)
+  def addRes(moreResources: Seq[File]): Directories = copy(resources = resources ++ moreResources)
 }
 
 case class SubProjectInfo(baseDir: File, name: String, dependencyProjects: List[String], classpathDeps: Seq[(File, Seq[File])], compileDirs: Directories,
@@ -39,5 +39,5 @@ case class IdeaUserEnvironment(webFacet: Boolean)
 
 case class IdeaProjectEnvironment(projectJdkName :String, javaLanguageLevel: String,
                                   includeSbtProjectDefinitionModule: Boolean, projectOutputPath: Option[String],
-                                  excludedFolders: String, compileWithIdea: Boolean, modulePath: String, useProjectFsc: Boolean,
+                                  excludedFolders: Seq[String], compileWithIdea: Boolean, modulePath: String, useProjectFsc: Boolean,
                                   enableTypeHighlighting: Boolean)

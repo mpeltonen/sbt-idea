@@ -18,7 +18,7 @@ class ParentProjectIdeaModuleDescriptor(val projectInfo: IdeaProjectInfo, val en
         <exclude-output />
         <content url="file://$MODULE_DIR$">
           {
-            env.excludedFolders.split(",").toList.map(_.trim).sorted.map { entry =>
+            env.excludedFolders.map(_.trim).sorted.map { entry =>
               log.info(String.format("Excluding folder %s\n", entry))
               <excludeFolder url={String.format("file://$MODULE_DIR$/%s", entry)} />
             }
