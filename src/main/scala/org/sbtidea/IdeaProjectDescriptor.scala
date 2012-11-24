@@ -11,7 +11,7 @@ import xml.transform.{RewriteRule, RuleTransformer}
 import java.io.{FileOutputStream, File}
 import java.nio.channels.Channels
 import util.control.Exception._
-import xml.{Text, Elem, UnprefixedAttribute, XML, Node, Unparsed}
+import xml.{Text, Elem, XML, Node, Unparsed}
 
 object OutputUtil {
   def saveFile(dir: File, filename: String, node: xml.Node) { saveFile(new File(dir, filename), node) }
@@ -29,16 +29,7 @@ object OutputUtil {
 
 class IdeaProjectDescriptor(val projectInfo: IdeaProjectInfo, val env: IdeaProjectEnvironment, val log: Logger) {
 
-  def projectRelative(file: File) = {
-    IO.relativize(projectInfo.baseDir, file.getCanonicalFile).map ("$PROJECT_DIR$/" + _).getOrElse(replaceUserHome(file.getCanonicalPath))
-  }
-
-  def replaceUserHome(path: String): String = {
-    val userHome = System.getProperty("user.home")
-    if (path.contains(userHome)) {
-      path.replace(userHome, "$USER_HOME$")
-    } else path
-  }
+  def projectRelative(file: File) = IOUtils.relativePath(projectInfo.baseDir, file, "$PROJECT_DIR$/")
 
   val vcsName = List("svn", "Git").foldLeft("") { (res, vcs) =>
     if (new File(projectInfo.baseDir, "." + vcs.toLowerCase).exists) vcs else res
@@ -75,9 +66,9 @@ class IdeaProjectDescriptor(val projectInfo: IdeaProjectInfo, val env: IdeaProje
 
   private def libraryTableComponent(library: IdeaLibrary): xml.Node = {
     def makeUrl(file: File) = {
-      val path = projectRelative(file);
+      val path = projectRelative(file)
       val formatStr = if (path.endsWith(".jar")) "jar://%s!/" else "file://%s"
-      <root url={String.format(formatStr, path)}/>;
+      <root url={String.format(formatStr, path)}/>
     }
     <component name="libraryTable">
       <library name={library.name}>

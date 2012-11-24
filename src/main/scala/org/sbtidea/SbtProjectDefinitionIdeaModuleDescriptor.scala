@@ -6,7 +6,7 @@ package org.sbtidea
  * See the LICENSE file for details.
  */
 
-import xml.{XML, Node}
+import xml.Node
 import java.io.File
 import sbt.{IO, Logger}
 
@@ -35,7 +35,7 @@ class SbtProjectDefinitionIdeaModuleDescriptor(projectName: String,
                                                val log: Logger) extends SaveableXml {
   val path = String.format("%s/%s-build.iml", imlDir.getAbsolutePath, projectName)
 
-  def removeIfExists():Unit = {
+  def removeIfExists() {
     val file = new File(path)
     if (file.exists) file.delete()
   }
@@ -44,9 +44,7 @@ class SbtProjectDefinitionIdeaModuleDescriptor(projectName: String,
   // pick only one of these.
   val distinctClassPath: Seq[File] = classpath.groupBy(_.getName).toMap.mapValues(_.sortBy(_.getParent).head).values.toSeq
 
-  def relativePath(file: File) = {
-    IO.relativize(imlDir, file.getCanonicalFile).map("$MODULE_DIR$/" + _).getOrElse(file.getCanonicalPath)
-  }
+  def relativePath(file: File) = IOUtils.relativePath(rootProjectDir, file, "$MODULE_DIR$/../")
   
   val scalaDir = "scala-" + sbtScalaVersion
 
@@ -56,18 +54,20 @@ class SbtProjectDefinitionIdeaModuleDescriptor(projectName: String,
   private[this] def isClassDir(file: File) = file.exists && !isSource(file) && !isJavaDoc(file) && !file.getName.endsWith(".jar")
 
   def content: Node = {
+    val relativeSbtOut = relativePath(sbtOut)
+    val relativeProjectDir = relativePath(sbtProjectDir)
 <module type="JAVA_MODULE" version="4">
   <component name="NewModuleRootManager">
-    <output url={"file://" + relativePath(sbtOut)}/>
-    <output-test url={"file://" + relativePath(sbtOut)}/>
+    <output url={"file://" + relativeSbtOut}/>
+    <output-test url={"file://" + relativeSbtOut}/>
     <exclude-output />
-    <content url={"file://" + relativePath(sbtProjectDir)}>
-      <sourceFolder url={"file://" + relativePath(sbtProjectDir)} isTestSource="false" />
-      <sourceFolder url={"file://" + relativePath(sbtProjectDir) + "/project"} isTestSource="false" />
+    <content url={"file://" + relativeProjectDir}>
+      <sourceFolder url={"file://" + relativeProjectDir} isTestSource="false" />
+      <sourceFolder url={"file://" + relativeProjectDir + "/project"} isTestSource="false" />
       {
       val excluded = Seq("boot", "target", "project/target", "project/project/target")
       for (e <- excluded) yield {
-        <excludeFolder url={"file://" + relativePath(sbtProjectDir) + "/" + e} />
+        <excludeFolder url={"file://" + relativeProjectDir + "/" + e} />
       }
       }
     </content>
