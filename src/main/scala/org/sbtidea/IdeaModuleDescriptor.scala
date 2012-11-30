@@ -173,10 +173,11 @@ class IdeaModuleDescriptor(val imlDir: File, projectRoot: File, val project: Sub
    * detecting evictors, and moving them up in the classpath to just before the evictees.
    */
   def promoteTestEvictors(libraries: Seq[IdeaModuleLibRef]) = {
-    val evictions = libraries.groupBy(_.library.evictionId)
-      .filter(_._2.size > 1)
-      .map(_._2.toSeq)
-      .flatMap(libs => libs.find(_.config == IdeaLibrary.TestScope).map(testLib => testLib -> libs.filterNot(_ == testLib)))
+    val evictions = for {
+      (evictionId, libs) <- libraries.groupBy(_.library.evictionId) if libs.size > 1
+      testLib <- libs.find(_.config == IdeaLibrary.TestScope)
+    } yield
+      testLib -> libs.filterNot(_ == testLib)
 
     evictions.foldLeft(libraries){(libs, e) =>
       val (evictor, evictees) = e
