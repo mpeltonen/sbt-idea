@@ -86,7 +86,7 @@ class IdeaModuleDescriptor(val imlDir: File, projectRoot: File, val project: Sub
         <orderEntry type="sourceFolder" forTests="false"/>
         {
         // what about j.extraAttributes.get("e:docUrl")?
-        project.libraries.map(ref => {
+        promoteTestEvictors(project.libraries).map(ref => {
           val orderEntry = <orderEntry type="library" name={ ref.library.name } level="project"/>
           ref.config match {
                 case IdeaLibrary.CompileScope => orderEntry
@@ -166,4 +166,29 @@ class IdeaModuleDescriptor(val imlDir: File, projectRoot: File, val project: Sub
         </webroots>
       </configuration>
     </facet>
+
+  /**
+   * SBT allows different versions of the same library in different scopes, evicting runtime/compile dependencies
+   * out of their scopes if a newer one is found in test when compiling/running tests, while still maintaining
+   * the order as defined in the build configuration. IDEA doesn't support this eviction.  We fake it by
+   * detecting evictors, and moving them up in the classpath to just before the evictees.
+   */
+  def promoteTestEvictors(libraries: Seq[IdeaModuleLibRef]) = {
+    val evictions = for {
+      (evictionId, libs) <- libraries.groupBy(_.library.evictionId) if libs.size > 1
+      testLib <- libs.find(_.config == IdeaLibrary.TestScope)
+    } yield
+      testLib -> libs.filterNot(_ == testLib)
+
+    evictions.foldLeft(libraries){(libs, e) =>
+      val (evictor, evictees) = e
+      val evictorIndex = libs.indexOf(evictor)
+      val firstEvicteeIndex = libs.indexWhere(l => evictees.contains(l))
+      if (evictorIndex > firstEvicteeIndex) {
+        (libs.take(firstEvicteeIndex) :+ evictor) ++ libs.takeRight(libs.size - firstEvicteeIndex).filterNot(_ == evictor)
+      } else {
+        libs
+      }
+    }
+  }
 }
