@@ -122,8 +122,8 @@ object SbtIdeaModuleMapping {
       case Some(classifiers) => classifiers.foldLeft(Seq[File]()) { (acc, classifier) => acc ++ findByClassifier(Some(classifier)) }
       case None => Seq[File]()
     }
-    val id = module.organization + "_" + module.name + "_" + module.revision + (if (!configuration.isEmpty) "_" + configuration else "")
-    val name = "SBT: " + module.organization + ":" + module.name + ":" + module.revision
+    val id = module.organization + "_" + module.name + "_" + module.revision + (if (configuration.nonEmpty) "_" + configuration else "")
+    val name = "SBT: " + module.organization + ":" + module.name + ":" + module.revision + (if (configuration.nonEmpty) ":" + configuration else "")
     val artifactId = module.organization + ":" + module.name
     IdeaLibrary(id,
       name,
