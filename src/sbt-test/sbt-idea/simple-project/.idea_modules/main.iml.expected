@@ -3,7 +3,7 @@
     <facet name="Scala" type="scala">
       <configuration>
         <option name="compilerLibraryLevel" value="Project"></option>
-        <option name="compilerLibraryName" value="scala-2.9.1"></option>
+        <option name="compilerLibraryName" value="SBT: scala:2.9.1"></option>
         <option name="fsc" value="true" />
         <option name="deprecationWarnings" value="true" />
         <option name="uncheckedWarnings" value="true" />
@@ -26,7 +26,7 @@
     </content>
     <orderEntry type="inheritedJdk"></orderEntry>
     <orderEntry type="sourceFolder" forTests="false"></orderEntry>
-    <orderEntry level="project" name="org.scala-lang_scala-library_2.9.1" type="library"></orderEntry>
-    <orderEntry level="project" name="junit_junit_4.8.2" type="library"></orderEntry>
+    <orderEntry level="project" name="SBT: org.scala-lang:scala-library:2.9.1" type="library"></orderEntry>
+    <orderEntry level="project" name="SBT: junit:junit:4.8.2" type="library"></orderEntry>
   </component>
 </module>

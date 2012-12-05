@@ -3,7 +3,7 @@
    <facet type="scala" name="Scala">
      <configuration>
        <option value="Project" name="compilerLibraryLevel"></option>
-       <option value="scala-2.9.1" name="compilerLibraryName"></option>
+       <option value="SBT: scala:2.9.1" name="compilerLibraryName"></option>
        <option value="true" name="fsc"></option>
        <option value="true" name="deprecationWarnings"></option>
        <option value="-deprecation" name="compilerOptions"/>
@@ -25,6 +25,6 @@
    </content>
    <orderEntry type="inheritedJdk"></orderEntry>
    <orderEntry forTests="false" type="sourceFolder"></orderEntry>
-   <orderEntry type="library" name="org.scala-lang_scala-library_2.9.1" level="project"></orderEntry>
+   <orderEntry type="library" name="SBT: org.scala-lang:scala-library:2.9.1" level="project"></orderEntry>
  </component>
 </module>

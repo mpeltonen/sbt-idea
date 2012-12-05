@@ -3,7 +3,7 @@
     <facet name="Scala" type="scala">
       <configuration>
         <option name="compilerLibraryLevel" value="Project"></option>
-        <option name="compilerLibraryName" value="scala-2.9.1"></option>
+        <option name="compilerLibraryName" value="SBT: scala:2.9.1"></option>
         <option name="fsc" value="true" />
         <option name="compilerOptions" value="" />
       </configuration>
@@ -24,8 +24,8 @@
     </content>
     <orderEntry type="inheritedJdk"></orderEntry>
     <orderEntry type="sourceFolder" forTests="false"></orderEntry>
-    <orderEntry level="project" name="org.scala-lang_scala-library_2.9.1" type="library"></orderEntry>
-    <orderEntry level="project" name="com.googlecode.kiama_kiama_2.9.1_1.2.0" type="library"></orderEntry>
-    <orderEntry level="project" scope="TEST" name="com.googlecode.kiama_kiama_2.9.1_1.2.0_test" type="library"></orderEntry>
+    <orderEntry level="project" name="SBT: org.scala-lang:scala-library:2.9.1" type="library"></orderEntry>
+    <orderEntry level="project" scope="TEST" name="SBT: com.googlecode.kiama:kiama_2.9.1:1.2.0:test" type="library"></orderEntry>
+    <orderEntry level="project" name="SBT: com.googlecode.kiama:kiama_2.9.1:1.2.0" type="library"></orderEntry>
   </component>
 </module>
