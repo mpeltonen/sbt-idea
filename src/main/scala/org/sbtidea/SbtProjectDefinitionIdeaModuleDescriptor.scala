@@ -46,7 +46,7 @@ class SbtProjectDefinitionIdeaModuleDescriptor(projectName: String,
 
   def relativePath(file: File) = IOUtils.relativePath(rootProjectDir, file, "$MODULE_DIR$/../")
   
-  val scalaDir = "scala-" + sbtScalaVersion
+  val scalaLibrary = "SBT: scala:" + sbtScalaVersion
 
   private[this] def isSource(file: File) = file.getName.endsWith("-sources.jar")
   private[this] def isJavaDoc(file: File) = file.getName.endsWith("-javadoc.jar")
@@ -94,7 +94,7 @@ class SbtProjectDefinitionIdeaModuleDescriptor(projectName: String,
         </SOURCES>
       </library>
     </orderEntry>
-    <orderEntry type="library" name={scalaDir} level="project" />
+    <orderEntry type="library" name={scalaLibrary} level="project" />
   </component>
 </module>
   }

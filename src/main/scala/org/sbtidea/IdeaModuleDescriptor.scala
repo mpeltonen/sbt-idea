@@ -140,7 +140,7 @@ class IdeaModuleDescriptor(val imlDir: File, projectRoot: File, val project: Sub
           project.basePackage.map(bp => <option name="basePackage" value={bp} />).getOrElse(scala.xml.Null)
         }
         <option name="compilerLibraryLevel" value="Project" />
-        <option name="compilerLibraryName" value={ "scala-" + project.scalaInstance.version } />
+        <option name="compilerLibraryName" value={ SbtIdeaModuleMapping.toIdeaLib(project.scalaInstance).name } />
         {
           if (env.useProjectFsc) <option name="fsc" value="true" />
         }
