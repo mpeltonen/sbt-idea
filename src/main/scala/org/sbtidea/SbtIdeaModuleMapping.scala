@@ -11,7 +11,7 @@ object SbtIdeaModuleMapping {
       Seq("compiler", "library", "reflect").map("scala-%s.jar" format _).exists(_ == jar.getName)
     }.toSet
     val id = "scala-" + instance.version
-    IdeaLibrary(id, "Scala " + instance.version, id, coreJars,
+    IdeaLibrary(id, "SBT: scala:" + instance.version, id, coreJars,
       instance.extraJars.filter(_.getAbsolutePath.endsWith("docs.jar")).toSet,
       instance.extraJars.filter(_.getAbsolutePath.endsWith("-sources.jar")).toSet)
   }
