@@ -1,0 +1,44 @@
+
+Changes since 1.1.0:
+
+* Add scala-reflect.jar into Scala IDEA library for Scala 2.10.x
+* Populate additional compiler options from scalacOptions ([pull 170][1] by [sythe21][2])
+* Set deprecation and unchecked scalac options ([issue 120][3], [pull 163][4] and [pull 174][5] by [jozic][6])
+* Enable type-aware highlighting by default ([pull 173][7] by [jozic][6])
+* Add ``no-sbt-build-module`` command line argument to disable generation of IDEA module for sbt build definition ([issue 180][8])
+* Use project name as IDEA module name for single-module projects ([issue 180][8])
+* Add 'runtime' scope support to unmanagedClasspath ([issue 181][9])
+* Remove absolute paths ([issue 135][10], [pull 185][11] by [jozic][6])
+* Make scala facet optional with ``idea-include-scala-facet`` command line arg ([pull 184][12] by [jroper][13])
+* Allow test dependency versions to override runtime dependencies ([pull 183][14] by [jroper][13])
+* Fix 'test' scoped transitive dependency to not override explicitly declared 'provided' scope ([issue 186][15])
+
+**NOTE**: Because of the library naming change in [#183][7], it is recommended to quit IDEA and delete all files in ``<project_root>/.idea/libraries/`` before running 'gen-idea' with 1.2.0 version of the plugin.
+
+**TIP**: You can use [sbt aliases][16] for setting default command line arguments. For example to not generate sbt build module by default, add this to ``~/.sbtrc``:
+
+    alias gen-idea=gen-idea no-sbt-build-module
+
+or to get sbt sources by default, add this:
+
+    alias gen-idea=gen-idea sbt-classifiers
+
+
+Many thanks to all contributors!
+
+[1]: https://github.com/mpeltonen/sbt-idea/pull/170
+[2]: https://github.com/sythe21
+[3]: https://github.com/mpeltonen/sbt-idea/issues/120
+[4]: https://github.com/mpeltonen/sbt-idea/pull/163
+[5]: https://github.com/mpeltonen/sbt-idea/pull/174
+[6]: https://github.com/jozic
+[7]: https://github.com/mpeltonen/sbt-idea/pull/173
+[8]: https://github.com/mpeltonen/sbt-idea/issues/180
+[9]: https://github.com/mpeltonen/sbt-idea/issues/181
+[10]: https://github.com/mpeltonen/sbt-idea/issues/135
+[11]: https://github.com/mpeltonen/sbt-idea/pull/185
+[12]: https://github.com/mpeltonen/sbt-idea/pull/184
+[13]: https://github.com/jroper
+[14]: https://github.com/mpeltonen/sbt-idea/pull/183
+[15]: https://github.com/mpeltonen/sbt-idea/issues/186
+[16]: http://www.scala-sbt.org/release/docs/Howto/runningcommands.html#alias
