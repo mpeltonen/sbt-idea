@@ -1,5 +1,6 @@
 package org.sbtidea
 
+import android.AndroidSupport
 import java.io.File
 import xml.NodeSeq
 
@@ -32,7 +33,7 @@ case class SubProjectInfo(baseDir: File, name: String, dependencyProjects: List[
                           testDirs: Directories, libraries: Seq[IdeaModuleLibRef], scalaInstance: ScalaInstance,
                           ideaGroup: Option[String], webAppPath: Option[File], basePackage: Option[String],
                           packagePrefix: Option[String], extraFacets: NodeSeq, scalacOptions: Seq[String],
-                          includeScalaFacet: Boolean)
+                          includeScalaFacet: Boolean, androidSupport: AndroidSupport)
 
 case class IdeaProjectInfo(baseDir: File, name: String, childProjects: List[SubProjectInfo], ideaLibs: List[IdeaLibrary])
 

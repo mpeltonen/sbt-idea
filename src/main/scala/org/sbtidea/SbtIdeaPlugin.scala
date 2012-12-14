@@ -1,5 +1,6 @@
 package org.sbtidea
 
+import android.AndroidSupport
 import sbt._
 import sbt.Load.BuildStructure
 import sbt.complete.Parsers._
@@ -83,7 +84,7 @@ object SbtIdeaPlugin extends Plugin {
 
     val allProjectIds = projectList.values.map(_.id).toSet
     val subProjects = projectList.collect {
-      case (projRef, project) if (!ignoreModule(projRef)) => projectData(projRef, project, buildStruct, state, args, allProjectIds)
+      case (projRef, project) if (!ignoreModule(projRef)) => projectData(projRef, project, buildStruct, state, args, allProjectIds, buildUnit.localBase)
     }.toList
 
     val scalaInstances = subProjects.map(_.scalaInstance).distinct
@@ -145,7 +146,7 @@ object SbtIdeaPlugin extends Plugin {
   }
 
   def projectData(projectRef: ProjectRef, project: ResolvedProject, buildStruct: BuildStructure,
-                  state: State, args: Seq[String], allProjectIds: Set[String]): SubProjectInfo = {
+                  state: State, args: Seq[String], allProjectIds: Set[String], projectRoot: File): SubProjectInfo = {
 
     val settings = Settings(projectRef, buildStruct, state)
 
@@ -208,9 +209,16 @@ object SbtIdeaPlugin extends Plugin {
     }
 
 
+    val androidSupport = AndroidSupport(project, projectRoot, buildStruct, settings)
+    val dependencyLibs = librariesExtractor.allLibraries.map { lib: IdeaModuleLibRef =>
+      // If this is Android project, change scope of android.jar and Scala library to provided,
+      // to prevent IDEA from dexing them when running.
+      def shouldNotDex(libName: String) = libName.equals("android.jar") || libName.contains(":scala-library:")
+      if (androidSupport.isAndroidProject && shouldNotDex(lib.library.name)) lib.copy(config = IdeaLibrary.ProvidedScope) else lib
+    }
     SubProjectInfo(baseDirectory, projectName, project.uses.map(_.project).filter(isAggregate).toList, classpathDeps, compileDirectories,
-      testDirectories, librariesExtractor.allLibraries, scalaInstance, ideaGroup, None, basePackage, packagePrefix, extraFacets, scalacOptions,
-      includeScalaFacet)
+      testDirectories, dependencyLibs, scalaInstance, ideaGroup, None, basePackage, packagePrefix, extraFacets, scalacOptions,
+      includeScalaFacet, androidSupport)
   }
 
 }
