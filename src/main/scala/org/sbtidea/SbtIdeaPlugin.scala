@@ -147,52 +147,23 @@ object SbtIdeaPlugin extends Plugin {
   def projectData(projectRef: ProjectRef, project: ResolvedProject, buildStruct: BuildStructure,
                   state: State, args: Seq[String], allProjectIds: Set[String]): SubProjectInfo = {
 
-    def optionalSetting[A](key: SettingKey[A], pr: ProjectRef = projectRef) : Option[A] = key in pr get buildStruct.data
-
-    def logErrorAndFail(errorMessage: String): Nothing = {
-      state.log.error(errorMessage)
-      throw new IllegalArgumentException()
-    }
-
-    def setting[A](key: SettingKey[A], errorMessage: => String, pr: ProjectRef = projectRef) : A = {
-      optionalSetting(key, pr) getOrElse {
-        logErrorAndFail(errorMessage)
-      }
-    }
-
-    def settingWithDefault[A](key: SettingKey[A], defaultValue: => A) : A = {
-      optionalSetting(key) getOrElse defaultValue
-    }
+    val settings = Settings(projectRef, buildStruct, state)
 
     // The SBT project name and id can be different. For single-module projects, we choose the name as the
     // IDEA project name, and for multi-module projects, the id as it must be consistent with the value of SubProjectInfo#dependencyProjects.
-    val projectName = if (allProjectIds.size == 1) setting(Keys.name, "Missing project name") else project.id
+    val projectName = if (allProjectIds.size == 1) settings.setting(Keys.name, "Missing project name") else project.id
 
     state.log.info("Trying to create an Idea module " + projectName)
 
-    val ideaGroup = optionalSetting(ideaProjectGroup)
-    val scalaInstance: ScalaInstance = {
-      val missingScalaInstanceMessage = "Missing scala instance"
-      // Compatibility from SBT 0.10.1 -> 0.10.2-SNAPSHOT
-      (Keys.scalaInstance: Any) match {
-        case k: SettingKey[_] =>
-          setting(k.asInstanceOf[SettingKey[ScalaInstance]], missingScalaInstanceMessage)
-        case t: TaskKey[_] =>
-          val scalaInstanceTaskKey = t.asInstanceOf[TaskKey[ScalaInstance]]
-          EvaluateTask(buildStruct, scalaInstanceTaskKey, state, projectRef).map(_._2) match {
-            case Some(Value(instance)) => instance
-            case _ => logErrorAndFail(missingScalaInstanceMessage)
-          }
-      }
-    }
-
-    val baseDirectory = setting(Keys.baseDirectory, "Missing base directory!")
-    val target = setting(Keys.target, "Missing target directory")
+    val ideaGroup = settings.optionalSetting(ideaProjectGroup)
+    val scalaInstance: ScalaInstance = settings.task(Keys.scalaInstance)
+    val scalacOptions: Seq[String] = settings.optionalTask(Keys.scalacOptions).getOrElse(Seq())
+    val baseDirectory = settings.setting(Keys.baseDirectory, "Missing base directory!")
 
     def sourceDirectoriesFor(config: Configuration) = {
-      val hasSourceGen = optionalSetting(Keys.sourceGenerators in config).exists(!_.isEmpty)
+      val hasSourceGen = settings.optionalSetting(Keys.sourceGenerators in config).exists(!_.isEmpty)
       val managedSourceDirs = if (hasSourceGen) {
-        setting(Keys.managedSourceDirectories in config, "Missing managed source directories!")
+        settings.setting(Keys.managedSourceDirectories in config, "Missing managed source directories!")
       }
       else Seq.empty[File]
 
@@ -202,44 +173,40 @@ object SbtIdeaPlugin extends Plugin {
       // This doesn't fit so well in IDEA, it only has a concept of source directories, not source files.
       // So we begrudgingly add the root dir as a source dir *only* if we find some .scala files there.
       val baseDirs = {
-        val baseDir = setting(Keys.baseDirectory, "Missing base directory!")
+        val baseDir = settings.setting(Keys.baseDirectory, "Missing base directory!")
         val baseDirDirectlyContainsSources = baseDir.listFiles().exists(f => f.isFile && f.ext == "scala")
         if (config.name == "compile" && baseDirDirectlyContainsSources) Seq[File](baseDir) else Seq[File]()
       }
 
-      settingWithDefault(Keys.unmanagedSourceDirectories in config, Nil) ++ managedSourceDirs ++ baseDirs
+      settings.settingWithDefault(Keys.unmanagedSourceDirectories in config, Nil) ++ managedSourceDirs ++ baseDirs
     }
     def resourceDirectoriesFor(config: Configuration) = {
-      settingWithDefault(Keys.unmanagedResourceDirectories in config, Nil)
+      settings.settingWithDefault(Keys.unmanagedResourceDirectories in config, Nil)
     }
     def directoriesFor(config: Configuration) = {
       Directories(
         sourceDirectoriesFor(config),
         resourceDirectoriesFor(config),
-        setting(Keys.classDirectory in config, "Missing class directory!"))
+        settings.setting(Keys.classDirectory in config, "Missing class directory!"))
     }
     val compileDirectories: Directories = directoriesFor(Configurations.Compile)
     val testDirectories: Directories = directoriesFor(Configurations.Test).addSrc(sourceDirectoriesFor(Configurations.IntegrationTest)).addRes(resourceDirectoriesFor(Configurations.IntegrationTest))
     val librariesExtractor = new SbtIdeaModuleMapping.LibrariesExtractor(buildStruct, state, projectRef, scalaInstance,
       withClassifiers = if (args.contains(NoClassifiers)) None else {
-        Some((setting(ideaSourcesClassifiers, "Missing idea-sources-classifiers"), setting(ideaJavadocsClassifiers, "Missing idea-javadocs-classifiers")))
+        Some((settings.setting(ideaSourcesClassifiers, "Missing idea-sources-classifiers"), settings.setting(ideaJavadocsClassifiers, "Missing idea-javadocs-classifiers")))
       }
     )
-    val basePackage = setting(ideaBasePackage, "missing IDEA base package")
-    val packagePrefix = setting(ideaPackagePrefix, "missing package prefix")
-    val extraFacets = settingWithDefault(ideaExtraFacets, NodeSeq.Empty)
-    val includeScalaFacet = settingWithDefault(ideaIncludeScalaFacet, true)
+    val basePackage = settings.setting(ideaBasePackage, "missing IDEA base package")
+    val packagePrefix = settings.setting(ideaPackagePrefix, "missing package prefix")
+    val extraFacets = settings.settingWithDefault(ideaExtraFacets, NodeSeq.Empty)
+    val includeScalaFacet = settings.settingWithDefault(ideaIncludeScalaFacet, true)
     def isAggregate(p: String) = allProjectIds.toSeq.contains(p)
     val classpathDeps = project.dependencies.filterNot(d => isAggregate(d.project.project)).flatMap { dep =>
       Seq(Compile, Test) map { scope =>
-        (setting(Keys.classDirectory in scope, "Missing class directory", dep.project), setting(Keys.sourceDirectories in scope, "Missing source directory", dep.project))
+        (settings.setting(Keys.classDirectory in scope, "Missing class directory", dep.project), settings.setting(Keys.sourceDirectories in scope, "Missing source directory", dep.project))
       }
     }
 
-    val scalacOptions: Seq[String] = EvaluateTask(buildStruct, Keys.scalacOptions in Configurations.Compile, state, projectRef) match {
-      case Some((_, Value(options))) => options
-      case _ => Seq()
-    }
 
     SubProjectInfo(baseDirectory, projectName, project.uses.map(_.project).filter(isAggregate).toList, classpathDeps, compileDirectories,
       testDirectories, librariesExtractor.allLibraries, scalaInstance, ideaGroup, None, basePackage, packagePrefix, extraFacets, scalacOptions,
