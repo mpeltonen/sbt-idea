@@ -27,6 +27,7 @@ class IdeaModuleDescriptor(val imlDir: File, projectRoot: File, val project: Sub
       <component name="FacetManager">
         { if (project.includeScalaFacet) scalaFacet else scala.xml.Null }
         { (for (wap <- project.webAppPath if userEnv.webFacet) yield webFacet(relativePath(wap))).getOrElse(scala.xml.Null) }
+        { project.androidSupport.facet }
         { project.extraFacets }
       </component>
       <component name="NewModuleRootManager" inherit-compiler-output={env.projectOutputPath.isDefined.toString}>
@@ -82,7 +83,10 @@ class IdeaModuleDescriptor(val imlDir: File, projectRoot: File, val project: Sub
             case _ => xml.Null
           }*/ xml.Null
         }
-        <orderEntry type="inheritedJdk"/>
+        {
+          if (project.androidSupport.isAndroidProject) project.androidSupport.moduleJdk
+          else <orderEntry type="inheritedJdk"/>
+        }
         <orderEntry type="sourceFolder" forTests="false"/>
         {
         // what about j.extraAttributes.get("e:docUrl")?

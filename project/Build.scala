@@ -1,7 +1,7 @@
 import sbt._
 import Keys._
 
-object SbtIdeaBuild extends Build {
+object SbtIdeaBuild extends Build with BuildExtra {
   lazy val sbtIdea = Project("sbt-idea", file("."), settings = mainSettings)
 
   lazy val mainSettings: Seq[Project.Setting[_]] = Defaults.defaultSettings ++ ScriptedPlugin.scriptedSettings ++ Seq(
@@ -19,14 +19,15 @@ object SbtIdeaBuild extends Build {
     publishArtifact in Test := false,
     pomIncludeRepository := (_ => false),
     pomExtra := extraPom,
-    resolvers += Classpaths.typesafeSnapshots,
+    resolvers ++= Seq(
+      Classpaths.typesafeSnapshots,
+      "Github Repo" at "http://mpeltonen.github.com/maven"
+    ),
     scalacOptions ++= Seq("-deprecation", "-unchecked"),
-    libraryDependencies ++= scriptedTestHelperDependencies
-  )
-
-  private def scriptedTestHelperDependencies = Seq(
-    "commons-io" % "commons-io" % "2.0.1"
-  )
+    libraryDependencies ++= Seq(
+      "commons-io" % "commons-io" % "2.0.1"
+    )
+  ) ++ addSbtPlugin("com.github.mpeltonen" % "sbt-android-plugin" % "0.6.3-SNAPSHOT" % "provided")
 
   def extraPom = (
     <url>http://your.project.url</url>
