@@ -115,11 +115,7 @@ class IdeaModuleDescriptor(val project: BasicDependencyProject, val log: Logger)
           val allJars = projectJars(project)
           // exclude dependencies already declared in module dependencies within the same scope
           def nameWithScope(f: File): String = {
-            val separator = File.separator match {
-              case """\""" => "\\\\"
-              case _ => File.separator
-            }
-            f.getAbsolutePath.split(separator).reverse.take(2).reverse.toList.mkString(separator)
+            f.getAbsolutePath.split(File.separatorChar).reverse.take(2).reverse.toList.mkString(File.separator)
           }
           val alreadyDeclared = dependencyProjects.flatMap{
             case p: BasicDependencyProject => List(projectJars(p).getFiles.map(f => (nameWithScope(f), f.length)))
