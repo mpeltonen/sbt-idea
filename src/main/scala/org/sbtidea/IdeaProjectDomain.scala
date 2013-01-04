@@ -32,7 +32,14 @@ case class SubProjectInfo(baseDir: File, name: String, dependencyProjects: List[
                           testDirs: Directories, libraries: Seq[IdeaModuleLibRef], scalaInstance: ScalaInstance,
                           ideaGroup: Option[String], webAppPath: Option[File], basePackage: Option[String],
                           packagePrefix: Option[String], extraFacets: NodeSeq, scalacOptions: Seq[String],
-                          includeScalaFacet: Boolean)
+                          includeScalaFacet: Boolean) {
+  lazy val languageLevel: String = {
+    val version = scalaInstance.version
+    val binaryScalaVersion = version.take(version.lastIndexOf('.'))
+    val virtualized = if (version.contains("virtualized")) " virtualized" else ""
+    "Scala " + binaryScalaVersion + virtualized
+  }
+}
 
 case class IdeaProjectInfo(baseDir: File, name: String, childProjects: List[SubProjectInfo], ideaLibs: List[IdeaLibrary])
 

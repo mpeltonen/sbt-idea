@@ -141,6 +141,8 @@ class IdeaModuleDescriptor(val imlDir: File, projectRoot: File, val project: Sub
         }
         <option name="compilerLibraryLevel" value="Project" />
         <option name="compilerLibraryName" value={ SbtIdeaModuleMapping.toIdeaLib(project.scalaInstance).name } />
+        <option name="languageLevel" value={project.languageLevel}/>
+
         {
           if (env.useProjectFsc) <option name="fsc" value="true" />
         }
