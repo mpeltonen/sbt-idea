@@ -4,6 +4,7 @@
      <configuration>
        <option value="Project" name="compilerLibraryLevel"></option>
        <option value="SBT: scala:2.9.2" name="compilerLibraryName"></option>
+       <option value="Scala 2.9" name="languageLevel"></option>
        <option value="true" name="fsc"></option>
        <option value="true" name="uncheckedWarnings"></option>
        <option value="-unchecked" name="compilerOptions"></option>

@@ -5,6 +5,7 @@
         <option value="foo.bar" name="basePackage"></option>
         <option name="compilerLibraryLevel" value="Project"></option>
         <option name="compilerLibraryName" value="SBT: scala:2.9.2"></option>
+        <option name="languageLevel" value="Scala 2.9" />
         <option name="fsc" value="true" />
         <option name="deprecationWarnings" value="true" />
         <option name="uncheckedWarnings" value="true" />
