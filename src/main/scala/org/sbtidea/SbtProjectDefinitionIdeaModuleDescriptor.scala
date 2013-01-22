@@ -45,7 +45,7 @@ class SbtProjectDefinitionIdeaModuleDescriptor(projectName: String,
   val distinctClassPath: Seq[File] = classpath.groupBy(_.getName).toMap.mapValues(_.sortBy(_.getParent).head).values.toSeq
 
   def relativePath(file: File) = IOUtils.relativePath(rootProjectDir, file, "$MODULE_DIR$/../")
-  
+
   val scalaLibrary = "SBT: scala:" + sbtScalaVersion
 
   private[this] def isSource(file: File) = file.getName.endsWith("-sources.jar")
@@ -54,12 +54,11 @@ class SbtProjectDefinitionIdeaModuleDescriptor(projectName: String,
   private[this] def isClassDir(file: File) = file.exists && !isSource(file) && !isJavaDoc(file) && !file.getName.endsWith(".jar")
 
   def content: Node = {
-    val relativeSbtOut = relativePath(sbtOut)
     val relativeProjectDir = relativePath(sbtProjectDir)
 <module type="JAVA_MODULE" version="4">
   <component name="NewModuleRootManager">
-    <output url={"file://" + relativeSbtOut + "/classes"}/>
-    <output-test url={"file://" + relativeSbtOut + "/test-classes"}/>
+    <output url={"file://" + sbtProjectDir + "/target/idea-classes"}/>
+    <output-test url={"file://" + sbtProjectDir + "/target/idea-test-classes"}/>
     <exclude-output />
     <content url={"file://" + relativeProjectDir}>
       <sourceFolder url={"file://" + relativeProjectDir} isTestSource="false" />
