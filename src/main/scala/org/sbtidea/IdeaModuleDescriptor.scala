@@ -134,6 +134,15 @@ class IdeaModuleDescriptor(val imlDir: File, projectRoot: File, val project: Sub
   }
 
   def scalaFacet: Node = {
+    val nonXplugin = project.scalacOptions.filter(x=> !x.startsWith("-Xplugin:"))
+    val optionMap=Map(
+                "-deprecation" -> <option name="deprecationWarnings" value="true" />,
+                "-unchecked" -> <option name="uncheckedWarnings" value="true" />,
+                "-P:continuations:enable" -> <option name="continuations" value="true" />,
+                "-explaintypes" -> <option name="explainTypeErrors" value="true" />,
+                "-optimise" -> <option name="optimiseBytecode" value="true" />,
+                "-nowarn" -> <option name="warnings" value="false" />
+              )
     <facet type="scala" name="Scala">
       <configuration>
         {
@@ -147,21 +156,25 @@ class IdeaModuleDescriptor(val imlDir: File, projectRoot: File, val project: Sub
           if (env.useProjectFsc) <option name="fsc" value="true" />
         }
         {
-          if (project.scalacOptions.contains("-deprecation")) <option name="deprecationWarnings" value="true" />
+          nonXplugin.filter(x=> optionMap.contains(x)).map(x=> optionMap(x))
         }
         {
-          if (project.scalacOptions.contains("-unchecked")) <option name="uncheckedWarnings" value="true" />
-        }
-        {
-          if (project.scalacOptions.contains("-P:continuations:enable")){
-              <option name="continuations" value="true" /> <option name="pluginPaths">
-                    <array>
-                      <option value={"$USER_HOME$/.ivy2/cache/org.scala-lang.plugins/continuations/jars/continuations-"+this.project.scalaInstance.version+".jar"} />
-                    </array>
-                  </option>
+          val xplugin = project.scalacOptions.filter(x=> x.startsWith("-Xplugin:")).map(x=>x.substring(9))
+          if (!xplugin.isEmpty){
+            <option name="pluginPaths">
+              <array>
+                {
+                project.scalacOptions.filter(x=> x.startsWith("-Xplugin:")).map(x=>x.substring(9)).
+                  map(x=> <option value={x} />)
+                }
+              </array>
+            </option>
           }
         }
-        <option name="compilerOptions" value={ project.scalacOptions.mkString(" ") } />
+        {
+        val options=nonXplugin.filter(x=> !optionMap.contains(x)).mkString(" ")
+        <option name="compilerOptions" value={options} />
+        }
       </configuration>
     </facet>
   }
