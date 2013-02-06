@@ -152,6 +152,15 @@ class IdeaModuleDescriptor(val imlDir: File, projectRoot: File, val project: Sub
         {
           if (project.scalacOptions.contains("-unchecked")) <option name="uncheckedWarnings" value="true" />
         }
+        {
+          if (project.scalacOptions.contains("-P:continuations:enable")){
+              <option name="continuations" value="true" /> <option name="pluginPaths">
+                    <array>
+                      <option value={"$USER_HOME$/.ivy2/cache/org.scala-lang.plugins/continuations/jars/continuations-"+this.project.scalaInstance.version+".jar"} />
+                    </array>
+                  </option>
+          }
+        }
         <option name="compilerOptions" value={ project.scalacOptions.mkString(" ") } />
       </configuration>
     </facet>
