@@ -12,7 +12,7 @@ Add the following lines to ~/.sbt/plugins/build.sbt or PROJECT_DIR/project/plugi
 
     addSbtPlugin("com.github.mpeltonen" % "sbt-idea" % "1.2.0")
 
-To use the latest snapshot version, add also Sonatype snapshots repository resolver into the same file:
+To use the **latest snapshot** version, add also Sonatype snapshots repository resolver into the same **plugins.sbt** file:
 
     resolvers += "Sonatype snapshots" at "http://oss.sonatype.org/content/repositories/snapshots/"
 
