@@ -27,7 +27,7 @@ object SbtIdeaBuild extends Build with BuildExtra {
     libraryDependencies ++= Seq(
       "commons-io" % "commons-io" % "2.0.1"
     )
-  ) ++ addSbtPlugin("com.github.mpeltonen" % "sbt-android-plugin" % "0.6.3-SNAPSHOT" % "provided")
+  ) ++ addSbtPlugin("com.github.mpeltonen" % "sbt-android-plugin" % "0.6.3-RC1" % "provided")
 
   def extraPom = (
     <url>http://your.project.url</url>
