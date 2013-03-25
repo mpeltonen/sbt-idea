@@ -24,13 +24,13 @@ object SbtIdeaPlugin extends Plugin {
 
   override lazy val settings = Seq(
     Keys.commands += ideaCommand,
-    ideaProjectName := "IdeaProject",
-    ideaBasePackage := None,
-    ideaPackagePrefix := None,
-    ideaSourcesClassifiers := Seq("sources"),
-    ideaJavadocsClassifiers := Seq("javadoc"),
-    ideaExtraFacets := NodeSeq.Empty,
-    ideaIncludeScalaFacet := true
+    ideaProjectName <<= ideaProjectName ?? "IdeaProject",
+    ideaBasePackage <<= ideaBasePackage ?? None,
+    ideaPackagePrefix <<= ideaPackagePrefix ?? None,
+    ideaSourcesClassifiers <<= ideaSourcesClassifiers ?? Seq("sources"),
+    ideaJavadocsClassifiers <<= ideaJavadocsClassifiers ?? Seq("javadoc"),
+    ideaExtraFacets <<= ideaExtraFacets ?? NodeSeq.Empty,
+    ideaIncludeScalaFacet <<= ideaIncludeScalaFacet ?? true
   )
 
   private val NoClassifiers = "no-classifiers"
