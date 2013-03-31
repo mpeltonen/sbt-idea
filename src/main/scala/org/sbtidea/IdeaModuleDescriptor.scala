@@ -164,8 +164,7 @@ class IdeaModuleDescriptor(val imlDir: File, projectRoot: File, val project: Sub
             <option name="pluginPaths">
               <array>
                 {
-                project.scalacOptions.filter(x=> x.startsWith("-Xplugin:")).map(x=>x.substring(9)).
-                  map(x=> <option value={x} />)
+                xplugin.map(x=> <option value={x} />)
                 }
               </array>
             </option>
