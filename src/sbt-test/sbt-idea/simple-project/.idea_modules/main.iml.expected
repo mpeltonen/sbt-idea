@@ -2,6 +2,7 @@
   <component name="FacetManager">
     <facet name="Scala" type="scala">
       <configuration>
+        <option value="foo.bar" name="basePackage"></option>
         <option name="compilerLibraryLevel" value="Project"></option>
         <option name="compilerLibraryName" value="SBT: scala:2.9.2"></option>
         <option name="fsc" value="true" />
