@@ -1,11 +1,13 @@
 import org.sbtidea.test.util.AbstractScriptedTestBuild
 import sbt._
 import sbt.Keys._
+import org.sbtidea.SbtIdeaPlugin._
 
 object ScriptedTestBuild extends AbstractScriptedTestBuild("simple-project") {
   
   lazy val root = Project("main", file("."), settings = Defaults.defaultSettings ++ scriptedTestSettings ++ Seq(
-    libraryDependencies ++= dependencies, scalacOptions ++= Seq("-unchecked", "-deprecation")
+    libraryDependencies ++= dependencies, scalacOptions ++= Seq("-unchecked", "-deprecation"),
+    ideaBasePackage := Some("foo.bar")
   ))
 
   lazy val dependencies = Seq(
