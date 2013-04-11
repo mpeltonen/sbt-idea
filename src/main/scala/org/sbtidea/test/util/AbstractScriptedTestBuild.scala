@@ -32,28 +32,10 @@ abstract class AbstractScriptedTestBuild(projectName : String) extends Build {
   private def assertExpectedXml(expectedFile: File, actualFile: File): Option[String] = {
     /* Make generated files OS independent and strip the suffix that is randomly generated from content url so that comparisons can work */
     def processActual(node: xml.Node): xml.Node = {
-      val osIndependentNode = if (SystemProps.runsOnWindows)
-        new RuleTransformer(new WindowsPathRewriteRule).transform(node).head
-      else node
+      val osIndependentNode = if (SystemProps.runsOnWindows) new RuleTransformer(new WindowsPathRewriteRule).transform(node).head else node
 
       if (!actualFile.getName.contains(".iml")) osIndependentNode
-      else {
-        new RuleTransformer(new RewriteRule {
-          def elementMatches(e: Node): Boolean = {
-            val url = (e \ "@url").text
-            url.matches("file://.*/sbt_[a-f[0-9]]+/" + projectName + "$")
-          }
-
-          override def transform(n: Node): Seq[Node] = n match {
-            case e: Elem if elementMatches(e) => {
-              <content url={"file:///tmp/sbt_/" + projectName}>
-                {e.child}
-              </content>
-            }
-            case _ => n
-          }
-        }).transform(osIndependentNode).head
-      }
+      else new RuleTransformer(TmpPathRewriteRule, IvyCachePathRewriteRule).transform(osIndependentNode).head
     }
     /* Take current jdk version into consideration */
     def processExpected(node: xml.Node): xml.Node =
@@ -115,4 +97,32 @@ abstract class AbstractScriptedTestBuild(projectName : String) extends Build {
       }
   }
 
+  object TmpPathRewriteRule extends RewriteRule {
+    def elementMatches(e: Node): Boolean = {
+      val url = (e \ "@url").text
+      url.matches("file://.*/sbt_[a-f[0-9]]+/" + projectName + "$")
+    }
+
+    override def transform(n: Node): Seq[Node] = n match {
+      case e: Elem if elementMatches(e) => {
+        <content url={"file:///tmp/sbt_/" + projectName}>
+          {e.child}
+        </content>
+      }
+      case _ => n
+    }
+  }
+
+  object IvyCachePathRewriteRule extends RewriteRule {
+    override def transform(n: Node): Seq[Node] =
+      n match {
+        case e: Elem if (e.attributes.asAttrMap.keys.exists(_ == "value")) => {
+          e.copy(attributes = for (attr <- e.attributes) yield attr match {
+            case a@Attribute(k, Text(v), _) if (k == "value" && v.contains("/.ivy2/")) => a.goodcopy(value = "~" + v.substring(v.indexOf("/.ivy2/")))
+            case other => other
+          })
+        }
+        case _ => n
+      }
+  }
 }

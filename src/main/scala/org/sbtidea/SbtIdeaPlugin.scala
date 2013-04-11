@@ -158,7 +158,7 @@ object SbtIdeaPlugin extends Plugin {
 
     val ideaGroup = settings.optionalSetting(ideaProjectGroup)
     val scalaInstance: ScalaInstance = settings.task(Keys.scalaInstance)
-    val scalacOptions: Seq[String] = settings.optionalTask(Keys.scalacOptions).getOrElse(Seq())
+    val scalacOptions: Seq[String] = settings.optionalTask(Keys.scalacOptions in Compile).getOrElse(Seq())
     val baseDirectory = settings.setting(Keys.baseDirectory, "Missing base directory!")
 
     def sourceDirectoriesFor(config: Configuration) = {

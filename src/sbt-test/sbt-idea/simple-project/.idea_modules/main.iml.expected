@@ -7,9 +7,15 @@
         <option name="compilerLibraryName" value="SBT: scala:2.9.2"></option>
         <option name="languageLevel" value="Scala 2.9" />
         <option name="fsc" value="true" />
-        <option name="deprecationWarnings" value="true" />
         <option name="uncheckedWarnings" value="true" />
-        <option name="compilerOptions" value="-unchecked -deprecation"/>
+        <option name="deprecationWarnings" value="true" />
+        <option name="continuations" value="true" />
+        <option name="pluginPaths">
+          <array>
+            <option value="~/.ivy2/cache/org.scala-lang.plugins/continuations/jars/continuations-2.9.2.jar"></option>
+          </array>
+        </option>
+        <option name="compilerOptions" value="-unchecked -deprecation -P:continuations:enable"/>
       </configuration>
     </facet>
   </component>

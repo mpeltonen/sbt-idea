@@ -138,6 +138,16 @@ class IdeaModuleDescriptor(val imlDir: File, projectRoot: File, val project: Sub
   }
 
   def scalaFacet: Node = {
+    val pluginOptionName = "-Xplugin:"
+    val nonXplugin = project.scalacOptions.filterNot(_.startsWith(pluginOptionName))
+    val compilerOptions = Map(
+      "-deprecation" -> <option name="deprecationWarnings" value="true" />,
+      "-unchecked" -> <option name="uncheckedWarnings" value="true" />,
+      "-P:continuations:enable" -> <option name="continuations" value="true" />,
+      "-explaintypes" -> <option name="explainTypeErrors" value="true" />,
+      "-optimise" -> <option name="optimiseBytecode" value="true" />,
+      "-nowarn" -> <option name="warnings" value="false" />
+    )
     <facet type="scala" name="Scala">
       <configuration>
         {
@@ -151,12 +161,24 @@ class IdeaModuleDescriptor(val imlDir: File, projectRoot: File, val project: Sub
           if (env.useProjectFsc) <option name="fsc" value="true" />
         }
         {
-          if (project.scalacOptions.contains("-deprecation")) <option name="deprecationWarnings" value="true" />
+          nonXplugin.filter(compilerOptions.contains).map(compilerOptions)
         }
         {
-          if (project.scalacOptions.contains("-unchecked")) <option name="uncheckedWarnings" value="true" />
+          val xplugin = project.scalacOptions.filter(_.startsWith(pluginOptionName)).map(_.substring(pluginOptionName.length))
+          if (!xplugin.isEmpty){
+            <option name="pluginPaths">
+              <array>
+                {
+                  xplugin.map(x=> <option value={x} />)
+                }
+              </array>
+            </option>
+          }
         }
-        <option name="compilerOptions" value={ project.scalacOptions.mkString(" ") } />
+        {
+        val options = nonXplugin.filter(compilerOptions.contains).mkString(" ")
+        <option name="compilerOptions" value={options} />
+        }
       </configuration>
     </facet>
   }
