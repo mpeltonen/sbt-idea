@@ -57,8 +57,8 @@ class SbtProjectDefinitionIdeaModuleDescriptor(projectName: String,
     val relativeProjectDir = relativePath(sbtProjectDir)
 <module type="JAVA_MODULE" version="4">
   <component name="NewModuleRootManager">
-    <output url={"file://" + sbtProjectDir + "/target/idea-classes"}/>
-    <output-test url={"file://" + sbtProjectDir + "/target/idea-test-classes"}/>
+    <output url={"file://" + relativeProjectDir + "/target/idea-classes"}/>
+    <output-test url={"file://" + relativeProjectDir + "/target/idea-test-classes"}/>
     <exclude-output />
     <content url={"file://" + relativeProjectDir}>
       <sourceFolder url={"file://" + relativeProjectDir} isTestSource="false" />
