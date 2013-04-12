@@ -15,7 +15,7 @@
    <output url="file://$MODULE_DIR$/../target/scala-2.9.1/classes"></output>
    <output-test url="file://$MODULE_DIR$/../target/scala-2.9.1/test-classes"></output-test>
    <exclude-output></exclude-output>
-   <content url="file:///tmp/sbt_/external-rootproject-dependency">
+   <content url="file://$MODULE_DIR$/../">
      <sourceFolder isTestSource="false" url="file://$MODULE_DIR$/../src/main/scala" ></sourceFolder>
      <sourceFolder isTestSource="false" url="file://$MODULE_DIR$/../src/main/java" ></sourceFolder>
      <sourceFolder isTestSource="false" url="file://$MODULE_DIR$/../src/main/resources" ></sourceFolder>
