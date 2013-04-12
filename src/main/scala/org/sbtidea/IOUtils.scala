@@ -7,5 +7,6 @@ object IOUtils {
   def replaceUserHome(path: String): String = path.replace(SystemProps.userHome, "$USER_HOME$")
 
   def relativePath(base: File, file: File, prefix: String) =
-    IO.relativize(base, file.getCanonicalFile).map(prefix + _).getOrElse(replaceUserHome(file.getCanonicalPath))
+    if (base.equals(file)) prefix
+    else IO.relativize(base, file.getCanonicalFile).map(prefix + _).getOrElse(replaceUserHome(file.getCanonicalPath))
 }
