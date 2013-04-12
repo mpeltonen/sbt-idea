@@ -169,7 +169,7 @@ object SbtIdeaPlugin extends Plugin {
     // IDEA project name, and for multi-module projects, the id as it must be consistent with the value of SubProjectInfo#dependencyProjects.
     val projectName = if (allProjectIds.size == 1) setting(Keys.name, "Missing project name") else project.id
 
-    logger(state).info("Trying to create an Idea module " + projectName)
+    logger(state).info("Creating IDEA module for project '" + projectName + "' ...")
 
     val ideaGroup = optionalSetting(ideaProjectGroup)
     val scalaInstance: ScalaInstance = {
