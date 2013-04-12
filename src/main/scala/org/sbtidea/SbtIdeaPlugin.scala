@@ -193,7 +193,11 @@ object SbtIdeaPlugin extends Plugin {
     def sourceDirectoriesFor(config: Configuration) = {
       val hasSourceGen = optionalSetting(Keys.sourceGenerators in config).exists(!_.isEmpty)
       val managedSourceDirs = if (hasSourceGen) {
-        setting(Keys.managedSourceDirectories in config, "Missing managed source directories!")
+        logger(state).info("Running " + config.name + ":" + Keys.managedSources.key.label + " ...")
+        EvaluateTask(buildStruct, Keys.managedSources in config, state, projectRef)
+        val managedSourceRoots = setting(Keys.managedSourceDirectories in config, "Missing managed source directories!")
+        def listSubdirectories(f: File) = Option(f.listFiles()).map(_.toSeq.filter(_.isDirectory)).getOrElse(Seq.empty[File])
+        managedSourceRoots.flatMap(listSubdirectories)
       }
       else Seq.empty[File]
 
