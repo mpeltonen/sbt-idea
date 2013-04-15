@@ -12,7 +12,7 @@
         <option name="continuations" value="true" />
         <option name="pluginPaths">
           <array>
-            <option value="~/.ivy2/cache/org.scala-lang.plugins/continuations/jars/continuations-2.9.2.jar"></option>
+            <option value="~/.ivy2/cache/org.scala-lang.plugins/continuations/jars/continuations-2.9.1.jar"></option>
           </array>
         </option>
         <option name="compilerOptions" value="-unchecked -deprecation -P:continuations:enable"/>
