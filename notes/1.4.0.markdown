@@ -1,0 +1,18 @@
+
+Changes since 1.3.0:
+
+* Allow overriding default sbt-idea settings ([pull 211][1] by [arashi01][2])
+* Add correct managed source folders to Idea config ([issue 209][3])
+* Set language level according to scala version used by the module ([pull 195][4] by [jozic][5])
+* Add compiler plugin configuration to Idea config ([pull 203][6] by [kasper-f][7])
+* Remove remaining absolute paths from generated Idea files
+
+Many thanks to contributors!
+
+[1]: https://github.com/mpeltonen/sbt-idea/pull/211
+[2]: https://github.com/arashi01
+[3]: https://github.com/mpeltonen/sbt-idea/issues/209
+[4]: https://github.com/mpeltonen/sbt-idea/pull/195
+[5]: https://github.com/jozic
+[6]: https://github.com/mpeltonen/sbt-idea/pull/203
+[7]: https://github.com/kasper-f
