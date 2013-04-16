@@ -31,16 +31,19 @@ abstract class AbstractScriptedTestBuild(projectName : String) extends Build {
 
   private def assertExpectedXml(expectedFile: File, actualFile: File): Option[String] = {
     /* Make generated files OS independent and strip the suffix that is randomly generated from content url so that comparisons can work */
-    def processActual(node: xml.Node): xml.Node = {
-      val osIndependentNode = if (SystemProps.runsOnWindows) new RuleTransformer(new WindowsPathRewriteRule).transform(node).head else node
-
-      if (!actualFile.getName.contains(".iml")) osIndependentNode
-      else new RuleTransformer(TmpPathRewriteRule, IvyCachePathRewriteRule).transform(osIndependentNode).head
-    }
+    val actualFileTransformers = Map("" -> Seq(WindowsPathRewriteRule), ".iml" -> Seq(TmpPathRewriteRule, IvyCachePathRewriteRule))
     /* Take current jdk version into consideration */
-    def processExpected(node: xml.Node): xml.Node =
-      if (actualFile.getName == "misc.xml") new RuleTransformer(new JDKVersionRewriteRule).transform(node).head
-      else node
+    val expectedFileTransformers = Map("misc.xml.expected" -> Seq(JDKVersionRewriteRule))
+
+    def transformNode(fileName: String, transformerMap: Map[String, Seq[RewriteRule]], node: xml.Node): xml.Node = {
+      val transformers = transformerMap.keys.foldLeft(Seq[RewriteRule]()) { (acc, key) =>
+        if (fileName.endsWith(key)) acc ++ transformerMap(key) else acc
+      }
+      new RuleTransformer(transformers:_*).transform(node).head
+    }
+
+    def processActual(node: xml.Node): xml.Node = transformNode(actualFile.getName, actualFileTransformers, node)
+    def processExpected(node: xml.Node): xml.Node = transformNode(expectedFile.getName, expectedFileTransformers, node)
 
     val actualXml = trim(processActual(XML.loadFile(actualFile)))
     val expectedXml = trim(processExpected(XML.loadFile(expectedFile)))
@@ -70,7 +73,7 @@ abstract class AbstractScriptedTestBuild(projectName : String) extends Build {
     }
   }
 
-  class WindowsPathRewriteRule extends RewriteRule {
+  object WindowsPathRewriteRule extends RewriteRule {
     override def transform(n: Node): Seq[Node] =
       n match {
         case e: Elem if (e.attributes.asAttrMap.values.exists(_.contains("\\"))) => {
@@ -83,7 +86,7 @@ abstract class AbstractScriptedTestBuild(projectName : String) extends Build {
       }
   }
 
-  class JDKVersionRewriteRule extends RewriteRule {
+  object JDKVersionRewriteRule extends RewriteRule {
     override def transform(n: Node): Seq[Node] =
       n match {
         case e: Elem if (e.attributes.asAttrMap.values.exists(_ == "ProjectRootManager")) => {
