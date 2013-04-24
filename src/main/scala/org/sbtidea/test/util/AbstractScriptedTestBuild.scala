@@ -9,6 +9,8 @@ import collection.JavaConverters._
 import xml.transform.{RewriteRule, RuleTransformer}
 import xml.Node
 import org.sbtidea.SystemProps
+import scala.language.implicitConversions
+import scala.language.reflectiveCalls
 
 abstract class AbstractScriptedTestBuild(projectName : String) extends Build {
   import XmlAttributesCopy._

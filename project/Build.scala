@@ -23,7 +23,7 @@ object SbtIdeaBuild extends Build with BuildExtra {
       Classpaths.typesafeSnapshots,
       Resolver.url("scalasbt snapshots", new URL("http://scalasbt.artifactoryonline.com/scalasbt/sbt-plugin-snapshots"))(Resolver.ivyStylePatterns)
     ),
-    scalacOptions ++= Seq("-deprecation", "-unchecked"),
+    scalacOptions ++= Seq("-deprecation", "-unchecked", "-feature"),
     libraryDependencies ++= Seq(
       "commons-io" % "commons-io" % "2.0.1"
     )
