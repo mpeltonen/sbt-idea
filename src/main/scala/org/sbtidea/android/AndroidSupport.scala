@@ -12,12 +12,16 @@ import java.util.Properties
 case class AndroidSupport(projectDefinition: ProjectDefinition[ProjectRef], projectRoot: File, buildStruct: BuildStructure, settings: Settings) {
   def isAndroidProject: Boolean = allCatch.opt {
     val settingLabelsInUse = projectDefinition.settings.map(_.key.key.label)
-    settingLabelsInUse.contains(sbtandroid.AndroidKeys.platformName.key.label)
+    // Disable until we have sbt 0.13 version of the plugin
+    // settingLabelsInUse.contains(sbtandroid.AndroidKeys.platformName.key.label)
+    false
   }.getOrElse(false)
 
   def facet: NodeSeq = {
     if (!isAndroidProject) NodeSeq.Empty
     else {
+      NodeSeq.Empty
+      /*
       import sbtandroid.AndroidKeys._
 
       def projectRelativePath(f: File) = IOUtils.relativePath(projectRoot, f, "/../")
@@ -54,6 +58,7 @@ case class AndroidSupport(projectDefinition: ProjectDefinition[ProjectRef], proj
           <additionalNativeLibs />
         </configuration>
       </facet>
+      */
     }
   }
 
@@ -62,9 +67,12 @@ case class AndroidSupport(projectDefinition: ProjectDefinition[ProjectRef], proj
   private def setting[A](key: SettingKey[A]): A = settings.setting(key, "Missing setting: %s".format(key.key.label))
 
   private lazy val platformVersion = {
-    import sbtandroid.AndroidKeys._
+    throw new UnsupportedOperationException
+    /*
+    import org.scalasbt.androidplugin.AndroidKeys._
     val props = new Properties()
     props.load(new FileReader((setting(platformPath in Android) / "source.properties").asFile))
     props.getProperty("Platform.Version")
+    */
   }
 }

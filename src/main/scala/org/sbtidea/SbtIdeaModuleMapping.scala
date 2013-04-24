@@ -97,7 +97,7 @@ object SbtIdeaModuleMapping {
       compileUnmanagedLibraries ++ testUnmanagedLibraries ++ runtimeUnmanagedLibraries
     }
 
-    private def evaluateTask[T](taskKey: sbt.Project.ScopedKey[sbt.Task[T]]) =
+    private def evaluateTask[T](taskKey: sbt.Def.ScopedKey[sbt.Task[T]]) =
       EvaluateTask(buildStruct, taskKey, state, projectRef).map(_._2)
   }
 
