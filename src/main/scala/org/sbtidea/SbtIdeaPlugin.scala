@@ -2,7 +2,6 @@ package org.sbtidea
 
 import android.AndroidSupport
 import sbt._
-import sbt.Load.BuildStructure
 import sbt.complete.Parsers._
 import java.io.File
 import collection.Seq

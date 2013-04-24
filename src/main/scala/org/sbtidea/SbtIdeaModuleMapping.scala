@@ -12,8 +12,8 @@ object SbtIdeaModuleMapping {
     }.toSet
     val id = "scala-" + instance.version
     IdeaLibrary(id, "SBT: scala:" + instance.version, id, coreJars,
-      instance.extraJars.filter(_.getAbsolutePath.endsWith("docs.jar")).toSet,
-      instance.extraJars.filter(_.getAbsolutePath.endsWith("-sources.jar")).toSet)
+      instance.allJars.filter(_.getAbsolutePath.endsWith("docs.jar")).toSet,
+      instance.allJars.filter(_.getAbsolutePath.endsWith("-sources.jar")).toSet)
   }
 
   /**
@@ -25,7 +25,7 @@ object SbtIdeaModuleMapping {
    *   * `updateSbtClassifiers`
    *   * `unmanagedClasspath`
    */
-  final class LibrariesExtractor(buildStruct: Load.BuildStructure, state: State, projectRef: ProjectRef,
+  final class LibrariesExtractor(buildStruct: BuildStructure, state: State, projectRef: ProjectRef,
                                  scalaInstance: ScalaInstance, withClassifiers: Option[(Seq[SourcesClassifier], Seq[JavadocClassifier])]) {
 
     def allLibraries: Seq[IdeaModuleLibRef] = managedLibraries ++ unmanagedLibraries

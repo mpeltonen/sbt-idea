@@ -5,7 +5,6 @@ import xml.NodeSeq
 import sbt._
 import java.io.{FileReader, File}
 import org.sbtidea.{Settings, IOUtils}
-import sbt.Load.BuildStructure
 import org.sbtidea.Settings
 import java.util.Properties
 
