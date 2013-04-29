@@ -21,7 +21,7 @@ case class AndroidSupport(projectDefinition: ProjectDefinition[ProjectRef], proj
       import org.scalasbt.androidplugin.AndroidKeys._
 
       def projectRelativePath(f: File) = IOUtils.relativePath(projectRoot, f, "/../")
-      val genFolder = projectRelativePath(setting(Keys.target in Android) / "gen")
+      val genFolder = projectRelativePath(setting(managedJavaPath in Android))
       val manifest: File = settings.optionalSetting(manifestTemplatePath in Android).getOrElse(settings.task(manifestPath in Android).head)
       // Run typed resources generation at this point, if defined, so that the project is immediately compilable in IDEA.
       settings.optionalTask(generateTypedResources)
