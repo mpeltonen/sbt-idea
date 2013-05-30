@@ -21,13 +21,13 @@ object SbtIdeaBuild extends Build with BuildExtra {
     pomExtra := extraPom,
     resolvers ++= Seq(
       Classpaths.typesafeSnapshots,
-      "Github Repo" at "http://mpeltonen.github.com/maven"
+      Resolver.url("scalasbt snapshots", new URL("http://scalasbt.artifactoryonline.com/scalasbt/sbt-plugin-snapshots"))(Resolver.ivyStylePatterns)
     ),
     scalacOptions ++= Seq("-deprecation", "-unchecked"),
     libraryDependencies ++= Seq(
       "commons-io" % "commons-io" % "2.0.1"
     )
-  ) ++ addSbtPlugin("com.github.mpeltonen" % "sbt-android-plugin" % "0.6.3-RC1" % "provided")
+  ) ++ addSbtPlugin("org.scala-sbt" % "sbt-android-plugin" % "0.6.3-20130429-SNAPSHOT" % "provided")
 
   def extraPom = (
     <url>http://your.project.url</url>
