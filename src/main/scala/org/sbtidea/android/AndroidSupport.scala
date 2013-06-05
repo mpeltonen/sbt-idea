@@ -12,13 +12,13 @@ import java.util.Properties
 case class AndroidSupport(projectDefinition: ProjectDefinition[ProjectRef], projectRoot: File, buildStruct: BuildStructure, settings: Settings) {
   def isAndroidProject: Boolean = allCatch.opt {
     val settingLabelsInUse = projectDefinition.settings.map(_.key.key.label)
-    settingLabelsInUse.contains(org.scalasbt.androidplugin.AndroidKeys.platformName.key.label)
+    settingLabelsInUse.contains(sbtandroid.AndroidKeys.platformName.key.label)
   }.getOrElse(false)
 
   def facet: NodeSeq = {
     if (!isAndroidProject) NodeSeq.Empty
     else {
-      import org.scalasbt.androidplugin.AndroidKeys._
+      import sbtandroid.AndroidKeys._
 
       def projectRelativePath(f: File) = IOUtils.relativePath(projectRoot, f, "/../")
       val genFolder = projectRelativePath(setting(managedJavaPath in Android))
@@ -62,7 +62,7 @@ case class AndroidSupport(projectDefinition: ProjectDefinition[ProjectRef], proj
   private def setting[A](key: SettingKey[A]): A = settings.setting(key, "Missing setting: %s".format(key.key.label))
 
   private lazy val platformVersion = {
-    import org.scalasbt.androidplugin.AndroidKeys._
+    import sbtandroid.AndroidKeys._
     val props = new Properties()
     props.load(new FileReader((setting(platformPath in Android) / "source.properties").asFile))
     props.getProperty("Platform.Version")
