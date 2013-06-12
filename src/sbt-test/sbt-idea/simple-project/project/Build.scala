@@ -17,6 +17,7 @@ object ScriptedTestBuild extends AbstractScriptedTestBuild("simple-project") {
   lazy val dependencies = Seq(
     "junit" % "junit" % "4.8.2",
     "org.eclipse.jetty" % "jetty-server" % "7.0.0.v20091005" % "test",
-    "javax.servlet" % "servlet-api" % "2.5" % "provided"
+    "javax.servlet" % "servlet-api" % "2.5" % "provided",
+    "mysql" % "mysql-connector-java" % "5.1.25" % "runtime"
   )
 }
