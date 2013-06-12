@@ -68,7 +68,7 @@ Or in your Build.scala:
     ...
     import org.sbtidea.SbtIdeaPlugin._
     ...
-    lazy val primimo = Project(id = "XXXX" ....)
+    lazy val myproject = Project(id = "XXXX" ....)
     .settings(ideaExcludeFolders := ".idea" :: ".idea_modules" :: Nil)
 
 
