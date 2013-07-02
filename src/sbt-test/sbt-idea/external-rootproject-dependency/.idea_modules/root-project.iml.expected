@@ -3,8 +3,8 @@
    <facet type="scala" name="Scala">
      <configuration>
        <option value="Project" name="compilerLibraryLevel"></option>
-       <option value="SBT: scala:2.9.2" name="compilerLibraryName"></option>
-       <option value="Scala 2.9" name="languageLevel"></option>
+       <option value="SBT: scala:2.10.2" name="compilerLibraryName"></option>
+       <option value="Scala 2.10" name="languageLevel"></option>
        <option value="true" name="fsc"></option>
        <option value="true" name="uncheckedWarnings"></option>
        <option value="-unchecked" name="compilerOptions"></option>
@@ -12,8 +12,8 @@
    </facet>
  </component>
  <component inherit-compiler-output="false" name="NewModuleRootManager">
-   <output url="file://$MODULE_DIR$/../target/scala-2.9.2/classes"></output>
-   <output-test url="file://$MODULE_DIR$/../target/scala-2.9.2/test-classes"></output-test>
+   <output url="file://$MODULE_DIR$/../target/scala-2.10/classes"></output>
+   <output-test url="file://$MODULE_DIR$/../target/scala-2.10/test-classes"></output-test>
    <exclude-output></exclude-output>
    <content url="file://$MODULE_DIR$/../">
      <sourceFolder isTestSource="false" url="file://$MODULE_DIR$/../src/main/scala" ></sourceFolder>
@@ -26,7 +26,7 @@
    </content>
    <orderEntry type="inheritedJdk"></orderEntry>
    <orderEntry type="sourceFolder" forTests="false"></orderEntry>
-   <orderEntry level="project" name="SBT: org.scala-lang:scala-library:2.9.2" type="library"></orderEntry>
+   <orderEntry level="project" name="SBT: org.scala-lang:scala-library:2.10.2" type="library"></orderEntry>
    <orderEntry type="module" module-name="dependency-root" exported=""></orderEntry>
  </component>
 </module>

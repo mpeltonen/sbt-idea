@@ -1,6 +1,7 @@
 <component name="libraryTable">
   <library name="SBT: com.googlecode.kiama:kiama_2.9.1:1.2.0:test">
     <CLASSES>
+      <root url="jar://$USER_HOME$/.ivy2/cache/com.googlecode.kiama/kiama_2.9.1/jars/kiama_2.9.1-1.2.0.jar!/"></root>
       <root url="jar://$USER_HOME$/.ivy2/cache/com.googlecode.kiama/kiama_2.9.1/jars/kiama_2.9.1-1.2.0-test.jar!/"></root>
     </CLASSES>
     <JAVADOC>
