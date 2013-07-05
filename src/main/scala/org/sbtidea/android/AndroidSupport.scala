@@ -104,8 +104,6 @@ case class AndroidSdkPlugin(projectDefinition: ProjectDefinition[ProjectRef], pr
 
   lazy val platformVersion = {
     import android.Keys._
-    val props = new Properties()
-    props.load(new FileReader(file(setting(platform in Android).getLocation) / "source.properties"))
-    props.getProperty("Platform.Version")
+    setting(platform in Android).getVersionName
   }
 }
