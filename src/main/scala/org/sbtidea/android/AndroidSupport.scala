@@ -20,6 +20,7 @@ trait AndroidSupport {
   def isAndroidProject: Boolean
   def facet: NodeSeq
   def moduleJdk: NodeSeq = <orderEntry type="jdk" jdkName={"Android %s Platform".format(platformVersion)} jdkType="Android SDK" />
+  def excludedFolders: Seq[String] = Seq.empty[String]
 
   protected def projectRoot: File
   protected def projectRelativePath(f: File) = IOUtils.relativePath(projectRoot, f, "/../")
@@ -91,16 +92,21 @@ case class SbtAndroid(projectDefinition: ProjectDefinition[ProjectRef], projectR
 
 /** support for "com.hanhuy.sbt" % "android-sdk-plugin" */
 case class AndroidSdkPlugin(projectDefinition: ProjectDefinition[ProjectRef], projectRoot: File, buildStruct: BuildStructure, settings: Settings) extends AndroidSupport {
+  import android.Keys._
   lazy val isAndroidProject: Boolean = allCatch.opt {
     // settings must be retrieved this way, or else build.sbt is not accounted
     setting(android.Keys.manifestPath in android.Keys.Android).isFile
   }.getOrElse(false)
 
   def facet = {
-    import android.Keys._
     val layout = setting(projectLayout in Android)
     val isLib = setting(libraryProject in Android)
     getFacet(setting(manifestPath in Android), layout.res, layout.assets, layout.libs, layout.gen, isLib, typedResourcesGenerator)
+  }
+
+  override def excludedFolders = {
+    val layout = setting(projectLayout in Android)
+    layout.base.relativize(layout.bin) map (p => Seq(p.getPath)) getOrElse Seq.empty
   }
 
   lazy val platformVersion = {

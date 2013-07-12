@@ -60,7 +60,7 @@ class IdeaModuleDescriptor(val imlDir: File, projectRoot: File, val project: Sub
                 Seq(toExclude)
             }
 
-            env.excludedFolders
+            (env.excludedFolders ++ (project.androidSupport map (_.excludedFolders) flatten))
               .map(entry => new File(project.baseDir, entry.trim))
               .flatMap(dontExcludeManagedSources)
               .sortBy(_.getName).map { exclude =>
