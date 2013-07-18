@@ -27,7 +27,7 @@ trait AndroidSupport {
   protected def platformVersion: String
   protected def settings: Settings
   protected def setting[A](key: SettingKey[A]): A = settings.setting(key, "Missing setting: %s".format(key.key.label))
-  protected def getFacet(manifest: File, res: File, assets: File, libs: File, gen: File, isLib: Boolean, trGen: TaskKey[_]): NodeSeq = {
+  protected def getFacet(manifest: File, apk: Option[File], res: File, assets: File, libs: File, gen: File, isLib: Boolean, trGen: TaskKey[_]): NodeSeq = {
     if (!isAndroidProject) NodeSeq.Empty
     else {
 
@@ -47,7 +47,7 @@ trait AndroidSupport {
           <option name="CUSTOM_APK_RESOURCE_FOLDER" value="" />
           <option name="USE_CUSTOM_COMPILER_MANIFEST" value="false" />
           <option name="CUSTOM_COMPILER_MANIFEST" value="" />
-          <option name="APK_PATH" value="" />
+          <option name="APK_PATH" value={ apk map { a => projectRelativePath(a) } getOrElse "" } />
           <option name="LIBRARY_PROJECT" value={ isLib.toString } />
           <option name="RUN_PROCESS_RESOURCES_MAVEN_TASK" value="false" />
           <option name="GENERATE_UNSIGNED_APK" value="false" />
@@ -79,7 +79,7 @@ case class SbtAndroid(projectDefinition: ProjectDefinition[ProjectRef], projectR
     import sbtandroid.AndroidKeys._
     val manifest: File = settings.optionalSetting(manifestTemplatePath in Android).getOrElse(settings.task(manifestPath in Android).head)
 
-    getFacet(manifest, settings.task(mainResPath in Android), setting(mainAssetsPath in Android), setting(Keys.sourceDirectory in Android) / "libs", setting(managedJavaPath in Android), false, generateTypedResources)
+    getFacet(manifest, None, settings.task(mainResPath in Android), setting(mainAssetsPath in Android), setting(Keys.sourceDirectory in Android) / "libs", setting(managedJavaPath in Android), false, generateTypedResources)
   }
 
   lazy val platformVersion = {
@@ -101,7 +101,7 @@ case class AndroidSdkPlugin(projectDefinition: ProjectDefinition[ProjectRef], pr
   def facet = {
     val layout = setting(projectLayout in Android)
     val isLib = setting(libraryProject in Android)
-    getFacet(setting(manifestPath in Android), layout.res, layout.assets, layout.libs, layout.gen, isLib, typedResourcesGenerator)
+    getFacet(setting(manifestPath in Android), Option(setting(apkFile in Android)), layout.res, layout.assets, layout.libs, layout.gen, isLib, typedResourcesGenerator)
   }
 
   override def excludedFolders = {
