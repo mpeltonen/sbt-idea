@@ -8,7 +8,7 @@ object SbtIdeaBuild extends Build with BuildExtra {
     sbtPlugin := true,
     organization := "com.github.mpeltonen",
     name := "sbt-idea",
-    version := "1.5.1",
+    version := "1.6.0-SNAPSHOT",
     publishTo := Some(Resolver.file("Github Pages", Path.userHome / "git" / "mpeltonen.github.com" / "maven" asFile)(Patterns(true, Resolver.mavenStyleBasePattern))),
     publishTo <<= version { (v: String) =>
       val nexus = "https://oss.sonatype.org/"
