@@ -19,6 +19,7 @@ object SbtIdeaPlugin extends Plugin {
                                                      "The package prefix for source directories.")
   val ideaSourcesClassifiers = SettingKey[Seq[String]]("idea-sources-classifiers")
   val ideaJavadocsClassifiers = SettingKey[Seq[String]]("idea-javadocs-classifiers")
+  val ideaExcludeFolders = SettingKey[Seq[String]]("idea-exclude-folders")
   val ideaExtraFacets = SettingKey[NodeSeq]("idea-extra-facets")
   val ideaIncludeScalaFacet = SettingKey[Boolean]("idea-include-scala-facet")
 
@@ -29,6 +30,7 @@ object SbtIdeaPlugin extends Plugin {
     ideaPackagePrefix <<= ideaPackagePrefix ?? None,
     ideaSourcesClassifiers <<= ideaSourcesClassifiers ?? Seq("sources"),
     ideaJavadocsClassifiers <<= ideaJavadocsClassifiers ?? Seq("javadoc"),
+    ideaExcludeFolders <<= ideaExcludeFolders ?? Nil,
     ideaExtraFacets <<= ideaExtraFacets ?? NodeSeq.Empty,
     ideaIncludeScalaFacet <<= ideaIncludeScalaFacet ?? true
   )
@@ -93,8 +95,10 @@ object SbtIdeaPlugin extends Plugin {
 
     val projectInfo = IdeaProjectInfo(buildUnit.localBase, name.getOrElse("Unknown"), subProjects, ideaLibs ::: scalaLibs)
 
+    val excludeFolders = (ideaExcludeFolders in extracted.currentRef get buildStruct.data).getOrElse(Nil) :+ "target"
+
     val env = IdeaProjectEnvironment(projectJdkName = SystemProps.jdkName, javaLanguageLevel = SystemProps.languageLevel,
-      includeSbtProjectDefinitionModule = !args.contains(NoSbtBuildModule), projectOutputPath = None, excludedFolders = Seq("target"),
+      includeSbtProjectDefinitionModule = !args.contains(NoSbtBuildModule), projectOutputPath = None, excludedFolders = excludeFolders,
       compileWithIdea = false, modulePath = ".idea_modules", useProjectFsc = !args.contains(NoFsc),
       enableTypeHighlighting = !args.contains(NoTypeHighlighting))
 

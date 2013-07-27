@@ -55,6 +55,24 @@ By default, classifiers (i.e. sources and javadocs) of dependencies are loaded i
 Configuration settings
 ----------------------
 
+### Exclude some folders
+
+In your build.sbt:
+
+    ideaExcludeFolders += ".idea"
+
+    ideaExcludeFolders += ".idea_modules"
+
+Or in your Build.scala:
+
+    ...
+    import org.sbtidea.SbtIdeaPlugin._
+    ...
+    lazy val myproject = Project(id = "XXXX" ....)
+    .settings(ideaExcludeFolders := ".idea" :: ".idea_modules" :: Nil)
+
+
+
 TODO...
 
 License
