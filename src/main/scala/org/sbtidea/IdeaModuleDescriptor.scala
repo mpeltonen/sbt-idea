@@ -9,7 +9,7 @@ package org.sbtidea
 import sbt._
 import java.io.File
 
-import xml.{UnprefixedAttribute, Node, Text}
+import xml.{UnprefixedAttribute, Node, NodeSeq, Text}
 
 
 class IdeaModuleDescriptor(val imlDir: File, projectRoot: File, val project: SubProjectInfo, val env: IdeaProjectEnvironment, val userEnv: IdeaUserEnvironment, val log: Logger) extends SaveableXml {
@@ -27,7 +27,7 @@ class IdeaModuleDescriptor(val imlDir: File, projectRoot: File, val project: Sub
       <component name="FacetManager">
         { if (project.includeScalaFacet) scalaFacet else scala.xml.Null }
         { (for (wap <- project.webAppPath if userEnv.webFacet) yield webFacet(relativePath(wap))).getOrElse(scala.xml.Null) }
-        { project.androidSupport.facet }
+        { project.androidSupport map (_.facet) getOrElse NodeSeq.Empty }
         { project.extraFacets }
       </component>
       <component name="NewModuleRootManager" inherit-compiler-output={env.projectOutputPath.isDefined.toString}>
@@ -60,7 +60,7 @@ class IdeaModuleDescriptor(val imlDir: File, projectRoot: File, val project: Sub
                 Seq(toExclude)
             }
 
-            env.excludedFolders
+            (env.excludedFolders ++ (project.androidSupport map (_.excludedFolders) flatten))
               .map(entry => new File(project.baseDir, entry.trim))
               .flatMap(dontExcludeManagedSources)
               .sortBy(_.getName).map { exclude =>
@@ -84,8 +84,7 @@ class IdeaModuleDescriptor(val imlDir: File, projectRoot: File, val project: Sub
           }*/ xml.Null
         }
         {
-          if (project.androidSupport.isAndroidProject) project.androidSupport.moduleJdk
-          else <orderEntry type="inheritedJdk"/>
+          project.androidSupport map (_.moduleJdk) getOrElse <orderEntry type="inheritedJdk"/>
         }
         <orderEntry type="sourceFolder" forTests="false"/>
         {

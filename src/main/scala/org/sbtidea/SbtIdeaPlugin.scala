@@ -218,7 +218,7 @@ object SbtIdeaPlugin extends Plugin {
       // If this is Android project, change scope of android.jar and Scala library to provided,
       // to prevent IDEA from dexing them when running.
       def shouldNotDex(libName: String) = libName.equals("android.jar") || libName.contains(":scala-library:")
-      if (androidSupport.isAndroidProject && shouldNotDex(lib.library.name)) lib.copy(config = IdeaLibrary.ProvidedScope) else lib
+      if (androidSupport.isDefined && shouldNotDex(lib.library.name)) lib.copy(config = IdeaLibrary.ProvidedScope) else lib
     }
     SubProjectInfo(baseDirectory, projectName, project.uses.map(_.project).filter(isAggregate).toList, classpathDeps, compileDirectories,
       testDirectories, dependencyLibs, scalaInstance, ideaGroup, None, basePackage, packagePrefix, extraFacets, scalacOptions,
