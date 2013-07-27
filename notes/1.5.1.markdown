@@ -10,6 +10,8 @@ Android support is currently implemented for sbt-0.12 only, as no released versi
 
 Many thanks to contributors!
 
+NOTE: Version 1.5.0 was also released and exists in Maven repo, but it does not work correctly for sbt 0.12 because it was published with older sbt having [issue #645][9] 
+
 [1]: https://github.com/mpeltonen/sbt-idea/issues/236
 [2]: https://github.com/mpeltonen/sbt-idea/issues/191
 [3]: https://github.com/mpeltonen/sbt-idea/pull/240
@@ -18,3 +20,4 @@ Many thanks to contributors!
 [6]: https://github.com/kxbmap
 [7]: https://github.com/mpeltonen/sbt-idea/pull/232
 [8]: https://github.com/heralight
+[9]: https://github.com/sbt/sbt/issues/645
