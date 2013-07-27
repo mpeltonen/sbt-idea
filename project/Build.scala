@@ -8,7 +8,7 @@ object SbtIdeaBuild extends Build with BuildExtra {
     sbtPlugin := true,
     organization := "com.github.mpeltonen",
     name := "sbt-idea",
-    version := "1.5.0",
+    version := "1.6.0-SNAPSHOT",
     sbtVersion in Global := "0.13.0-RC3",
     scalaVersion in Global := "2.10.2",
     publishTo := Some(Resolver.file("Github Pages", Path.userHome / "git" / "mpeltonen.github.com" / "maven" asFile)(Patterns(true, Resolver.mavenStyleBasePattern))),
