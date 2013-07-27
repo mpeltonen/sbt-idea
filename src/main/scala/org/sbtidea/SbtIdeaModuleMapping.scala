@@ -170,7 +170,7 @@ object SbtIdeaModuleMapping {
     //mapToIdeaModuleLibs and remove the hardcoded configurations. Something like the following would be enough:
     //report.configurations.flatMap(configReport => mapToIdeaModuleLibs(configReport.configuration, configReport.modules, deps))
 
-    Seq("compile", "provided", "test", "runtime", "optional").flatMap(report.configuration(_)).foldLeft(Seq[(IdeaModuleLibRef, ModuleID)]()) {
+    Seq("compile", "provided", "runtime", "test", "optional").flatMap(report.configuration(_)).foldLeft(Seq[(IdeaModuleLibRef, ModuleID)]()) {
       (acc, configReport) =>
         def processedArtifacts = acc.flatMap(_._1.library.allFiles)
         def alreadyIncludedJar(f: File): Boolean = { processedArtifacts.exists(_.getAbsolutePath == f.getAbsolutePath) }
