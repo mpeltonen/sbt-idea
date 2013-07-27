@@ -1,0 +1,20 @@
+
+Changes since 1.4.0:
+
+* First version supporting sbt-0.13 ([issue 236][1])
+* Initial Android Facet support for two plugins, 'android-sbt' ([issue 191][2]) and 'android-sdk-plugin' ([pull 240][3] by [pfn][4])
+* Fix configuration order ([pull 233][5] by [kxbmap][6])
+* Configurable excluded folders ([pull 232][7] by [heralight][8])
+
+Android support is currently implemented for sbt-0.12 only, as no released versions of android plugins for sbt 0.13 exist yet.
+
+Many thanks to contributors!
+
+[1]: https://github.com/mpeltonen/sbt-idea/issues/236
+[2]: https://github.com/mpeltonen/sbt-idea/issues/191
+[3]: https://github.com/mpeltonen/sbt-idea/pull/240
+[4]: https://github.com/pfn
+[5]: https://github.com/mpeltonen/sbt-idea/pull/233
+[6]: https://github.com/kxbmap
+[7]: https://github.com/mpeltonen/sbt-idea/pull/232
+[8]: https://github.com/heralight
