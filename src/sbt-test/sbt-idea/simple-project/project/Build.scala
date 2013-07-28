@@ -6,7 +6,7 @@ import org.sbtidea.SbtIdeaPlugin._
 object ScriptedTestBuild extends AbstractScriptedTestBuild("simple-project") {
   
   lazy val root = Project("main", file("."), settings = Defaults.defaultSettings ++ scriptedTestSettings ++ Seq(
-    libraryDependencies ++= dependencies, scalacOptions ++= Seq("-unchecked", "-deprecation", "-P:continuations:enable"),
+    libraryDependencies ++= dependencies, scalacOptions ++= Seq("-unchecked", "-deprecation", "-P:continuations:enable", "-language:implicitConversions"),
     ideaBasePackage := Some("foo.bar"),
     autoCompilerPlugins := true,
     libraryDependencies <<= (scalaVersion, libraryDependencies) { (ver, deps) =>

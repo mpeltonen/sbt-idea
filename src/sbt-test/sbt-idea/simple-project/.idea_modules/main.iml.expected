@@ -15,7 +15,7 @@
             <option value="~/.ivy2/cache/org.scala-lang.plugins/continuations/jars/continuations-2.9.2.jar"></option>
           </array>
         </option>
-        <option name="compilerOptions" value="-unchecked -deprecation -P:continuations:enable"/>
+        <option name="compilerOptions" value="-language:implicitConversions"/>
       </configuration>
     </facet>
   </component>
