@@ -176,7 +176,7 @@ class IdeaModuleDescriptor(val imlDir: File, projectRoot: File, val project: Sub
           }
         }
         {
-        val options = nonXplugin.filter(compilerOptions.contains).mkString(" ")
+        val options = nonXplugin.filterNot(compilerOptions.contains).mkString(" ")
         <option name="compilerOptions" value={options} />
         }
       </configuration>

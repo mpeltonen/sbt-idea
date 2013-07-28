@@ -7,7 +7,7 @@
        <option value="Scala 2.10" name="languageLevel"></option>
        <option value="true" name="fsc"></option>
        <option value="true" name="deprecationWarnings"></option>
-       <option value="-deprecation" name="compilerOptions"/>
+       <option value="" name="compilerOptions"/>
      </configuration>
    </facet>
  </component>

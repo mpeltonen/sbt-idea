@@ -7,7 +7,7 @@
        <option value="Scala 2.10" name="languageLevel"></option>
        <option value="true" name="fsc"></option>
        <option value="true" name="uncheckedWarnings"></option>
-       <option value="-unchecked" name="compilerOptions"></option>
+       <option value="" name="compilerOptions"></option>
      </configuration>
    </facet>
  </component>
