@@ -111,6 +111,6 @@ case class AndroidSdkPlugin(projectDefinition: ProjectDefinition[ProjectRef], pr
 
   lazy val platformVersion = {
     import android.Keys._
-    setting(platform in Android).getVersionName
+    settings.task(platform in Android).getVersionName
   }
 }
