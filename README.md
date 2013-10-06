@@ -8,7 +8,7 @@ Requirements
 Installation
 ------------
 
-Add the following lines to ~/.sbt/plugins/build.sbt or PROJECT_DIR/project/plugins.sbt
+Add the following lines to ~/.sbt/0.13/plugins/build.sbt or PROJECT_DIR/project/plugins.sbt
 
     addSbtPlugin("com.github.mpeltonen" % "sbt-idea" % "1.5.1")
 
