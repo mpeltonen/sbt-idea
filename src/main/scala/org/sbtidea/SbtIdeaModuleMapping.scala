@@ -8,7 +8,7 @@ object SbtIdeaModuleMapping {
 
   def toIdeaLib(instance: ScalaInstance) = {
     val coreJars = instance.jars.filter { jar =>
-      Seq("compiler", "library", "reflect").map("scala-%s.jar" format _).exists(_ == jar.getName)
+      Seq("compiler", "library", "reflect").exists(x => jar.getName.contains(x))
     }.toSet
     val id = "scala-" + instance.version
     IdeaLibrary(id, "SBT: scala:" + instance.version, id, coreJars,

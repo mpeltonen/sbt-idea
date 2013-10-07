@@ -1,0 +1,30 @@
+ <module version="4" type="JAVA_MODULE">
+  <component name="FacetManager">
+    <facet name="Scala" type="scala">
+      <configuration>
+        <option value="Project" name="compilerLibraryLevel"/>
+        <option value="SBT: scala:2.10.3" name="compilerLibraryName"/>
+        <option value="Scala 2.10" name="languageLevel"/>
+        <option value="true" name="fsc"/>
+        <option value="" name="compilerOptions"/>
+      </configuration>
+    </facet>
+  </component>
+  <component inherit-compiler-output="false" name="NewModuleRootManager">
+    <output url="file://$MODULE_DIR$/../target/scala-2.10/classes"/>
+    <output-test url="file://$MODULE_DIR$/../target/scala-2.10/test-classes"/>
+    <exclude-output/>
+    <content url="file://$MODULE_DIR$/../">
+      <sourceFolder isTestSource="false" url="file://$MODULE_DIR$/../src/main/scala"/>
+      <sourceFolder isTestSource="false" url="file://$MODULE_DIR$/../src/main/java"/>
+      <sourceFolder isTestSource="false" url="file://$MODULE_DIR$/../src/main/resources"/>
+      <sourceFolder isTestSource="true" url="file://$MODULE_DIR$/../src/test/scala"/>
+      <sourceFolder isTestSource="true" url="file://$MODULE_DIR$/../src/test/java"/>
+      <sourceFolder isTestSource="true" url="file://$MODULE_DIR$/../src/test/resources"/>
+      <excludeFolder url="file://$MODULE_DIR$/../target"/>
+    </content>
+    <orderEntry type="inheritedJdk"/>
+    <orderEntry forTests="false" type="sourceFolder"/>
+    <orderEntry level="project" name="SBT: org.scala-lang:scala-library:2.10.3" type="library"/>
+  </component>
+</module>
