@@ -1,0 +1,9 @@
+
+Changes since 1.5.1:
+
+* Support any compiler flag that does not need special configuration ([issue 235][1])
+* Fix compiler library in SBT 0.13.x with Scala != 2.10.2 ([pull 253][2] by [retronym][3])
+
+[1]: https://github.com/mpeltonen/sbt-idea/issues/235
+[2]: https://github.com/mpeltonen/sbt-idea/pull/253
+[3]: https://github.com/retronym
