@@ -4,9 +4,8 @@ import android.AndroidSupport
 import sbt._
 import sbt.complete.Parsers._
 import java.io.File
-import collection.Seq
+import scala.collection.SortedMap
 import SbtIdeaModuleMapping._
-import java.lang.IllegalArgumentException
 import xml.NodeSeq
 
 object SbtIdeaPlugin extends Plugin {
@@ -74,8 +73,8 @@ object SbtIdeaPlugin extends Plugin {
         processAggregates(proj.aggregate.toList)
       }
 
-      buildUnit.defined.flatMap {
-        case (id, proj) => (ProjectRef(uri, id) -> proj) :: getProjectList(proj).toList
+      SortedMap.empty[ProjectRef, ResolvedProject] ++ buildUnit.defined.flatMap {
+        case (id, proj) => (ProjectRef(uri, id) -> proj) :: getProjectList(proj)
       }
     }
 
@@ -209,13 +208,23 @@ object SbtIdeaPlugin extends Plugin {
     val packagePrefix = settings.setting(ideaPackagePrefix, "missing package prefix")
     val extraFacets = settings.settingWithDefault(ideaExtraFacets, NodeSeq.Empty)
     val includeScalaFacet = settings.settingWithDefault(ideaIncludeScalaFacet, true)
-    def isAggregate(p: String) = allProjectIds.toSeq.contains(p)
+    def isAggregate(p: String) = allProjectIds(p)
     val classpathDeps = project.dependencies.filterNot(d => isAggregate(d.project.project)).flatMap { dep =>
       Seq(Compile, Test) map { scope =>
         (settings.setting(Keys.classDirectory in scope, "Missing class directory", dep.project), settings.setting(Keys.sourceDirectories in scope, "Missing source directory", dep.project))
       }
     }
-
+    val dependencyProjects = {
+      val dependencies = project.dependencies.collect {
+        case p if isAggregate(p.project.project) =>
+          DependencyProject(p.project.project, IdeaLibrary.Scope(p.configuration getOrElse "compile"))
+      }
+      val aggregates = project.aggregate.collect {
+        case p if isAggregate(p.project) && dependencies.forall(_.name != p.project) =>
+          DependencyProject(p.project, IdeaLibrary.CompileScope)
+      }
+      (aggregates ++ dependencies).toList
+    }
 
     val androidSupport = AndroidSupport(project, projectRoot, buildStruct, settings)
     val dependencyLibs = librariesExtractor.allLibraries.map { lib: IdeaModuleLibRef =>
@@ -224,7 +233,8 @@ object SbtIdeaPlugin extends Plugin {
       def shouldNotDex(libName: String) = libName.equals("android.jar") || libName.contains(":scala-library:")
       if (androidSupport.isAndroidProject && shouldNotDex(lib.library.name)) lib.copy(config = IdeaLibrary.ProvidedScope) else lib
     }
-    SubProjectInfo(baseDirectory, projectName, project.uses.map(_.project).filter(isAggregate).toList, classpathDeps, compileDirectories,
+
+    SubProjectInfo(baseDirectory, projectName, dependencyProjects, classpathDeps, compileDirectories,
       testDirectories, dependencyLibs, scalaInstance, ideaGroup, None, basePackage, packagePrefix, extraFacets, scalacOptions,
       includeScalaFacet, androidSupport)
   }

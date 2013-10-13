@@ -10,11 +10,23 @@ import sbt.ScalaInstance
 class IdeaProjectDomain
 
 object IdeaLibrary {
-  sealed abstract class Scope(val configName: String)
-  case object CompileScope extends Scope("")
-  case object RuntimeScope extends Scope("RUNTIME")
-  case object TestScope extends Scope("TEST")
-  case object ProvidedScope extends Scope("PROVIDED")
+  sealed abstract class Scope(val configName: Option[String])
+  case object CompileScope extends Scope(None)
+  case object RuntimeScope extends Scope(Some("RUNTIME"))
+  case object TestScope extends Scope(Some("TEST"))
+  case object ProvidedScope extends Scope(Some("PROVIDED"))
+
+  object Scope {
+    def apply(conf: String): Scope = {
+      conf match {
+        case "compile" => CompileScope
+        case "runtime" => RuntimeScope
+        case "test" => TestScope
+        case "provided" => ProvidedScope
+        case _ => CompileScope
+      }
+    }
+  }
 }
 
 case class IdeaLibrary(id: String, name: String, evictionId: String, classes: Set[File], javaDocs: Set[File], sources: Set[File]) {
@@ -29,7 +41,11 @@ case class Directories(sources: Seq[File], resources: Seq[File], outDir: File) {
   def addRes(moreResources: Seq[File]): Directories = copy(resources = resources ++ moreResources)
 }
 
-case class SubProjectInfo(baseDir: File, name: String, dependencyProjects: List[String], classpathDeps: Seq[(File, Seq[File])], compileDirs: Directories,
+case class DependencyProject(name: String, scope: IdeaLibrary.Scope)
+
+case class SubProjectInfo(baseDir: File, name: String,
+                          dependencyProjects: List[DependencyProject],
+                          classpathDeps: Seq[(File, Seq[File])], compileDirs: Directories,
                           testDirs: Directories, libraries: Seq[IdeaModuleLibRef], scalaInstance: ScalaInstance,
                           ideaGroup: Option[String], webAppPath: Option[File], basePackage: Option[String],
                           packagePrefix: Option[String], extraFacets: NodeSeq, scalacOptions: Seq[String],

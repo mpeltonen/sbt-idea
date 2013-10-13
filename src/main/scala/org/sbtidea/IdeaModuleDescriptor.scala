@@ -9,7 +9,7 @@ package org.sbtidea
 import sbt._
 import java.io.File
 
-import xml.{UnprefixedAttribute, Node, Text}
+import xml.{Node, Text}
 
 
 class IdeaModuleDescriptor(val imlDir: File, projectRoot: File, val project: SubProjectInfo, val env: IdeaProjectEnvironment, val userEnv: IdeaUserEnvironment, val log: Logger) extends SaveableXml {
@@ -91,19 +91,16 @@ class IdeaModuleDescriptor(val imlDir: File, projectRoot: File, val project: Sub
         {
         // what about j.extraAttributes.get("e:docUrl")?
         promoteTestEvictors(project.libraries).map(ref => {
-          val orderEntry = <orderEntry type="library" name={ ref.library.name } level="project"/>
-          ref.config match {
-                case IdeaLibrary.CompileScope => orderEntry
-                case scope => orderEntry % new UnprefixedAttribute("scope", scope.configName, scala.xml.Null)
-          }
+          val scope = ref.config.configName.map(Text(_))
+          <orderEntry type="library" name={ref.library.name} scope={scope} level="project"/>
         })
         }
 
         {
-          //FIXME Take dependency scope into account
-          project.dependencyProjects.distinct.map { name =>
-            log.debug("Project dependency: " + name)
-            <orderEntry type="module" module-name={name} exported=""/>
+          project.dependencyProjects.map { dep =>
+            log.debug("Project dependency: " + dep.name)
+            val scope = dep.scope.configName.map(Text(_))
+            <orderEntry type="module" module-name={dep.name} scope={scope} exported=""/>
           }
         }
         {

@@ -81,7 +81,7 @@ object SbtIdeaModuleMapping {
               attributedFile <- unmanagedClassPathSeq
               f = attributedFile.data
               if Seq("sources", "javadoc").forall(classifier => !f.name.endsWith("-%s.jar".format(classifier)))
-              scope = toScope(config.name)
+              scope = IdeaLibrary.Scope(config.name)
               sources = if (f.name.endsWith(".jar")) classifier(f, "sources").toSet else Set[File]()
               javadocs = if (f.name.endsWith(".jar")) classifier(f, "javadoc").toSet else Set[File]()
               ideaLib = IdeaLibrary(f.getName, f.getName, f.getName, classes = Set(f), sources = sources, javaDocs = javadocs)
@@ -107,23 +107,23 @@ object SbtIdeaModuleMapping {
     m1.organization == m2.organization && crossName(m1).name == crossName(m2).name
   }
 
-  private def ideaLibFromModule(configuration: String, module: ModuleID, artifacts: Seq[(Artifact, File)], classifiers: Option[(Seq[SourcesClassifier], Seq[JavadocClassifier])]): IdeaLibrary = {
+  private def ideaLibFromModule(configuration: Option[String], module: ModuleID, artifacts: Seq[(Artifact, File)], classifiers: Option[(Seq[SourcesClassifier], Seq[JavadocClassifier])]): IdeaLibrary = {
     def findClasses = {
       val sourceAndJavadocClassifiers: Seq[String] = classifiers map { case (a, b) => a ++ b } getOrElse Seq.empty
-      def isSourceOrJavadocArtifact(artifact: Artifact) = artifact.classifier map { sourceAndJavadocClassifiers contains _ } getOrElse false
+      def isSourceOrJavadocArtifact(artifact: Artifact) = artifact.classifier exists { sourceAndJavadocClassifiers contains _ }
       artifacts.collect {
         case (artifact, file) if !isSourceOrJavadocArtifact(artifact) => file
       }
     }
     def findByClassifier(classifier: Option[String]) = artifacts.collect {
-      case (artifact, file) if (artifact.classifier == classifier) => file
+      case (artifact, file) if artifact.classifier == classifier => file
     }
     def findByClassifiers(classifiers: Option[Seq[String]]): Seq[File] = classifiers match {
       case Some(classifiers) => classifiers.foldLeft(Seq[File]()) { (acc, classifier) => acc ++ findByClassifier(Some(classifier)) }
       case None => Seq[File]()
     }
-    val id = module.organization + "_" + module.name + "_" + module.revision + (if (configuration.nonEmpty) "_" + configuration else "")
-    val name = "SBT: " + module.organization + ":" + module.name + ":" + module.revision + (if (configuration.nonEmpty) ":" + configuration else "")
+    val id = module.organization + "_" + module.name + "_" + module.revision + configuration.fold("")("_" + _)
+    val name = "SBT: " + module.organization + ":" + module.name + ":" + module.revision + configuration.fold("")(":" + _)
     val artifactId = module.organization + ":" + module.name
     IdeaLibrary(id,
       name,
@@ -134,25 +134,14 @@ object SbtIdeaModuleMapping {
     )
   }
 
-  private def toScope(conf: String) = {
-    import org.sbtidea.IdeaLibrary._
-    conf match {
-      case "compile" => CompileScope
-      case "runtime" => RuntimeScope
-      case "test" => TestScope
-      case "provided" => ProvidedScope
-      case _ => CompileScope
-    }
-  }
-
   private def mapToIdeaModuleLibs(configuration: String, module: ModuleID, artifacts: Seq[(Artifact, File)], deps: Keys.Classpath,  classifiers:Option[(Seq[SourcesClassifier], Seq[JavadocClassifier])],
                                   scalaVersion: String): Seq[(IdeaModuleLibRef, ModuleID)] = {
-    val scope = toScope(configuration)
+    val scope = IdeaLibrary.Scope(configuration)
     val depFilter = libDepFilter(deps.flatMap(_.get(Keys.moduleID.key)), scalaVersion) _
 
     Seq(module).filter(depFilter).foldLeft(Seq[(IdeaModuleLibRef, ModuleID)]()) { (acc, module) =>
       val ideaLib = ideaLibFromModule(
-        scope.configName.toLowerCase,
+        scope.configName.map(_.toLowerCase),
         module,
         artifacts,
         classifiers
@@ -170,7 +159,7 @@ object SbtIdeaModuleMapping {
     //mapToIdeaModuleLibs and remove the hardcoded configurations. Something like the following would be enough:
     //report.configurations.flatMap(configReport => mapToIdeaModuleLibs(configReport.configuration, configReport.modules, deps))
 
-    Seq("compile", "provided", "runtime", "test", "optional").flatMap(report.configuration(_)).foldLeft(Seq[(IdeaModuleLibRef, ModuleID)]()) {
+    Seq("compile", "provided", "runtime", "test", "optional").flatMap(report.configuration).foldLeft(Seq[(IdeaModuleLibRef, ModuleID)]()) {
       (acc, configReport) =>
         def processedArtifacts = acc.flatMap(_._1.library.allFiles)
         def alreadyIncludedJar(f: File): Boolean = { processedArtifacts.exists(_.getAbsolutePath == f.getAbsolutePath) }
@@ -194,11 +183,11 @@ object SbtIdeaModuleMapping {
     ideaModuleLibRefs.map { case (moduleLibRef, moduleId) =>
       val configsAndModules = report.configurations.flatMap(configReport => configReport.modules.map(configReport.configuration -> _))
       configsAndModules.find { case (configuration, moduleReport) =>
-        moduleLibRef.config == toScope(configuration) && equivModule(moduleReport.module, moduleId)
+        moduleLibRef.config == IdeaLibrary.Scope(configuration) && equivModule(moduleReport.module, moduleId)
       } map { case (configuration, moduleReport) =>
         val ideaLibrary = {
           val il = ideaLibFromModule(
-            toScope(configuration).configName.toLowerCase,
+            IdeaLibrary.Scope(configuration).configName.map(_.toLowerCase),
             moduleReport.module,
             moduleReport.artifacts,
             Some(classifiers)
@@ -218,10 +207,10 @@ object SbtIdeaModuleMapping {
       configReport <- report.configurations
       moduleReport <- configReport.modules
     } yield ideaLibFromModule(
-        toScope(configReport.configuration).configName.toLowerCase,
-        moduleReport.module,
-        moduleReport.artifacts,
-        Some(Seq("sources"), Seq("javadoc"))
+      IdeaLibrary.Scope(configReport.configuration).configName.map(_.toLowerCase),
+      moduleReport.module,
+      moduleReport.artifacts,
+      Some(Seq("sources"), Seq("javadoc"))
     )
   }
 }
