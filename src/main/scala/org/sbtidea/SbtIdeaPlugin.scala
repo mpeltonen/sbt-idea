@@ -171,8 +171,9 @@ object SbtIdeaPlugin extends Plugin {
         state.log.info("Running " + config.name + ":" + Keys.managedSources.key.label + " ...")
         EvaluateTask(buildStruct, Keys.managedSources in config, state, projectRef)
         val managedSourceRoots = settings.setting(Keys.managedSourceDirectories in config, "Missing managed source directories!")
+        val sourceManaged = settings.setting(Keys.sourceManaged in config, "Missing 'sourceManaged'")
         def listSubdirectories(f: File) = Option(f.listFiles()).map(_.toSeq.filter(_.isDirectory)).getOrElse(Seq.empty[File])
-        managedSourceRoots.flatMap(listSubdirectories)
+        (listSubdirectories(sourceManaged) ++ managedSourceRoots).distinct
       }
       else Seq.empty[File]
 
