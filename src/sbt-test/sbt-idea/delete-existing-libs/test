@@ -1,0 +1,11 @@
+$ exists .idea/libraries/mysql_mysql_connector_java_5_1_25_runtime.xml
+$ exists .idea/libraries/SBT__javax_servlet_servlet_api_2_5_provided.xml
+$ exists .idea/libraries/SBT__junit_junit_4_8_2.xml.expected
+> gen-idea dont-delete-existing-libs
+$ exists .idea/libraries/mysql_mysql_connector_java_5_1_25_runtime.xml
+$ exists .idea/libraries/SBT__javax_servlet_servlet_api_2_5_provided.xml
+$ exists .idea/libraries/SBT__junit_junit_4_8_2.xml
+> gen-idea
+$ exists .idea/libraries/mysql_mysql_connector_java_5_1_25_runtime.xml
+$ absent .idea/libraries/SBT__javax_servlet_servlet_api_2_5_provided.xml
+$ exists .idea/libraries/SBT__junit_junit_4_8_2.xml

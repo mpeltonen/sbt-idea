@@ -129,6 +129,10 @@ class IdeaProjectDescriptor(val projectInfo: IdeaProjectInfo, val env: IdeaProje
 
       val librariesDir = configFile("libraries")
       librariesDir.mkdirs
+      if (env.deleteExistingLibraries) {
+        IO.delete(IO.listFiles(librariesDir, GlobFilter("SBT__*.xml")))
+        log.info("Deleted existing library files")
+      }
       for (ideaLib <- projectInfo.ideaLibs) {
         // MUST all be _
         val filename = ideaLib.name.replaceAll("[:\\.\\s-]", "_") + ".xml"

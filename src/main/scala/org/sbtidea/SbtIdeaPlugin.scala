@@ -6,7 +6,6 @@ import sbt.complete.Parsers._
 import java.io.File
 import collection.Seq
 import SbtIdeaModuleMapping._
-import java.lang.IllegalArgumentException
 import xml.NodeSeq
 
 object SbtIdeaPlugin extends Plugin {
@@ -39,8 +38,9 @@ object SbtIdeaPlugin extends Plugin {
   private val NoFsc = "no-fsc"
   private val NoTypeHighlighting = "no-type-highlighting"
   private val NoSbtBuildModule = "no-sbt-build-module"
+  private val DontDeleteExistingLibs = "dont-delete-existing-libs"
 
-  private val args = (Space ~> NoClassifiers | Space ~> SbtClassifiers | Space ~> NoFsc | Space ~> NoTypeHighlighting | Space ~> NoSbtBuildModule).*
+  private val args = (Space ~> NoClassifiers | Space ~> SbtClassifiers | Space ~> NoFsc | Space ~> NoTypeHighlighting | Space ~> NoSbtBuildModule | Space ~> DontDeleteExistingLibs).*
 
   private lazy val ideaCommand = Command("gen-idea")(_ => args)(doCommand)
 
@@ -56,9 +56,10 @@ object SbtIdeaPlugin extends Plugin {
     val extracted = Project.extract(state)
     val buildStruct = extracted.structure
     val buildUnit = buildStruct.units(buildStruct.root)
+    val settings = Settings(extracted.currentRef, buildStruct, state)
 
     val uri = buildStruct.root
-    val name: Option[String] = ideaProjectName in extracted.currentRef get buildStruct.data
+    val name: Option[String] = settings.optionalSetting(ideaProjectName)
     val projectList = {
       def getProjectList(proj: ResolvedProject): List[(ProjectRef, ResolvedProject)] = {
         def processAggregates(aggregates: List[ProjectRef]): List[(ProjectRef, ResolvedProject)] = {
@@ -79,9 +80,8 @@ object SbtIdeaPlugin extends Plugin {
       }
     }
 
-    def ignoreModule(projectRef: ProjectRef): Boolean = {
-      (ideaIgnoreModule in projectRef get buildStruct.data).getOrElse(false)
-    }
+    def ignoreModule(projectRef: ProjectRef): Boolean =
+      settings.optionalSetting(ideaIgnoreModule, projectRef).getOrElse(false)
 
     val allProjectIds = projectList.values.map(_.id).toSet
     val subProjects = projectList.collect {
@@ -94,12 +94,12 @@ object SbtIdeaPlugin extends Plugin {
 
     val projectInfo = IdeaProjectInfo(buildUnit.localBase, name.getOrElse("Unknown"), subProjects, ideaLibs ::: scalaLibs)
 
-    val excludeFolders = (ideaExcludeFolders in extracted.currentRef get buildStruct.data).getOrElse(Nil) :+ "target"
+    val excludeFolders = settings.settingWithDefault(ideaExcludeFolders, Nil) :+ "target"
 
     val env = IdeaProjectEnvironment(projectJdkName = SystemProps.jdkName, javaLanguageLevel = SystemProps.languageLevel,
       includeSbtProjectDefinitionModule = !args.contains(NoSbtBuildModule), projectOutputPath = None, excludedFolders = excludeFolders,
       compileWithIdea = false, modulePath = ".idea_modules", useProjectFsc = !args.contains(NoFsc),
-      enableTypeHighlighting = !args.contains(NoTypeHighlighting))
+      enableTypeHighlighting = !args.contains(NoTypeHighlighting), deleteExistingLibraries = !args.contains(DontDeleteExistingLibs))
 
     val userEnv = IdeaUserEnvironment(false)
 
