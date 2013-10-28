@@ -1,6 +1,7 @@
 Requirements
 ------------
 
+* For sbt 0.13.x version of the plugin, see [branch sbt-0.13](https://github.com/mpeltonen/sbt-idea/tree/sbt-0.13#requirements)
 * [sbt](https://github.com/harrah/xsbt/wiki) 0.12.x
 * For sbt 0.11.x version of the plugin, see [branch sbt-0.11](https://github.com/mpeltonen/sbt-idea/tree/sbt-0.11#requirements)
 
