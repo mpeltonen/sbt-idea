@@ -49,7 +49,7 @@ case class SubProjectInfo(baseDir: File, name: String,
                           testDirs: Directories, libraries: Seq[IdeaModuleLibRef], scalaInstance: ScalaInstance,
                           ideaGroup: Option[String], webAppPath: Option[File], basePackage: Option[String],
                           packagePrefix: Option[String], extraFacets: NodeSeq, scalacOptions: Seq[String],
-                          includeScalaFacet: Boolean, androidSupport: AndroidSupport) {
+                          includeScalaFacet: Boolean, androidSupport: Option[AndroidSupport]) {
   lazy val languageLevel: String = {
     val version = scalaInstance.version
     val binaryScalaVersion = version.take(version.lastIndexOf('.'))
