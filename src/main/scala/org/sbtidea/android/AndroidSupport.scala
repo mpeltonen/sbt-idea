@@ -16,7 +16,7 @@ object AndroidSupport {
 trait AndroidSupport {
   def isAndroidProject: Boolean
   def facet: NodeSeq
-  def moduleJdk: NodeSeq = <orderEntry type="jdk" jdkName={"Android %s Platform".format(platformVersion)} jdkType="Android SDK" />
+  def moduleJdk: NodeSeq = <orderEntry type="jdk" jdkName={"Android API %s Platform".format(platformVersion)} jdkType="Android SDK" />
   def excludedFolders: Seq[String] = Seq.empty[String]
 
   protected def projectRoot: File
@@ -110,6 +110,6 @@ case class AndroidSdkPlugin(projectDefinition: ProjectDefinition[ProjectRef], pr
 
   lazy val platformVersion = {
     import android.Keys._
-    settings.task(platform in Android).getVersionName
+    setting(targetSdkVersion in Android).toString
   }
 }
