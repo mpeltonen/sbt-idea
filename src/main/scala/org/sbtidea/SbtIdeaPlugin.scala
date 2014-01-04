@@ -137,7 +137,7 @@ object SbtIdeaPlugin extends Plugin {
     for (subProj <- subProjects) {
       val buildDefinitionDir = new File(subProj.baseDir, "project")
       if (buildDefinitionDir.exists()) {
-        val sbtDef = new SbtProjectDefinitionIdeaModuleDescriptor(subProj.name, imlDir, subProj.baseDir,
+        val sbtDef = new SbtProjectDefinitionIdeaModuleDescriptor(subProj.name, imlDir, projectInfo.baseDir,
          buildDefinitionDir, sbtScalaVersion, sbtVersion, sbtOut, buildUnit.classpath, sbtModuleSourceFiles, state.log)
         if (args.contains(NoSbtBuildModule))
           sbtDef.removeIfExists()
