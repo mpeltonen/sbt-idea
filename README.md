@@ -10,13 +10,13 @@ Installation
 
 Add the following lines to ~/.sbt/0.13/plugins/build.sbt or PROJECT_DIR/project/plugins.sbt
 
-    addSbtPlugin("com.github.mpeltonen" % "sbt-idea" % "1.5.2")
+    addSbtPlugin("com.github.mpeltonen" % "sbt-idea" % "1.6.0")
 
 To use the **latest snapshot** version, add also Sonatype snapshots repository resolver into the same **plugins.sbt** file:
 
     resolvers += "Sonatype snapshots" at "http://oss.sonatype.org/content/repositories/snapshots/"
 
-    addSbtPlugin("com.github.mpeltonen" % "sbt-idea" % "1.6.0-SNAPSHOT")
+    addSbtPlugin("com.github.mpeltonen" % "sbt-idea" % "1.7.0-SNAPSHOT")
 
 Usage
 -----
