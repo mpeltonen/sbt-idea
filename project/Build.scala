@@ -8,7 +8,7 @@ object SbtIdeaBuild extends Build with BuildExtra {
     sbtPlugin := true,
     organization := "com.github.mpeltonen",
     name := "sbt-idea",
-    version := "1.6.0-SNAPSHOT",
+    version := "1.6.0",
     publishTo <<= version { (v: String) =>
       val nexus = "https://oss.sonatype.org/"
       if (v.trim.endsWith("SNAPSHOT")) Some("snapshots" at nexus + "content/repositories/snapshots")
