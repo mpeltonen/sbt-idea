@@ -1,0 +1,20 @@
+
+Changes since 1.5.2:
+
+* IDEA source dirs for generated sources  ([pull 257][1] by [chwthewke][2])
+* Support project dependency scope ([pull 258][3] by [kxbmap][4])
+* Delete existing xml files for libraries unless dont-delete-existing-libs argument is specified ([pull 260][5] by [jozic][6])
+* Fixed descriptor generation for multiple root projects ([pull 272][7] by [SheliakLyr][8])
+* Support [android-sdk-plugin][9] 0.9.x and later (now supports also sbt 0.13 version of sbt-idea)
+* Use new Android SDK naming scheme ([issue 263][10])
+
+[1]: https://github.com/mpeltonen/sbt-idea/pull/257
+[2]: https://github.com/chwthewke
+[3]: https://github.com/mpeltonen/sbt-idea/pull/258
+[4]: https://github.com/kxbmap
+[5]: https://github.com/mpeltonen/sbt-idea/pull/260
+[6]: https://github.com/jozic
+[7]: https://github.com/mpeltonen/sbt-idea/pull/272
+[8]: https://github.com/SheliakLyr
+[9]: https://github.com/pfn/android-sdk-plugin
+[10]: https://github.com/mpeltonen/sbt-idea/pull/263
