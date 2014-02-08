@@ -8,7 +8,7 @@ object SbtIdeaBuild extends Build with BuildExtra {
     sbtPlugin := true,
     organization := "com.github.mpeltonen",
     name := "sbt-idea",
-    version := "1.6.0",
+    version := "1.7.0-SNAPSHOT",
     sbtVersion in Global := "0.13.0",
     scalaVersion in Global := "2.10.3",
     publishTo <<= version { (v: String) =>
