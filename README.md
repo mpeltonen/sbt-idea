@@ -71,6 +71,19 @@ Or in your Build.scala:
     lazy val myproject = Project(id = "XXXX" ....)
     .settings(ideaExcludeFolders := ".idea" :: ".idea_modules" :: Nil)
 
+### Include extra test configurations
+
+In your Build.scala:
+
+    lazy val LoadTest = config("test-load") extend Test
+    lazy val loadTestSettings : Seq[Setting[_]] = inConfig(LoadTest)(Defaults.testSettings ++ Seq(sourceDirectory in LoadTest <<= (sourceDirectory in LoadTest)(_ / ".." / "test-load")))
+
+    lazy val root = Project(...)
+      .settings(ideaExtraTestConfigurations := Seq(LoadTest) :: Nil)
+      .configs( LoadTest )
+      .settings( loadTestSettings : _*)
+
+
 
 
 TODO...

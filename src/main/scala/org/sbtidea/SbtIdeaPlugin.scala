@@ -20,6 +20,7 @@ object SbtIdeaPlugin extends Plugin {
   val ideaExcludeFolders = SettingKey[Seq[String]]("idea-exclude-folders")
   val ideaExtraFacets = SettingKey[NodeSeq]("idea-extra-facets")
   val ideaIncludeScalaFacet = SettingKey[Boolean]("idea-include-scala-facet")
+  val ideaExtraTestConfigurations = SettingKey[Seq[Configuration]]("idea-extra-test-configurations","Extra configurations to be included in test sources")
 
   override lazy val settings = Seq(
     Keys.commands += ideaCommand,
@@ -30,7 +31,8 @@ object SbtIdeaPlugin extends Plugin {
     ideaJavadocsClassifiers <<= ideaJavadocsClassifiers ?? Seq("javadoc"),
     ideaExcludeFolders <<= ideaExcludeFolders ?? Nil,
     ideaExtraFacets <<= ideaExtraFacets ?? NodeSeq.Empty,
-    ideaIncludeScalaFacet <<= ideaIncludeScalaFacet ?? true
+    ideaIncludeScalaFacet <<= ideaIncludeScalaFacet ?? true,
+    ideaExtraTestConfigurations <<= ideaExtraTestConfigurations ?? Seq()
   )
 
   private val NoClassifiers = "no-classifiers"
@@ -199,7 +201,14 @@ object SbtIdeaPlugin extends Plugin {
         settings.setting(Keys.classDirectory in config, "Missing class directory!"))
     }
     val compileDirectories: Directories = directoriesFor(Configurations.Compile)
-    val testDirectories: Directories = directoriesFor(Configurations.Test).addSrc(sourceDirectoriesFor(Configurations.IntegrationTest)).addRes(resourceDirectoriesFor(Configurations.IntegrationTest))
+
+    def appendExtraTestDirectories(directories: Directories) = {
+      val extraConfigurations = (Seq(Configurations.IntegrationTest) ++ settings.setting(ideaExtraTestConfigurations, "Missing extra test configuration"))
+      extraConfigurations.foldLeft(directories)((dirs,conf) =>
+        dirs.addSrc(sourceDirectoriesFor(conf)).addRes(resourceDirectoriesFor(conf))
+      )
+    }
+    val testDirectories: Directories = appendExtraTestDirectories(directoriesFor(Configurations.Test))
     val librariesExtractor = new SbtIdeaModuleMapping.LibrariesExtractor(buildStruct, state, projectRef, scalaInstance,
       withClassifiers = if (args.contains(NoClassifiers)) None else {
         Some((settings.setting(ideaSourcesClassifiers, "Missing idea-sources-classifiers"), settings.setting(ideaJavadocsClassifiers, "Missing idea-javadocs-classifiers")))
