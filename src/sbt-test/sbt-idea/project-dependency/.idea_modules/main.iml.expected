@@ -3,7 +3,7 @@
     <facet name="Scala" type="scala">
       <configuration>
         <option value="Project" name="compilerLibraryLevel"/>
-        <option value="SBT: scala:2.10.2" name="compilerLibraryName"/>
+        <option value="SBT: scala:2.10.3" name="compilerLibraryName"/>
         <option value="Scala 2.10" name="languageLevel"/>
         <option value="true" name="fsc"/>
         <option value="" name="compilerOptions"/>
@@ -25,7 +25,7 @@
     </content>
     <orderEntry type="inheritedJdk"/>
     <orderEntry forTests="false" type="sourceFolder"/>
-    <orderEntry level="project" name="SBT: org.scala-lang:scala-library:2.10.2" type="library"/>
+    <orderEntry level="project" name="SBT: org.scala-lang:scala-library:2.10.3" type="library"/>
     <orderEntry exported="" module-name="compile-project" type="module"/>
     <orderEntry exported="" module-name="provided-project" type="module" scope="PROVIDED"/>
     <orderEntry exported="" module-name="runtime-project" type="module" scope="RUNTIME"/>

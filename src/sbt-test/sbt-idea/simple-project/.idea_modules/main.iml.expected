@@ -4,7 +4,7 @@
       <configuration>
         <option value="foo.bar" name="basePackage"></option>
         <option name="compilerLibraryLevel" value="Project"></option>
-        <option name="compilerLibraryName" value="SBT: scala:2.10.2"></option>
+        <option name="compilerLibraryName" value="SBT: scala:2.10.3"></option>
         <option name="languageLevel" value="Scala 2.10" />
         <option name="fsc" value="true" />
         <option name="uncheckedWarnings" value="true" />
@@ -12,7 +12,7 @@
         <option name="continuations" value="true" />
         <option name="pluginPaths">
           <array>
-            <option value="~/.ivy2/cache/org.scala-lang.plugins/continuations/jars/continuations-2.10.2.jar"></option>
+            <option value="~/.ivy2/cache/org.scala-lang.plugins/continuations/jars/continuations-2.10.3.jar"></option>
           </array>
         </option>
         <option name="compilerOptions" value="-language:implicitConversions"/>
@@ -34,7 +34,7 @@
     </content>
     <orderEntry type="inheritedJdk"></orderEntry>
     <orderEntry type="sourceFolder" forTests="false"></orderEntry>
-    <orderEntry level="project" name="SBT: org.scala-lang:scala-library:2.10.2" type="library"></orderEntry>
+    <orderEntry level="project" name="SBT: org.scala-lang:scala-library:2.10.3" type="library"></orderEntry>
     <orderEntry level="project" name="SBT: junit:junit:4.8.2" type="library"></orderEntry>
     <orderEntry scope="PROVIDED" level="project" name="SBT: javax.servlet:servlet-api:2.5:provided" type="library"></orderEntry>
     <orderEntry scope="RUNTIME" level="project" name="SBT: mysql:mysql-connector-java:5.1.25:runtime" type="library"></orderEntry>

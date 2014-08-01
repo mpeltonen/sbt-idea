@@ -9,7 +9,7 @@ object SbtIdeaBuild extends Build with BuildExtra {
     organization := "com.github.mpeltonen",
     name := "sbt-idea",
     version := "1.7.0-SNAPSHOT",
-    sbtVersion in Global := "0.13.0",
+    sbtVersion in Global := "0.13.2",
     scalaVersion in Global := "2.10.3",
     publishTo <<= version { (v: String) =>
       val nexus = "https://oss.sonatype.org/"
@@ -26,9 +26,9 @@ object SbtIdeaBuild extends Build with BuildExtra {
     ),
     scalacOptions ++= Seq("-deprecation", "-unchecked", "-feature"),
     libraryDependencies ++= Seq(
-      "commons-io" % "commons-io" % "2.0.1"
+      "commons-io" % "commons-io" % "2.4"
     )
-  ) ++ addSbtPlugin("com.hanhuy.sbt" % "android-sdk-plugin" % "0.9.3" % "provided")
+  ) ++ addSbtPlugin("com.hanhuy.sbt" % "android-sdk-plugin" % "1.3.2" % "provided")
 
 
   def extraPom = (
